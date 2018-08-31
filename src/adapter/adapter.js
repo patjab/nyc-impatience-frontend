@@ -1,4 +1,4 @@
-const baseURL = `http://localhost:3000/api/v1/high_scores/`
+const baseURL = `http://impatience-api.herokuapp.com/api/v1/high_scores/`
 
 const getHighScores = () => {
   return fetch(baseURL)
