@@ -28,7 +28,7 @@ class StartScreen extends Component {
           this.props.changeCurrentScreen("highScores")
           break
         case 2:
-          alert("Go around the tourists")
+          this.props.changeCurrentScreen("instructions")
           break
         default:
           break

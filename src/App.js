@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import StartScreen from './StartScreen'
 import Canvas from './components/Canvas'
 import HighScores from './components/HighScores'
+import Instructions from './components/Instructions'
 
 import './App.css'
 
@@ -13,6 +14,8 @@ class App extends Component {
         return <StartScreen />
       case "highScores":
         return <HighScores />
+      case "instructions":
+        return <Instructions />
       default:
         return <Canvas />
     }
