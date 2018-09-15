@@ -37,6 +37,7 @@ class Path extends Component {
   }
 
   // CHEAP FIX need separation of concerns here
+  // separation of concerns to pure function
   drawVerticals = (ctx, previousPoints, currentPoints, shouldAlternateOdd) => {
     const bricksList = []
 
