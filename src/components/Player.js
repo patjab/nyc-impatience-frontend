@@ -13,7 +13,7 @@ class Player extends Component {
   state = {
     walkingCycle: 0,
     // walkingCollection: ['../player/0.png', '../player/0.png', '../player/1.png', '../player/1.png'],
-    walkingCollection: ['https://image.ibb.co/dP6zme/player0.png', 'https://image.ibb.co/dP6zme/player0.png', 'https://image.ibb.co/dP6zme/player1.png', 'https://image.ibb.co/dP6zme/player1.png'],
+    walkingCollection: ['https://image.ibb.co/dP6zme/player0.png', 'https://image.ibb.co/dP6zme/player0.png', 'https://image.ibb.co/euBX6e/player1.png', 'https://image.ibb.co/euBX6e/player1.png'],
     changeInDirectionCounter: 0
   }
 
