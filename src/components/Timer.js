@@ -95,9 +95,6 @@ class Timer extends Component {
 
   componentDidUpdate() {
     if (this.props.patience <= 0) {
-      // if (this.props.streak.length === 0) {
-      //   this.props.recordStreak(this.props.movement)
-      // }
       this.props.recordStreak(this.props.movement)
       this.props.recordTimeFinished(this.state.time)
       this.showGameOverScreen()
