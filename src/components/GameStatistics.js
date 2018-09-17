@@ -147,7 +147,7 @@ class GameStatistics extends Component {
     }
 
     const recordData = {
-      "Distance": this.props.movement,
+      "Distance": Math.trunc(this.props.movement),
       "Average Speed": this.props.movement / (this.props.timeFinished/100),
       "Time Lasted": this.props.timeFinished,
       "Longest Streak": indivStreaks.length !== 0 ? Math.max(...indivStreaks) : 0,
