@@ -212,7 +212,7 @@ const gameController = (state = initialState, action) => {
       console.log("HUNT - DONE RECORDING REDUCER")
       return {
         ...state,
-        cording: true
+        doneRecording: true
       }
     case "RESET_CURRENT_BONUS":
       return {
