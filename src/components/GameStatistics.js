@@ -150,8 +150,8 @@ class GameStatistics extends Component {
       "Distance": Math.trunc(this.props.movement),
       "Average Speed": this.props.movement / (this.props.timeFinished/100),
       "Time Lasted": this.props.timeFinished,
-      "Longest Streak": Math.max(...indivStreaks),
-      "Shortest Streak": Math.min(...indivStreaks),
+      "Longest Streak": Math.trunc(Math.max(...indivStreaks)),
+      "Shortest Streak": Math.trunc(Math.min(...indivStreaks)),
       "Direction Changes": this.props.changeInDirectionCounter,
       "Dir Changes per Sec": this.props.changeInDirectionCounter / (this.props.timeFinished/100)
     }
