@@ -209,6 +209,7 @@ const gameController = (state = initialState, action) => {
         currentBonus: (state.currentBonus + 1) % 6
       }
     case "SIGNAL_DONE_RECORDING":
+      console.log("HUNT - DONE RECORDING REDUCER")
       return {
         ...state,
         cording: true

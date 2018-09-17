@@ -36,6 +36,7 @@ class NameInput extends Component {
 
       const checkIfRecorded = setInterval(() => {
         if (this.props.doneRecording) {
+          console.log("HUNT - IN DONE RECORDING")
           clearInterval(checkIfRecorded)
           this.refs.saveSound.play()
           setTimeout(() => {
@@ -70,6 +71,8 @@ class NameInput extends Component {
             }, 1500)
 
           }, 1000)
+        } else {
+          console.log("HUNT - IS NOT YET DONE RECORDING")
         }
       }, 500)
 
