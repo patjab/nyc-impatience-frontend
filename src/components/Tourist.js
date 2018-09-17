@@ -126,7 +126,7 @@ const Tourist = class extends Component {
           this.props.recordStreak(this.props.movement)
           this.props.resetPlayer()
           this.props.decreaseLife()
-        }
+        } 
       })
     }
   }
