@@ -93,8 +93,12 @@ class Timer extends Component {
   }
 
   showGameOverScreen = () => {
-    const gameOverImg = this.props.canvas.toDataURL("image/png")
-    this.props.setGameOverImage(gameOverImg)
+    try {
+      const gameOverImg = this.props.canvas.toDataURL("image/png")
+      this.props.setGameOverImage(gameOverImg)
+    } catch (err){
+      console.log("security error deferred")
+    }
   }
 
   componentDidUpdate() {
