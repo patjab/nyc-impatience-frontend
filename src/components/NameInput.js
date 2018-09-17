@@ -34,39 +34,44 @@ class NameInput extends Component {
       ctx.font = '50px Geneva'
       ctx.fillText(this.state.nameInput, canvasWidth/2, 1045)
 
-      this.refs.saveSound.play()
-      setTimeout(() => {
-        ctx.beginPath()
-        ctx.rect(100, 920, canvasWidth - (100*2), 70)
-        ctx.fillStyle = "#000000"
-        ctx.fill()
-        ctx.closePath()
-
-        this.clearInputArea(ctx)
-
-        ctx.textAlign = 'center'
-        ctx.fillStyle = '#00ff00'
-        ctx.font = '40px Geneva'
-        ctx.fillText("Your score", canvasWidth/2, 945)
-        ctx.fillText("has been recorded", canvasWidth/2, 945 + 45)
-
-
-        setInterval(() => {
-          ctx.textAlign = 'center'
-          ctx.fillStyle = 'red'
-          ctx.font = '40px Geneva'
-          ctx.fillText("Press [ESC] to continue", canvasWidth/2, 1100)
-
+      const checkIfRecorded = setInterval(() => {
+        if (this.props.doneRecording) {
+          clearInterval(checkIfRecorded)
+          this.refs.saveSound.play()
           setTimeout(() => {
             ctx.beginPath()
-            ctx.rect(100, 1100 - 40, canvasWidth - 200, 80)
+            ctx.rect(100, 920, canvasWidth - (100*2), 70)
             ctx.fillStyle = "#000000"
             ctx.fill()
             ctx.closePath()
-          }, 1000)
-        }, 1500)
 
-      }, 1000)
+            this.clearInputArea(ctx)
+
+            ctx.textAlign = 'center'
+            ctx.fillStyle = '#00ff00'
+            ctx.font = '40px Geneva'
+            ctx.fillText("Your score", canvasWidth/2, 945)
+            ctx.fillText("has been recorded", canvasWidth/2, 945 + 45)
+
+
+            setInterval(() => {
+              ctx.textAlign = 'center'
+              ctx.fillStyle = 'red'
+              ctx.font = '40px Geneva'
+              ctx.fillText("Press [ESC] to continue", canvasWidth/2, 1100)
+
+              setTimeout(() => {
+                ctx.beginPath()
+                ctx.rect(100, 1100 - 40, canvasWidth - 200, 80)
+                ctx.fillStyle = "#000000"
+                ctx.fill()
+                ctx.closePath()
+              }, 1000)
+            }, 1500)
+
+          }, 1000)
+        }
+      }, 500)
 
     }
   }
@@ -120,7 +125,8 @@ class NameInput extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    canvas: state.canvas
+    canvas: state.canvas,
+    doneRecording: state.doneRecording
   }
 }
 

@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { recordGameStatistics, changeCurrentScreen } from '../actions'
+import { recordGameStatistics, changeCurrentScreen, signalDoneRecording } from '../actions'
 import { canvasWidth, canvasHeight, marginAroundStats, paddingAroundStats } from '../setupData'
 import { recordHighScore } from '../adapter/adapter'
 import NameInput from './NameInput'
@@ -203,7 +203,7 @@ class GameStatistics extends Component {
         direction_changes_per_second: unformatted["Dir Changes per Sec"]
       }
     }
-    recordHighScore(formatted)
+    return recordHighScore(formatted)
   }
 
   componentDidUpdate() {
@@ -211,7 +211,9 @@ class GameStatistics extends Component {
     if ( this.state.doneGreyscale && this.cfOnlyOnceTemp ) {
       this.displayGameStatsSquare(ctx)
     } else if ( this.props.dataToBeRecorded["Name"] ) {
-      this.formatAndSaveGameStatistics()
+      this.formatAndSaveGameStatistics().then(() => {
+        this.props.signalDoneRecording()
+      })
     }
   }
 
@@ -253,7 +255,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     recordGameStatistics: (recordData) => dispatch(recordGameStatistics(recordData)),
-    changeCurrentScreen: (screen) => dispatch(changeCurrentScreen(screen))
+    changeCurrentScreen: (screen) => dispatch(changeCurrentScreen(screen)),
+    signalDoneRecording: () => dispatch(signalDoneRecording())
   }
 }
 

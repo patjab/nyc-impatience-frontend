@@ -39,7 +39,8 @@ const initialState = {
     "Direction Changes": null,
     "Dir Changes per Sec": null
   },
-  currentScreen: "start"
+  currentScreen: "start",
+  doneRecording: false
 }
 
 const gameController = (state = initialState, action) => {
@@ -206,6 +207,11 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         currentBonus: (state.currentBonus + 1) % 6
+      }
+    case "SIGNAL_DONE_RECORDING":
+      return {
+        ...state,
+        cording: true
       }
     case "RESET_CURRENT_BONUS":
       return {

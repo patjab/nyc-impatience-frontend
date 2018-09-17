@@ -208,3 +208,9 @@ export const resetCurrentBonus = (num) => {
     payload: num
   }
 }
+
+export const signalDoneRecording = () => {
+  return {
+    type: "SIGNAL_DONE_RECORDING"
+  }
+}
