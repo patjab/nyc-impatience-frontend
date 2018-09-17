@@ -223,8 +223,6 @@ class GameStatistics extends Component {
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.switchToHighScores)
-    // Not really done recording, but to stop the interval
-    this.props.signalDoneRecording()
   }
 
   render() {

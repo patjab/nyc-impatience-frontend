@@ -34,10 +34,11 @@ class NameInput extends Component {
       ctx.font = '50px Geneva'
       ctx.fillText(this.state.nameInput, canvasWidth/2, 1045)
 
-      const checkIfRecorded = setInterval(() => {
+      this.checkIfRecorded = setInterval(() => {
         if (this.props.doneRecording) {
           console.log("HUNT - IN DONE RECORDING")
           clearInterval(checkIfRecorded)
+
           this.refs.saveSound.play()
           setTimeout(() => {
             ctx.beginPath()
@@ -81,6 +82,7 @@ class NameInput extends Component {
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.handleNameInput)
+    clearInterval(this.checkIfRecorded)
   }
 
   clearInputArea = (ctx) => {
