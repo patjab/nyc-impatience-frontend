@@ -24,7 +24,7 @@ export const playerStartY = (canvasHeight)-2*(initialPlayerSize*2)
 
 export const movementsPerStage = 1000
 
-export const loudnessSpookLevel = 0.6
+export const loudnessSpookLevel = 0.8
 export const loudnessRechargeInSeconds = 30
 
 export const rendingTouristRowsPercentage = 0.50
