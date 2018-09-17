@@ -106,8 +106,12 @@ const Tourist = class extends Component {
         if (!this.props.gameOver) {
           this.props.toggleBumpingShake()
           const quality = 1
-          const snapshot = this.props.canvas.toDataURL("image/jpeg", quality)
-          this.props.addToBumpedImages(snapshot)
+          try {
+            const snapshot = this.props.canvas.toDataURL("image/jpeg", quality)
+            this.props.addToBumpedImages(snapshot)
+          } catch (err) {
+            console.log("security error deferred")
+          }
           this.props.changeMovementAbility(false)
         }
       }, 1000)
