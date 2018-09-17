@@ -123,10 +123,12 @@ const Tourist = class extends Component {
       this.setState({dontCallBumpAgain: true}, () => {
         if (!this.props.gameOver) {
           this.runningAnimation()
-          this.props.recordStreak(this.props.movement)
+          if ( this.props.patience > 0 ) {
+            this.props.recordStreak(this.props.movement)
+          }
           this.props.resetPlayer()
           this.props.decreaseLife()
-        } 
+        }
       })
     }
   }
@@ -187,7 +189,8 @@ const mapStateToProps = (state) => {
     centersOfBricks: state.centersOfBricks,
     movementPerBrick: state.movementPerBrick,
     touristRoaster: state.touristRoaster,
-    gameOver: state.gameOver
+    gameOver: state.gameOver,
+    patience: state.patience
   }
 }
 
