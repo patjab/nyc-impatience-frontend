@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience } from '../actions'
-import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience } from '../setupData'
+import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience, playerStepBigRight, playerStepBigLeft } from '../setupData'
 import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
 
 class Player extends Component {
@@ -13,7 +13,8 @@ class Player extends Component {
   state = {
     walkingCycle: 0,
     // walkingCollection: ['../player/0.png', '../player/0.png', '../player/1.png', '../player/1.png'],
-    walkingCollection: ['https://i.imgur.com/TOGoncO.png', 'https://i.imgur.com/TOGoncO.png', 'https://i.imgur.com/x5KN4Tk.png', 'https://i.imgur.com/x5KN4Tk.png'],
+    // walkingCollection: ['https://i.imgur.com/TOGoncO.png', 'https://i.imgur.com/TOGoncO.png', 'https://i.imgur.com/x5KN4Tk.png', 'https://i.imgur.com/x5KN4Tk.png'],
+    walkingCollection: [playerStepBigRight, playerStepBigRight, playerStepBigLeft, playerStepBigLeft],
     changeInDirectionCounter: 0
   }
 
