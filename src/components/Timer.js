@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { canvasWidth, statusBarHeight, movingQuicklyPatience } from '../setupData'
-import { setGameOver, setGameOverImage, recordTimeFinished, modifyPatience, signalBonusOut } from '../actions'
+import { setGameOver, setGameOverImage, recordTimeFinished, modifyPatience, signalBonusOut, recordStreak } from '../actions'
 
 import Patience from './Patience'
 
@@ -30,14 +30,10 @@ class Timer extends Component {
       ctx.fillStyle = 'black'
       ctx.fillRect(canvasWidth*0.70, 0, canvasWidth*0.30, statusBarHeight)
 
-
       this.drawStepsCounter(ctx)
       this.drawTime(ctx)
     }
   }
-
-
-
 
   drawTime = (ctx) => {
     const currentTime = this.formatTime()
@@ -93,16 +89,15 @@ class Timer extends Component {
   }
 
   showGameOverScreen = () => {
-    try {
-      const gameOverImg = this.props.canvas.toDataURL("image/png")
-      this.props.setGameOverImage(gameOverImg)
-    } catch (err){
-      console.log("security error deferred")
-    }
+    const gameOverImg = this.props.canvas.toDataURL("image/png")
+    this.props.setGameOverImage(gameOverImg)
   }
 
   componentDidUpdate() {
     if (this.props.patience <= 0) {
+      if (this.props.streak.length === 0) {
+        this.props.recordStreak(this.props.movement)
+      }
       this.props.recordTimeFinished(this.state.time)
       this.showGameOverScreen()
     }
@@ -130,7 +125,8 @@ const mapDispatchToProps = (dispatch) => {
     setGameOverImage: (image) => dispatch(setGameOverImage(image)),
     recordTimeFinished: (time) => dispatch(recordTimeFinished(time)),
     modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
-    signalBonusOut: () => dispatch(signalBonusOut())
+    signalBonusOut: () => dispatch(signalBonusOut()),
+    recordStreak: (streak) => dispatch(recordStreak(streak))
   }
 }
 
