@@ -95,7 +95,10 @@ class Timer extends Component {
 
   componentDidUpdate() {
     if (this.props.patience <= 0) {
-      this.props.recordStreak(this.props.movement)
+      // If gameOver through not bumping, but just running out of patience record movement
+      if (!this.props.streak.includes(this.props.movement)) {
+        this.props.recordStreak(this.props.movement)
+      }
       this.props.recordTimeFinished(this.state.time)
       this.showGameOverScreen()
     }
