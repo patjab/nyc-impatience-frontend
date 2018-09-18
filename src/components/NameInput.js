@@ -35,7 +35,7 @@ class NameInput extends Component {
       ctx.fillText(this.state.nameInput, canvasWidth/2, 1045)
 
       ctx.font = '20px Geneva'
-      ctx.fillText("Please wait", canvasWidth/2, 1045+60)
+      ctx.fillText("Please wait", canvasWidth/2, 1045+50)
 
       this.checkIfRecorded = setInterval(() => {
         if (this.props.doneRecording) {
@@ -92,7 +92,7 @@ class NameInput extends Component {
 
   clearInputArea = (ctx) => {
     ctx.beginPath()
-    ctx.rect(100, 990, canvasWidth - (100*2), 70)
+    ctx.rect(100, 990, canvasWidth - (100*2), 100)
     ctx.fillStyle = "#000000"
     ctx.fill()
     ctx.closePath()
