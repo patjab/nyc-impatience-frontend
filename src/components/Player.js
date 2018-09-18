@@ -12,8 +12,6 @@ class Player extends Component {
 
   state = {
     walkingCycle: 0,
-    // walkingCollection: ['../player/0.png', '../player/0.png', '../player/1.png', '../player/1.png'],
-    // walkingCollection: ['https://i.imgur.com/TOGoncO.png', 'https://i.imgur.com/TOGoncO.png', 'https://i.imgur.com/x5KN4Tk.png', 'https://i.imgur.com/x5KN4Tk.png'],
     walkingCollection: [playerStepBigRight, playerStepBigRight, playerStepBigLeft, playerStepBigLeft],
     changeInDirectionCounter: 0
   }
@@ -31,18 +29,18 @@ class Player extends Component {
 
       if (!this.props.bumpingShake && (((!upperLeft && !upperRight) && (e.keyCode > 36 && e.keyCode < 41)) || (e.key === 's')) ) {
         e.preventDefault()
-        if (e.keyCode === 37 && this.props.player.xPosition > 0) {
+        if (e.keyCode === 37 && this.props.player.xPosition > 0 && this.props.movement > 0 ) {
           if ( this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + 0.50*initialPlayerSize ) {
             this.props.moveLeft()
           }
         }
         else if (e.keyCode === 38) { this.props.moveUp() }
-        else if (e.keyCode === 39 && this.props.player.xPosition < this.props.canvas.width) {
+        else if (e.keyCode === 39 && this.props.player.xPosition < this.props.canvas.width && this.props.movement > 0 ) {
           if ( this.props.player.xPosition + initialPlayerSize < ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + pixelLengthOfBrickPath(playerStartY) + 0.50*initialPlayerSize ) {
             this.props.moveRight()
           }
         }
-        else if (e.keyCode === 40) { this.props.moveDown() }
+        else if (e.keyCode === 40 && this.props.movement > 0 ) { this.props.moveDown() }
         else if (e.key === 's') { this.props.speed === 1 ? this.props.changeSpeed(1.5) : this.props.changeSpeed(1) }
         this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
       }
