@@ -29,13 +29,13 @@ class Player extends Component {
 
       if (!this.props.bumpingShake && (((!upperLeft && !upperRight) && (e.keyCode > 36 && e.keyCode < 41)) || (e.key === 's')) ) {
         e.preventDefault()
-        if (e.keyCode === 37 && this.props.player.xPosition > 0 && this.props.movement > 0 ) {
+        if (e.keyCode === 37 && this.props.player.xPosition > 0 ) {
           if ( this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + 0.50*initialPlayerSize ) {
             this.props.moveLeft()
           }
         }
         else if (e.keyCode === 38) { this.props.moveUp() }
-        else if (e.keyCode === 39 && this.props.player.xPosition < this.props.canvas.width && this.props.movement > 0 ) {
+        else if (e.keyCode === 39 && this.props.player.xPosition < this.props.canvas.width ) {
           if ( this.props.player.xPosition + initialPlayerSize < ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + pixelLengthOfBrickPath(playerStartY) + 0.50*initialPlayerSize ) {
             this.props.moveRight()
           }
