@@ -14,7 +14,7 @@ class GamePlayContainer extends Component {
   }
 
   backgroundMusicStart = (e) => {
-    if ( e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+    if ( e.key === 'ArrowUp' ) {
       if ( backgroundMusicOn ) {
         this.refs.backgroundMusic.play()
       }
