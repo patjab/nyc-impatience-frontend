@@ -156,24 +156,27 @@ class Path extends Component {
   skylineStartX = -55
   skylineStartY = 20
 
+  drawStartInstructions = () => {
+    const mapMargins = 0
+    const widthOfMap = canvasWidth - (mapMargins*2)
+    const heightOfMap = 150
+    ctx.beginPath()
+    ctx.rect(mapMargins, canvasHeight - mapMargins - heightOfMap, widthOfMap, heightOfMap)
+    ctx.fillStyle = "#000000"
+    ctx.fill()
+    ctx.closePath()
+
+    ctx.font = "36px Geneva"
+    ctx.fillStyle = "white"
+    ctx.fillText('Press UP arrow to start', canvasWidth/2, canvasHeight-75)
+    ctx.textAlign = 'center'
+  }
+
   componentDidMount () {
     this.refs.nySkyline.onload = () => {
       const ctx = this.props.canvas.getContext("2d")
       ctx.drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
-
-      const mapMargins = 0
-      const widthOfMap = canvasWidth - (mapMargins*2)
-      const heightOfMap = 150
-      ctx.beginPath()
-      ctx.rect(mapMargins, canvasHeight - mapMargins - heightOfMap, widthOfMap, heightOfMap)
-      ctx.fillStyle = "#000000"
-      ctx.fill()
-      ctx.closePath()
-
-      ctx.font = "36px Geneva"
-      ctx.fillStyle = "white"
-      ctx.fillText('Press UP arrow to start', canvasWidth/2, canvasHeight-75)
-      ctx.textAlign = 'center'
+      this.drawStartInstructions()
     }
   }
 
@@ -184,6 +187,7 @@ class Path extends Component {
     if ((this.props.centersOfBricks && this.props.centersOfBricks.length === 0) || prevProps.movement !== this.props.movement) {
       this.props.initializeBrickList(this.cfBricksList)
     }
+    this.props.gameStarted ? this.drawStartInstructions() : null
   }
 
   drawSky(ctx) {
@@ -224,7 +228,8 @@ const mapStateToProps = (state) => {
     movement: state.movement,
     centersOfBricks: state.centersOfBricks,
     movementPerBrick: state.movementPerBrick,
-    pathUpdater: state.pathUpdater
+    pathUpdater: state.pathUpdater,
+    gameStarted: state.gameStarted
   }
 }
 
