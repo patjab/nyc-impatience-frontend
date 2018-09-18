@@ -128,9 +128,8 @@ class GameStatistics extends Component {
     if ( numberOfBumpedImages === 0 ) {
       const image = new Image()
       image.src = angryGoomba
-      imageWidth = 400
       image.onload = () => {
-        ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight, imageCursorX, imageCursorY, imageWidth, 400)
+        ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight, imageCursorX, imageCursorY, 600, 600)
       }
     }
 
