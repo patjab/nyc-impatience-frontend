@@ -188,7 +188,7 @@ class Path extends Component {
     if ((this.props.centersOfBricks && this.props.centersOfBricks.length === 0) || prevProps.movement !== this.props.movement) {
       this.props.initializeBrickList(this.cfBricksList)
     }
-    this.props.gameStarted ? this.drawStartInstructions(ctx) : null
+    this.props.gameStarted ? null : this.drawStartInstructions(ctx)
   }
 
   drawSky(ctx) {
