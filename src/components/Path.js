@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { initializeBrickList } from '../actions'
 import { depthMultiplier, horizonLine, numOfBricksInARow, brickColor, brickBorderColor,
-  sideAreaColor, statusBarHeight, canvasWidth, canvasHeight } from '../setupData'
+  sideAreaColor, statusBarHeight, canvasWidth, canvasHeight, skyColor } from '../setupData'
 
 class Path extends Component {
   brickSpacingBetweenRows = 1 // MAYBE should be in some form of state
@@ -183,7 +183,7 @@ class Path extends Component {
 
   drawSky(ctx) {
     ctx.rect(0, statusBarHeight, canvasWidth, horizonLine - statusBarHeight)
-    ctx.fillStyle = '#6BD7FF'
+    ctx.fillStyle = skyColor
     ctx.fill()
   }
 

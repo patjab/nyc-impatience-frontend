@@ -44,6 +44,7 @@ export const paddingAroundStats = 20
 export const brickColor = '#CBCBCB'
 export const brickBorderColor = '#000000'
 export const sideAreaColor = '#0CBE00'
+export const skyColor = '#6BD7FF'
 
 
 export const releaseCriteriaImpatience = -5
