@@ -156,7 +156,7 @@ class Path extends Component {
   skylineStartX = -55
   skylineStartY = 20
 
-  drawStartInstructions = () => {
+  drawStartInstructions = (ctx) => {
     const mapMargins = 0
     const widthOfMap = canvasWidth - (mapMargins*2)
     const heightOfMap = 150
@@ -176,18 +176,19 @@ class Path extends Component {
     this.refs.nySkyline.onload = () => {
       const ctx = this.props.canvas.getContext("2d")
       ctx.drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
-      this.drawStartInstructions()
+      this.drawStartInstructions(ctx)
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const ctx = this.props.canvas.getContext("2d")
     if (this.props.canvas && this.refs.nySkyline) {
-      this.props.canvas.getContext("2d").drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
+      ctx.drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
     }
     if ((this.props.centersOfBricks && this.props.centersOfBricks.length === 0) || prevProps.movement !== this.props.movement) {
       this.props.initializeBrickList(this.cfBricksList)
     }
-    this.props.gameStarted ? this.drawStartInstructions() : null
+    this.props.gameStarted ? this.drawStartInstructions(ctx) : null
   }
 
   drawSky(ctx) {
