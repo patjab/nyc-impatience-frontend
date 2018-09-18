@@ -202,7 +202,7 @@ const gameController = (state = initialState, action) => {
     case "MODIFY_PATIENCE":
       return {
         ...state,
-        patience: state.patience + action.payload > 0 ? state.patience + action.payload : 0
+        patience: state.patience + action.payload > 0 ? (state.patience + action.payload > initialPatience ? initialPatience : (state.patience + action.payload)) : 0
       }
     case "SIGNAL_BONUS_OUT":
       return {
@@ -210,7 +210,6 @@ const gameController = (state = initialState, action) => {
         currentBonus: (state.currentBonus + 1) % 6
       }
     case "SIGNAL_DONE_RECORDING":
-      console.log("HUNT - DONE RECORDING REDUCER")
       return {
         ...state,
         doneRecording: true
