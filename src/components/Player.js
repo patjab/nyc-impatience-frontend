@@ -164,8 +164,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     moveUp: () => dispatch(movePlayer(0, 1)),
     moveDown: () => dispatch(movePlayer(0, -1)),
-    moveLeft: () => {dispatch(movePlayer(-shiftingSpeed, 0))},
-    moveRight: () => {dispatch(movePlayer(shiftingSpeed, 0))},
+    moveLeft: () => dispatch(movePlayer(-shiftingSpeed, 0)),
+    moveRight: () => dispatch(movePlayer(shiftingSpeed, 0)),
     moveUpLeft: () => dispatch(movePlayer(-shiftingSpeed, 1)),
     moveUpRight: () => dispatch(movePlayer(shiftingSpeed, 1)),
     changeSpeed: (speed) => dispatch(changeSpeed(speed)),

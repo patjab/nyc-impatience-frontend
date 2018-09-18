@@ -6,24 +6,23 @@ import { depthMultiplier, horizonLine, numOfBricksInARow, brickColor, brickBorde
   sideAreaColor, statusBarHeight, canvasWidth, canvasHeight } from '../setupData'
 
 class Path extends Component {
-  horizonPosition = horizonLine
   brickSpacingBetweenRows = 1 // MAYBE should be in some form of state
   initialBrickSpacingBetweenRows = 1
 
   cfBricksList = []
 
   drawPathBackground = (ctx) => {
-    ctx.rect(0, this.horizonPosition, this.props.canvas.width, this.props.canvas.height)
+    ctx.rect(0, horizonLine, canvasWidth, canvasHeight)
     ctx.fillStyle = brickColor
     ctx.fill()
   }
 
   findAngle = () => {
-    const lengthOfGroundTriangle = this.props.canvas.height - this.horizonPosition
-    const widthOfGroundTriangle = this.props.canvas.width/2
+    const lengthOfGroundTriangle = canvasHeight - horizonLine
+    const widthOfGroundTriangle = canvasWidth/2
 
     const sideOfPath = Math.sqrt(Math.pow(lengthOfGroundTriangle, 2) + Math.pow(widthOfGroundTriangle, 2))
-    const numerator = (2 * Math.pow(sideOfPath, 2)) - Math.pow(this.props.canvas.width, 2)
+    const numerator = (2 * Math.pow(sideOfPath, 2)) - Math.pow(canvasWidth, 2)
     const denominator = (2 * Math.pow(sideOfPath, 2))
 
     return Math.acos(numerator/denominator)
@@ -32,7 +31,7 @@ class Path extends Component {
   drawHorizontalRow = (ctx, row) => {
     ctx.beginPath()
     ctx.moveTo(0, row)
-    ctx.lineTo(this.props.canvas.width, row)
+    ctx.lineTo(canvasWidth, row)
     ctx.stroke()
   }
 
@@ -78,15 +77,15 @@ class Path extends Component {
 
   getRows = () => {
     const rowsWithBrickBorders = []
-    for ( let row = this.horizonPosition; row <= this.props.canvas.height; row += this.brickSpacingBetweenRows ) {
-      const distanceFromHorizon = row - this.horizonPosition
+    for ( let row = horizonLine; row <= canvasHeight; row += this.brickSpacingBetweenRows ) {
+      const distanceFromHorizon = row - horizonLine
       const percentageOfBrick = (this.props.movement * this.props.movementPerBrick) % 2
       const absoluteChunkOfBrick = this.brickSpacingBetweenRows * percentageOfBrick
       const rowWithBorderBrick = row + (absoluteChunkOfBrick)
       rowsWithBrickBorders.push(rowWithBorderBrick)
       this.brickSpacingBetweenRows = this.brickSpacingBetweenRows + (depthMultiplier*distanceFromHorizon)
     }
-    rowsWithBrickBorders.push(this.props.canvas.height)
+    rowsWithBrickBorders.push(canvasHeight)
     rowsWithBrickBorders.sort((a,b)=>a-b)
     return rowsWithBrickBorders
   }
@@ -100,10 +99,10 @@ class Path extends Component {
     let bricksList = []
 
     for ( let row of rowsWithBrickBorders ) {
-      const distanceFromHorizon = row - this.horizonPosition
+      const distanceFromHorizon = row - horizonLine
       this.drawHorizontalRow(ctx, row)
       const horizontalPathLength = 2 * distanceFromHorizon * Math.tan(angleOfConvergence/2)
-      const xStartOfHorizontalLines = (this.props.canvas.width - horizontalPathLength) / 2
+      const xStartOfHorizontalLines = (canvasWidth - horizontalPathLength) / 2
       const currentPoints = this.recordCurrentPoints(horizontalPathLength, xStartOfHorizontalLines, row)
       const bricksListInRow = this.drawVerticals(ctx, previousPoints, currentPoints, shouldAlternateOdd)
 
@@ -120,30 +119,23 @@ class Path extends Component {
   }
 
   makeSideStructures = (ctx) => {
-    const centralX = this.props.canvas.width/2
+    const centralX = canvasWidth/2
 
     ctx.fillStyle = sideAreaColor
     ctx.beginPath()
-    ctx.moveTo(0, this.props.canvas.height)
-    ctx.lineTo(centralX, this.horizonPosition)
-    ctx.lineTo(0, this.horizonPosition)
+    ctx.moveTo(0, canvasHeight)
+    ctx.lineTo(centralX, horizonLine)
+    ctx.lineTo(0, horizonLine)
     ctx.closePath()
     ctx.stroke()
     ctx.fill()
 
     ctx.fillStyle = sideAreaColor
     ctx.beginPath()
-    ctx.moveTo(this.props.canvas.width, this.props.canvas.height)
-    ctx.lineTo(centralX, this.horizonPosition)
-    ctx.lineTo(this.props.canvas.width, this.horizonPosition)
-    ctx.lineTo(this.props.canvas.width, this.props.canvas.height)
-    ctx.closePath()
-    ctx.stroke()
-    ctx.fill()
-
-    ctx.fillStyle = sideAreaColor
-    ctx.beginPath()
-
+    ctx.moveTo(canvasWidth, canvasHeight)
+    ctx.lineTo(centralX, horizonLine)
+    ctx.lineTo(canvasWidth, horizonLine)
+    ctx.lineTo(canvasWidth, canvasHeight)
     ctx.closePath()
     ctx.stroke()
     ctx.fill()
@@ -204,8 +196,14 @@ class Path extends Component {
     ctx.closePath()
     ctx.fillStyle = sideAreaColor
     ctx.fill()
-    // ctx.strokeStyle = sideAreaColor
-    // ctx.stroke()
+  }
+
+  drawLeftPathBorder = (ctx) => {
+    ctx.beginPath()
+    ctx.moveTo(canvasWidth/10, canvasHeight)
+    ctx.lineTo(canvasWidth/2, horizonLine)
+    ctx.strokeStyle = brickBorderColor
+    ctx.stroke()
   }
 
   render() {
@@ -214,6 +212,7 @@ class Path extends Component {
       this.drawPathBackground(ctx)
       this.makeBricks(ctx)
       this.makeSideStructures(ctx)
+      this.drawLeftPathBorder(ctx)
       this.drawSky(ctx)
       this.drawBicycleLane(ctx)
     }
