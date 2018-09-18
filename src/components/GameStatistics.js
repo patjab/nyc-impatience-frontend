@@ -105,7 +105,14 @@ class GameStatistics extends Component {
     const proportionalSizeImage = imageWidth/canvasWidth
     const imageHeight = proportionalSizeImage * canvasHeight
 
-    let imageCursorX = marginAroundStats + paddingAroundStats
+    let imageCursorX
+    if ( numberOfBumpedImages === 1 ) {
+      imageCursorX = (canvasWidth/2) - (imageWidth/2)
+    } else if ( numberOfBumpedImages === 2 ) {
+      imageCursorX = (canvasWidth/2) - (imageWidth)
+    } else if ( numberOfBumpedImages === 3 ) {
+      imageCursorX = marginAroundStats + paddingAroundStats
+    }
     let imageCursorY = yCursor + sectionPadding // separate due to ASYNC behavior
     yCursor += sectionPadding
 
@@ -113,12 +120,6 @@ class GameStatistics extends Component {
       const image = new Image()
       image.src = img64
       image.onload = () => {
-        if ( numberOfBumpedImages === 1 ) {
-          imageCursorX = (canvasWidth/2) - (imageWidth/2)
-        } else if ( numberOfBumpedImages === 2 ) {
-          imageCursorX = (canvasWidth/2) - (imageWidth)
-        } else if ( numberOfBumpedImages === 3 ) {
-        }
         ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight, imageCursorX, imageCursorY, imageWidth, imageHeight)
         imageCursorX += imageWidth + marginAroundPictures
       }
