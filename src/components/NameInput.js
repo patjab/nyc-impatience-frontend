@@ -21,6 +21,15 @@ class NameInput extends Component {
       this.setState({nameInput: this.state.nameInput.slice(0, -1)}, this.showNameOnScreen)
     }
 
+    if ( e.keyCode === 13 && this.state.nameInput.length === 0 ) {
+      const ctx = this.props.canvas.getContext("2d")
+
+      ctx.textAlign = 'center'
+      ctx.fillStyle = 'red'
+      ctx.font = '25px Geneva'
+      ctx.fillText("Enter a valid name", canvasWidth/2, 1045+50)
+    }
+
     if ( e.keyCode === 13 && this.state.nameInput.length > 0 ) {
       window.removeEventListener('keydown', this.handleNameInput)
       const ctx = this.props.canvas.getContext("2d")
@@ -48,8 +57,7 @@ class NameInput extends Component {
           ctx.font = '50px Geneva'
           ctx.fillText(this.state.nameInput, canvasWidth/2, 1045)
 
-
-          ctx.font = '20px Geneva'
+          ctx.font = '25px Geneva'
           ctx.fillText("Success!", canvasWidth/2, 1045+50)
 
           setTimeout(() => {
