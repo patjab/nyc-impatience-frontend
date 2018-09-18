@@ -114,13 +114,17 @@ class GameStatistics extends Component {
       image.src = img64
       image.onload = () => {
         if ( numberOfBumpedImages === 1 ) {
-          ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight, (canvasWidth/2) - (imageWidth/2), imageCursorY, imageWidth, imageHeight)
-        } else {
-          ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight, imageCursorX, imageCursorY, imageWidth, imageHeight)
+          imageCursorX = (canvasWidth/2) - (imageWidth/2)
+        } else if ( numberOfBumpedImages === 2 ) {
+          imageCursorX = (canvasWidth/2) - (imageWidth)
+        } else if ( numberOfBumpedImages === 3 ) {
         }
+        ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight, imageCursorX, imageCursorY, imageWidth, imageHeight)
         imageCursorX += imageWidth + marginAroundPictures
       }
     }
+
+
 
     const message = numberOfBumpedImages === 1 ? "You bumped into this tourist" : numberOfBumpedImages === 0 ? "You were just too impatient" : "You bumped into these tourists"
 
