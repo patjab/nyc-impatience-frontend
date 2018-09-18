@@ -43,9 +43,15 @@ class NameInput extends Component {
 
           this.refs.saveSound.play()
 
+          this.clearInputArea()
+
           ctx.fillStyle = '#00ff00'
           ctx.font = '50px Geneva'
           ctx.fillText(this.state.nameInput, canvasWidth/2, 1045)
+
+
+          ctx.font = '20px Geneva'
+          ctx.fillText("Success!", canvasWidth/2, 1045+50)
 
           setTimeout(() => {
             ctx.beginPath()
