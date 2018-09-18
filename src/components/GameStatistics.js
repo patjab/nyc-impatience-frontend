@@ -129,7 +129,7 @@ class GameStatistics extends Component {
       const image = new Image()
       image.src = angryGoomba
       image.onload = () => {
-        ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight, imageCursorX, imageCursorY, 600, 600)
+        ctx.drawImage(image, imageCursorX, imageCursorY)
       }
     }
 
