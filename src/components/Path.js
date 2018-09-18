@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { initializeBrickList } from '../actions'
+import { nySkyline } from '../images'
 import { depthMultiplier, horizonLine, numOfBricksInARow, brickColor, brickBorderColor,
   sideAreaColor, statusBarHeight, canvasWidth, canvasHeight, skyColor } from '../setupData'
 
@@ -216,7 +217,7 @@ class Path extends Component {
       this.drawSky(ctx)
       this.drawBicycleLane(ctx)
     }
-    return <img src='../nyBackground.png' ref='nySkyline' className='hidden' alt='nySkyline'/>
+    return <img src={nySkyline} ref='nySkyline' className='hidden' alt='nySkyline'/>
   }
 }
 

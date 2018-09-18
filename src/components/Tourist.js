@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { initialPeopleSizes, initialPlayerSize, canvasHeight, nearnessSpook,
   rendingTouristRowsPercentage, touristRunningMilliseconds, collidedImpatience } from '../setupData'
-import { tourist1, tourist2, tourist3, tourist4 } from '../images'
+import { tourist1, tourist2, tourist3 } from '../images'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, decreaseLife, recordStreak, forceUpdateOfPathForAnimation,
   forceUpdateOfPlayerForAnimation, changeMovementAbility, toggleBumpingShake,
@@ -16,8 +16,8 @@ const Tourist = class extends Component {
     positionY: null,
     initialRow: null,
     positionOnArray: null,
-    image: Math.trunc(Math.random() * 4),
-    images: [tourist1, tourist2, tourist3, tourist4],
+    image: Math.trunc(Math.random() * 3),
+    images: [tourist1, tourist2, tourist3],
     dontCallBumpAgain: false,
     mountedOnMovement: null,
     derivedStateOverride: false,
