@@ -59,7 +59,7 @@ class GamePlayContainer extends Component {
       <Fragment>
         <audio src='../backgroundMusic.mp3' loop='true' ref='backgroundMusic'/ >
         { this.props.timeFinished === null ? <GamePlayScreen /> : <GameStatistics /> }
-        <Map />
+        { this.props.gameStarted ? <Map /> : null }
 
       </Fragment>
     )
@@ -69,7 +69,8 @@ class GamePlayContainer extends Component {
 const mapStateToProps = (state) => {
   return {
     timeFinished: state.timeFinished,
-    touristRoaster: state.touristRoaster
+    touristRoaster: state.touristRoaster,
+    gameStarted: state.gameStarted
   }
 }
 
