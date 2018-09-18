@@ -76,7 +76,7 @@ class Player extends Component {
     if ( e.keyCode >= 37 && e.keyCode <= 40 ) {
         this.setState({changeInDirectionCounter: this.state.changeInDirectionCounter+1}, ()=> {
 
-          if ( this.props.movement !== 0 ) {
+          if ( this.props.movement > 0 ) {
             this.props.modifyPatience(releaseCriteriaImpatience)
           }
 
