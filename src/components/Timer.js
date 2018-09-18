@@ -61,7 +61,7 @@ class Timer extends Component {
   }
 
   incrementTime = (e) => {
-    if ( e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+    if ( e.key === 'ArrowUp' ) {
       setInterval(() => this.setState({time: this.state.time + 1}, () => {
         if (this.state.time % 2000 === 0 && this.state.time > 0 ) {
           console.log("REACHED 20s INTERVAL")
@@ -95,10 +95,7 @@ class Timer extends Component {
 
   componentDidUpdate() {
     if (this.props.patience <= 0) {
-      // If gameOver through not bumping, but just running out of patience record movement
-      // if (!this.props.streak.includes(this.props.movement)) {
       this.props.recordStreak(this.props.movement)
-      // }
       this.props.recordTimeFinished(this.state.time)
       this.showGameOverScreen()
     }
