@@ -43,7 +43,7 @@ class NameInput extends Component {
 
           this.refs.saveSound.play()
 
-          this.clearInputArea()
+          this.clearInputArea(ctx)
 
           ctx.fillStyle = '#00ff00'
           ctx.font = '50px Geneva'
