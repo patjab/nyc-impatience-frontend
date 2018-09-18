@@ -84,7 +84,7 @@ class Player extends Component {
           const previousMovement = this.props.movement
           const impatientWait = setInterval(() => {
             setTimeout(() => {
-              if ( this.props.movement !== 0 && this.props.movement === previousMovement ) {
+              if ( this.props.gameStarted && this.props.movement === previousMovement ) {
                 this.props.modifyPatience(waitingImpatience)
               } else {
                 clearInterval(impatientWait)
