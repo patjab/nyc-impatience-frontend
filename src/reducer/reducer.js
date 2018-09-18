@@ -21,7 +21,7 @@ const initialState = {
   playerUpdater: 0,
   mapUpdater: 0,
   disabled: false,
-  bumpingShake: false,
+  bumpingShake: false, 
   gameOver: false,
   gameOverImage: null,
   bumpedImages: [],
