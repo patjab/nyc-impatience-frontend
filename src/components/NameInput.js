@@ -42,7 +42,6 @@ class NameInput extends Component {
           clearInterval(this.checkIfRecorded)
 
           this.refs.saveSound.play()
-
           this.clearInputArea(ctx)
 
           ctx.fillStyle = '#00ff00'

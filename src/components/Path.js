@@ -52,18 +52,16 @@ class Path extends Component {
         ctx.stroke()
       }
 
-      if ( true ) {
-        const brickCenterX = ((previousPoints[i+1].x - previousPoints[i].x) / 2) + previousPoints[i].x
-        const brickCenterY = ((currentPoints[i+1].y - previousPoints[i+1].y) / 2) + previousPoints[i+1].y
+      const brickCenterX = ((previousPoints[i+1].x - previousPoints[i].x) / 2) + previousPoints[i].x
+      const brickCenterY = ((currentPoints[i+1].y - previousPoints[i+1].y) / 2) + previousPoints[i+1].y
 
-        if ( previousY === brickCenterY ) {
-          bricksList[bricksList.length-1].push({x: brickCenterX, y: brickCenterY})
-        } else {
-          bricksList.push([{x: brickCenterX, y: brickCenterY}])
-        }
-
-        previousY = brickCenterY
+      if ( previousY === brickCenterY ) {
+        bricksList[bricksList.length-1].push({x: brickCenterX, y: brickCenterY})
+      } else {
+        bricksList.push([{x: brickCenterX, y: brickCenterY}])
       }
+
+      previousY = brickCenterY
 
     }
     return bricksList
