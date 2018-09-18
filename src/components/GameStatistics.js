@@ -101,7 +101,7 @@ class GameStatistics extends Component {
     const marginAroundPictures = 10
     const numberOfMargins = numberOfBumpedImages+1
     const spaceAvailableToAllImages = availableSpaceInnerLength - (numberOfMargins*marginAroundPictures)
-    const imageWidth = numberOfBumpedImages <= 2 ? spaceAvailableToAllImages/3 : spaceAvailableToAllImages/(numberOfBumpedImages)
+    let imageWidth = numberOfBumpedImages <= 2 ? spaceAvailableToAllImages/3 : spaceAvailableToAllImages/(numberOfBumpedImages)
     const proportionalSizeImage = imageWidth/canvasWidth
     const imageHeight = proportionalSizeImage * canvasHeight
 
@@ -130,7 +130,7 @@ class GameStatistics extends Component {
       image.src = angryGoomba
       imageWidth = 400
       image.onload = () => {
-        ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight, imageCursorX, imageCursorY, imageWidth, imageHeight)
+        ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight, imageCursorX, imageCursorY, imageWidth, 400)
       }
     }
 
