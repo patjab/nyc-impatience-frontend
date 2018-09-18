@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { recordGameStatistics, changeCurrentScreen, signalDoneRecording } from '../actions'
-import { canvasWidth, canvasHeight, marginAroundStats, paddingAroundStats } from '../setupData'
+import { canvasWidth, canvasHeight, marginAroundStats, paddingAroundStats, angryGoomba } from '../setupData'
 import { recordHighScore } from '../adapter/adapter'
 import NameInput from './NameInput'
 
@@ -106,7 +106,7 @@ class GameStatistics extends Component {
     const imageHeight = proportionalSizeImage * canvasHeight
 
     let imageCursorX
-    if ( numberOfBumpedImages === 1 ) {
+    if ( numberOfBumpedImages <= 1 ) {
       imageCursorX = (canvasWidth/2) - (imageWidth/2)
     } else if ( numberOfBumpedImages === 2 ) {
       imageCursorX = (canvasWidth/2) - (imageWidth)
@@ -125,7 +125,13 @@ class GameStatistics extends Component {
       }
     }
 
-
+    if ( numberOfBumpedImages === 0 ) {
+      const image = new Image()
+      image.src = angryGoomba
+      image.onload = () => {
+        ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight, imageCursorX, imageCursorY, imageWidth, imageHeight)
+      }
+    }
 
     const message = numberOfBumpedImages === 1 ? "You bumped into this tourist" : numberOfBumpedImages === 0 ? "You were just too impatient" : "You bumped into these tourists"
 
