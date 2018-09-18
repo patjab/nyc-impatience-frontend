@@ -92,7 +92,7 @@ class NameInput extends Component {
 
   clearInputArea = (ctx) => {
     ctx.beginPath()
-    ctx.rect(100, 990, canvasWidth - (100*2), 100)
+    ctx.rect(100, 990, canvasWidth - (100*2), 130)
     ctx.fillStyle = "#000000"
     ctx.fill()
     ctx.closePath()
