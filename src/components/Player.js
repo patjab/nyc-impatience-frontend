@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience } from '../actions'
+import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience, signalStartGame } from '../actions'
 import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience, playerStepBigRight, playerStepBigLeft } from '../setupData'
 import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
 
@@ -34,7 +34,10 @@ class Player extends Component {
             this.props.moveLeft()
           }
         }
-        else if (e.keyCode === 38) { this.props.moveUp() }
+        else if (e.keyCode === 38) {
+          if ( !this.props.gameStarted ) { this.props.signalStartGame() }
+          this.props.moveUp()
+        }
         else if (e.keyCode === 39 && this.props.player.xPosition < this.props.canvas.width ) {
           if ( this.props.player.xPosition + initialPlayerSize < ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + pixelLengthOfBrickPath(playerStartY) + 0.50*initialPlayerSize ) {
             this.props.moveRight()
@@ -74,7 +77,7 @@ class Player extends Component {
     if ( e.keyCode >= 37 && e.keyCode <= 40 ) {
         this.setState({changeInDirectionCounter: this.state.changeInDirectionCounter+1}, ()=> {
 
-          if ( this.props.movement > 0 ) {
+          if ( this.props.gameStarted ) {
             this.props.modifyPatience(releaseCriteriaImpatience)
           }
 
@@ -152,7 +155,8 @@ const mapStateToProps = (state) => {
     bumpingShake: state.bumpingShake,
     playerUpdater: state.playerUpdater,
     gameOver: state.gameOver,
-    movement: state.movement
+    movement: state.movement,
+    gameStarted: state.gameStarted
   }
 }
 
@@ -167,7 +171,8 @@ const mapDispatchToProps = (dispatch) => {
     changeSpeed: (speed) => dispatch(changeSpeed(speed)),
     setPlayer: (player) => dispatch(setPlayer(player)),
     setChangeInDirection: (count) => dispatch(setChangeInDirection(count)),
-    modifyPatience: (modifier) => dispatch(modifyPatience(modifier))
+    modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
+    signalStartGame: () => dispatch(signalStartGame())
   }
 }
 

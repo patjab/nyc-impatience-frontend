@@ -40,7 +40,8 @@ const initialState = {
     "Dir Changes per Sec": null
   },
   currentScreen: "start",
-  doneRecording: false
+  doneRecording: false,
+  gameStarted: false
 }
 
 const gameController = (state = initialState, action) => {
@@ -218,6 +219,11 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         currentBonus: action.payload
+      }
+    case "SIGNAL_START_GAME":
+      return {
+        ...state,
+        gameStarted: true
       }
     case "RESET_ALL_STATE":
       return {

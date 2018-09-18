@@ -214,3 +214,9 @@ export const signalDoneRecording = () => {
     type: "SIGNAL_DONE_RECORDING"
   }
 }
+
+export const signalStartGame = () => {
+  return {
+    type: "SIGNAL_START_GAME"
+  }
+}
