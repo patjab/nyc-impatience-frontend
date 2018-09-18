@@ -30,16 +30,21 @@ class NameInput extends Component {
       this.clearInputArea(ctx)
 
       ctx.textAlign = 'center'
-      ctx.fillStyle = '#00ff00'
+      // ctx.fillStyle = '#00ff00'
+      ctx.fillStyle = 'yellow'
       ctx.font = '50px Geneva'
       ctx.fillText(this.state.nameInput, canvasWidth/2, 1045)
 
       this.checkIfRecorded = setInterval(() => {
         if (this.props.doneRecording) {
-          console.log("HUNT - IN DONE RECORDING")
           clearInterval(this.checkIfRecorded)
 
           this.refs.saveSound.play()
+
+          ctx.fillStyle = '#00ff00'
+          ctx.font = '50px Geneva'
+          ctx.fillText(this.state.nameInput, canvasWidth/2, 1045)
+
           setTimeout(() => {
             ctx.beginPath()
             ctx.rect(100, 920, canvasWidth - (100*2), 70)
@@ -72,8 +77,6 @@ class NameInput extends Component {
             }, 1500)
 
           }, 1000)
-        } else {
-          console.log("HUNT - IS NOT YET DONE RECORDING")
         }
       }, 500)
 
