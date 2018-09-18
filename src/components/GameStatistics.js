@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { recordGameStatistics, changeCurrentScreen, signalDoneRecording } from '../actions'
-import { canvasWidth, canvasHeight, marginAroundStats, paddingAroundStats, angryGoomba } from '../setupData'
+import { canvasWidth, canvasHeight, marginAroundStats, paddingAroundStats } from '../setupData'
+import { angryGoomba } from '../images'
 import { recordHighScore } from '../adapter/adapter'
 import NameInput from './NameInput'
 
