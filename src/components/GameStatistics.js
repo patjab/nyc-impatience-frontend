@@ -231,7 +231,9 @@ class GameStatistics extends Component {
   }
 
   componentDidMount() {
-    tracks.forEach(track => track.stop())
+    if ( tracks ) {
+      tracks.forEach(track => track.stop())
+    }
     this.fadeToGrey()
   }
 

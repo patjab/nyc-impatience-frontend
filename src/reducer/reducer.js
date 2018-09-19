@@ -21,7 +21,7 @@ const initialState = {
   playerUpdater: 0,
   mapUpdater: 0,
   disabled: false,
-  bumpingShake: false, 
+  bumpingShake: false,
   gameOver: false,
   gameOverImage: null,
   bumpedImages: [],
@@ -41,7 +41,9 @@ const initialState = {
   },
   currentScreen: "start",
   doneRecording: false,
-  gameStarted: false
+  gameStarted: false,
+  playerYelled: false,
+  time: 0
 }
 
 const gameController = (state = initialState, action) => {
@@ -219,10 +221,25 @@ const gameController = (state = initialState, action) => {
         ...state,
         currentBonus: action.payload
       }
+    case "SIGNAL_PLAYER_YELLED":
+      return {
+        ...state,
+        playerYelled: true
+      }
+    case "RESET_PLAYER_YELLED":
+      return {
+        ...state,
+        playerYelled: false
+      }
     case "SIGNAL_START_GAME":
       return {
         ...state,
         gameStarted: true
+      }
+    case "INCREMENT_TIME":
+      return {
+        ...state,
+        time: state.time + 1
       }
     case "RESET_ALL_STATE":
       return {

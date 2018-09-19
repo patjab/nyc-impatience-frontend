@@ -220,3 +220,21 @@ export const signalStartGame = () => {
     type: "SIGNAL_START_GAME"
   }
 }
+
+export const signalPlayerYelled = () => {
+  return {
+    type: "SIGNAL_PLAYER_YELLED"
+  }
+}
+
+export const resetPlayerYelled = () => {
+  return {
+    type: "RESET_PLAYER_YELLED"
+  }
+}
+
+export const incrementTime = () => {
+  return {
+    type: "INCREMENT_TIME"
+  }
+}

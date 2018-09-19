@@ -3,14 +3,16 @@ import { connect } from 'react-redux'
 import { backgroundMusicOn, loudnessSpookLevel, loudnessRechargeInSeconds } from '../setupData'
 import { microphoneRunner, loudEnough } from '../mediaHelper/microphoneHelper'
 
+import { signalPlayerYelled, resetPlayerYelled} from '../actions'
+
 import GamePlayScreen from './GamePlayScreen'
 import GameStatistics from './GameStatistics'
 import Map from './Map'
 
 class GamePlayContainer extends Component {
   state = {
-    scaredTouristListener: null,
-    playerYelled: null
+    scaredTouristListener: null
+    // playerYelled: null
   }
 
   backgroundMusicStart = (e) => {
@@ -25,17 +27,16 @@ class GamePlayContainer extends Component {
   scaredTouristListener = () => {
     microphoneRunner(loudnessSpookLevel)
     return setInterval( () => {
-      if (loudEnough && !this.state.playerYelled ) {
-        this.setState({playerYelled: true}, () => {
-          for ( let tourist of this.props.touristRoaster ) {
-            tourist.runningAnimation()
-          }
-          setTimeout( () => {
-            this.setState({playerYelled: false})
-          }, loudnessRechargeInSeconds * 1000)
-        })
+      if (loudEnough && !this.props.playerYelled ) {
+        this.props.signalPlayerYelled()
+        for ( let tourist of this.props.touristRoaster ) {
+          tourist.runningAnimation()
+        }
+        setTimeout( () => {
+          this.props.resetPlayerYelled()
+        }, loudnessRechargeInSeconds * 1000)
       }
-    }, 1)
+    }, 100)
   }
 
   componentDidMount() {
@@ -69,9 +70,16 @@ const mapStateToProps = (state) => {
   return {
     timeFinished: state.timeFinished,
     touristRoaster: state.touristRoaster,
-    gameStarted: state.gameStarted
+    gameStarted: state.gameStarted,
+    playerYelled: state.playerYelled
   }
 }
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    signalPlayerYelled: () => dispatch(signalPlayerYelled()),
+    resetPlayerYelled: () => dispatch(resetPlayerYelled()),
+  }
+}
 
-export default connect(mapStateToProps)(GamePlayContainer)
+export default connect(mapStateToProps, mapDispatchToProps)(GamePlayContainer)
