@@ -35,6 +35,8 @@ let audioContext = null;
 export let meter = null;
 export let loudEnough = false;
 
+export let tracks = null
+
 function createAudioMeter(audioContext,clipLevel,averaging,clipLag) {
   let processor = audioContext.createScriptProcessor(512);
   processor.onaudioprocess = volumeAudioProcess;
@@ -84,13 +86,14 @@ function volumeAudioProcess( event ) {
 }
 
 function onMicrophoneDenied() {
-    alert('Stream generation failed.');
+    alert('Unable to use microphone. Please check your browser.');
 }
 
 let mediaStreamSource = null;
 
 function onMicrophoneGranted(stream, loudness) {
     mediaStreamSource = audioContext.createMediaStreamSource(stream);
+    tracks = mediaStreamSource.mediaStream.getTracks()
     meter = createAudioMeter(audioContext);
     mediaStreamSource.connect(meter);
     setInterval(() => {
