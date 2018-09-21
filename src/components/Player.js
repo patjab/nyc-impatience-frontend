@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience, signalStartGame, recordForBonus } from '../actions'
-import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience } from '../setupData'
+import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience, movingQuicklyPatience } from '../setupData'
 import { playerStepBigRight, playerStepBigLeft } from '../images'
 import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
 
@@ -138,13 +138,18 @@ class Player extends Component {
     const lastRecord = bonusRecord[bonusRecord.length - 1]
 
     if ( this.props.movement > lastRecord.movement + 1000 ) {
-      console.log(this.props.movement)
-      console.log(lastRecord.movement)
+      console.log("CURRENT: ", this.props.time)
+      console.log("LAST REC: ", lastRecord.time)
+
+      if ( (this.props.time/1000) - (lastRecord.time) < 30 ) {
+        console.log("AWARDED")
+        this.props.modifyPatience(movingQuicklyPatience)
+      }
+
       this.props.recordForBonus({movement: lastRecord.movement + 1000, time: this.props.time/1000})
 
-      // this.props.modifyPatience(movingQuicklyPatience)
     }
-    console.log(bonusRecord)
+    // console.log(bonusRecord)
   }
 
   componentWillUnmount() {
