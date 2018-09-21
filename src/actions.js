@@ -233,8 +233,9 @@ export const resetPlayerYelled = () => {
   }
 }
 
-export const incrementTime = () => {
+export const incrementTime = (time) => {
   return {
-    type: "INCREMENT_TIME"
+    type: "INCREMENT_TIME",
+    payload: time
   }
 }

@@ -10,11 +10,12 @@ import Ability from './Ability'
 
 class Timer extends Component {
   state = {
-    willBeDone: false
+    willBeDone: false,
+    startTime: 0
   }
 
   formatTime() {
-    return {minutes: Math.trunc((this.props.time/100)/60), seconds: Math.trunc((this.props.time/100) % (60)), milliseconds: this.props.time % 100}
+    return {minutes: Math.trunc((this.props.time/1000)/60), seconds: Math.trunc((this.props.time/1000) % (60)), milliseconds: this.props.time % 1000}
   }
 
   formatMovement() {
@@ -24,28 +25,12 @@ class Timer extends Component {
   drawStatusBar = () => {
     const ctx = this.props.canvas ? this.props.canvas.getContext("2d") : null
     if (ctx) {
-      // ctx.clearRect(0, 0, canvasWidth*0.30, statusBarHeight)
-      // ctx.fillStyle = 'black'
-      // ctx.fillRect(0, 0, canvasWidth*0.30, statusBarHeight)
-
       ctx.clearRect(canvasWidth*0.70, 0, canvasWidth*0.30, statusBarHeight)
       ctx.fillStyle = 'black'
       ctx.fillRect(canvasWidth*0.70, 0, canvasWidth*0.30, statusBarHeight)
-
-      // this.drawYellStatus(ctx)
-
-      // this.drawStepsCounter(ctx)
       this.drawTime(ctx)
     }
   }
-
-  // drawYellStatus = (ctx) => {
-  //   const shoutIcon = new Image()
-  //   shoutIcon.src = this.props.playerYelled ? inactiveMegaphone: activeMegaphone
-  //   shoutIcon.onload = () => {
-  //     ctx.drawImage(shoutIcon, 30, 15, 60, 60)
-  //   }
-  // }
 
   drawTime = (ctx) => {
     const currentTime = this.formatTime()
@@ -60,34 +45,29 @@ class Timer extends Component {
     ctx.fillText(`${("0" + currentTime.minutes).slice(-2)}:${("0" + currentTime.seconds).slice(-2)}.${("0" + currentTime.milliseconds).slice(-2)}`, canvasWidth-110, 70)
   }
 
-  // drawStepsCounter = (ctx) => {
-    // ctx.textAlign = 'center'
-    // ctx.font = "20px Geneva"
-    // ctx.fillStyle = "white"
-    // this.state.willBeDone ? ctx.fillText(`Distance`, 170, 30) : ctx.fillText(`Distance`, 170, 30)
-    //
-    // ctx.font = "36px Geneva"
-    // ctx.fillStyle = "red"
-    // ctx.fillText(`${Math.round(this.formatMovement())}`, 170, 70)
-    // ctx.textAlign = 'left'
-
-  // }
-
   incrementTime = (e) => {
     if ( e.key === 'ArrowUp' ) {
-      setInterval(() => {
-        this.props.incrementTime()
-        if (this.props.time % 2000 === 0 && this.props.time > 0 ) {
-          console.log("REACHED 20s INTERVAL")
-          this.props.signalBonusOut()
-          if ( (this.props.time / 2000) * 1000 < this.props.movement ) {
-            console.log("ABOVE 1000")
-            this.props.modifyPatience(movingQuicklyPatience)
-          }
-        }
+      console.log('creating a new interval')
 
-      }, 10)
-      window.removeEventListener('keydown', this.incrementTime)
+      this.setState({startTime: new Date()}, () => {
+
+        setInterval(() => {
+          // console.log((new Date() - this.state.startTime))
+          this.props.incrementTime((new Date() - this.state.startTime))
+          if (this.props.time % 2000 === 0 && this.props.time > 0 ) {
+            console.log("REACHED 20s INTERVAL")
+            this.props.signalBonusOut()
+            if ( (this.props.time / 2000) * 1000 < this.props.movement ) {
+              console.log("ABOVE 1000")
+              this.props.modifyPatience(movingQuicklyPatience)
+            }
+          }
+
+        }, 10)
+
+        window.removeEventListener('keydown', this.incrementTime)
+
+      })
     }
   }
 
@@ -97,9 +77,6 @@ class Timer extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (this.state.willBeDone) { return false }
-    // if (nextProps.lives <= 0) {
-    //   this.setState({willBeDone: true})
-    // }
     return true
   }
 
@@ -147,7 +124,7 @@ const mapDispatchToProps = (dispatch) => {
     modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
     signalBonusOut: () => dispatch(signalBonusOut()),
     recordStreak: (streak) => dispatch(recordStreak(streak)),
-    incrementTime: () => dispatch(incrementTime())
+    incrementTime: (time) => dispatch(incrementTime(time))
   }
 }
 

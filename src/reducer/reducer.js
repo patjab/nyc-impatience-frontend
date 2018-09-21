@@ -239,7 +239,7 @@ const gameController = (state = initialState, action) => {
     case "INCREMENT_TIME":
       return {
         ...state,
-        time: state.time + 1
+        time: action.payload
       }
     case "RESET_ALL_STATE":
       return {
