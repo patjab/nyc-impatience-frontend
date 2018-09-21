@@ -141,8 +141,10 @@ class Player extends Component {
       console.log(this.props.movement)
       console.log(lastRecord.movement)
       this.props.recordForBonus({movement: lastRecord.movement + 1000, time: this.props.time/1000})
-      console.log(bonusRecord)
+
+      // this.props.modifyPatience(movingQuicklyPatience)
     }
+    console.log(bonusRecord)
   }
 
   componentWillUnmount() {
