@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { canvasWidth, statusBarHeight, initialPatience } from '../setupData'
-import { activeMegaphone, inactiveMegaphone, activeRunning, inactiveRunning } from '../images'
+import { activeMegaphone, inactiveMegaphone, activeRunning, inactiveRunning, activeSnow, inactiveSnow } from '../images'
 
 class Ability extends Component {
   drawYellStatus = (ctx) => {
@@ -23,17 +23,14 @@ class Ability extends Component {
     const runningIcon = new Image()
     runningIcon.src = this.props.playerYelled ? inactiveRunning : activeRunning
     runningIcon.onload = () => {
-      ctx.drawImage(runningIcon, ((canvasWidth*0.30)*0.40)-1, 35, 40, 40)
       ctx.drawImage(runningIcon, (canvasWidth*0.30)*0.40, 35, 40, 40)
-      ctx.drawImage(runningIcon, ((canvasWidth*0.30)*0.40)+1, 35, 40, 40)
     }
 
-    // const runningIcon = new Image()
-    // runningIcon.src = this.props.playerYelled ? inactiveRunning : activeRunning
-    // runningIcon.onload = () => {
-    //   ctx.drawImage(runningIcon, (canvasWidth*0.30)*0.40, 35, 40, 40)
-    //   ctx.drawImage(runningIcon, (canvasWidth*0.30)*0.65, 35, 40, 40)
-    // }
+    const snowIcon = new Image()
+    snowIcon.src = this.props.playerYelled ? inactiveSnow : activeSnow
+    snowIcon.onload = () => {
+      ctx.drawImage(snowIcon, (canvasWidth*0.30)*0.65, 35, 40, 40)
+    }
   }
 
   render() {
