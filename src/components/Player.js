@@ -140,7 +140,7 @@ class Player extends Component {
     if ( this.props.movement > lastRecord.movement + 1000 ) {
       console.log(this.props.movement)
       console.log(lastRecord.movement)
-      this.props.recordForBonus({movement: lastRecord.movement + 1000, time: 'ichiban'})
+      this.props.recordForBonus({movement: lastRecord.movement + 1000, time: this.props.time/1000})
       console.log(bonusRecord)
     }
   }
@@ -173,7 +173,8 @@ const mapStateToProps = (state) => {
     gameOver: state.gameOver,
     movement: state.movement,
     gameStarted: state.gameStarted,
-    bonusRecord: state.recordForBonus
+    bonusRecord: state.recordForBonus,
+    time: state.time // FIX - find a more efficient way of rendering independent of state.time since time is only used for recording, but not rendering (maybe shouldComponentUpdate)
   }
 }
 
