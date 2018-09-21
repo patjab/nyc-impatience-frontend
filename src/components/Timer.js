@@ -42,7 +42,8 @@ class Timer extends Component {
     ctx.textAlign = 'center'
     ctx.font = "36px Geneva"
     ctx.fillStyle = "red"
-    ctx.fillText(`${("0" + currentTime.minutes).slice(-2)}:${("0" + currentTime.seconds).slice(-2)}.${("0" + currentTime.milliseconds).slice(-2)}`, canvasWidth-110, 70)
+    ctx.fillText(`${("0" + currentTime.minutes).slice(-2)}:${("0" + currentTime.seconds).slice(-2)}`, canvasWidth-110, 70)
+    // ctx.fillText(`${("0" + currentTime.minutes).slice(-2)}:${("0" + currentTime.seconds).slice(-2)}.${("0" + currentTime.milliseconds).slice(-2)}`, canvasWidth-110, 70)
   }
 
   incrementTime = (e) => {
@@ -52,18 +53,18 @@ class Timer extends Component {
       this.setState({startTime: new Date()}, () => {
 
         setInterval(() => {
-          // console.log((new Date() - this.state.startTime))
           this.props.incrementTime((new Date() - this.state.startTime))
-          if (this.props.time % 2000 === 0 && this.props.time > 0 ) {
-            console.log("REACHED 20s INTERVAL")
-            this.props.signalBonusOut()
-            if ( (this.props.time / 2000) * 1000 < this.props.movement ) {
-              console.log("ABOVE 1000")
-              this.props.modifyPatience(movingQuicklyPatience)
-            }
-          }
+          const timeInSec = this.props.time/1000
+          // if (Math.trunc(timeInSec) % 30 === 0 && this.props.time > 0 ) {
+          //   console.log("REACHED 30s INTERVAL")
+          //   this.props.signalBonusOut()
+          //   if ( (this.props.time / 30000) * 1000 < this.props.movement ) {
+          //     console.log("ABOVE 1000")
+          //     this.props.modifyPatience(movingQuicklyPatience)
+          //   }
+          // }
 
-        }, 10)
+        }, 1000)
 
         window.removeEventListener('keydown', this.incrementTime)
 

@@ -239,3 +239,10 @@ export const incrementTime = (time) => {
     payload: time
   }
 }
+
+export const recordForBonus = (record) => {
+  return {
+    type: "RECORD_FOR_BONUS",
+    payload: record
+  }
+}

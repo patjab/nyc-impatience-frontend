@@ -43,7 +43,8 @@ const initialState = {
   doneRecording: false,
   gameStarted: false,
   playerYelled: false,
-  time: 0
+  time: 0,
+  recordForBonus: [{movement: 0, time: 0}]
 }
 
 const gameController = (state = initialState, action) => {
@@ -235,6 +236,11 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         gameStarted: true
+      }
+    case "RECORD_FOR_BONUS":
+      return {
+        ...state,
+        recordForBonus: [...state.recordForBonus, action.payload]
       }
     case "INCREMENT_TIME":
       return {

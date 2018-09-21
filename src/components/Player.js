@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience, signalStartGame } from '../actions'
+import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience, signalStartGame, recordForBonus } from '../actions'
 import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience } from '../setupData'
 import { playerStepBigRight, playerStepBigLeft } from '../images'
 import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
@@ -128,6 +128,21 @@ class Player extends Component {
     const ctx = this.props.canvas.getContext("2d")
     this.refs.playerImg.src = this.state.walkingCollection[this.state.walkingCycle]
     ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPlayerSize, initialPlayerSize)
+
+
+
+
+
+
+    const bonusRecord = this.props.bonusRecord
+    const lastRecord = bonusRecord[bonusRecord.length - 1]
+
+    if ( this.props.movement > lastRecord.movement + 1000 ) {
+      console.log(this.props.movement)
+      console.log(lastRecord.movement)
+      this.props.recordForBonus({movement: lastRecord.movement + 1000, time: 'ichiban'})
+      console.log(bonusRecord)
+    }
   }
 
   componentWillUnmount() {
@@ -157,7 +172,8 @@ const mapStateToProps = (state) => {
     playerUpdater: state.playerUpdater,
     gameOver: state.gameOver,
     movement: state.movement,
-    gameStarted: state.gameStarted
+    gameStarted: state.gameStarted,
+    bonusRecord: state.recordForBonus
   }
 }
 
@@ -173,7 +189,8 @@ const mapDispatchToProps = (dispatch) => {
     setPlayer: (player) => dispatch(setPlayer(player)),
     setChangeInDirection: (count) => dispatch(setChangeInDirection(count)),
     modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
-    signalStartGame: () => dispatch(signalStartGame())
+    signalStartGame: () => dispatch(signalStartGame()),
+    recordForBonus: (record) => dispatch(recordForBonus(record))
   }
 }
 
