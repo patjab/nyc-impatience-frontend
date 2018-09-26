@@ -70,20 +70,7 @@ class Player extends Component {
 
         }
         else if (e.key === 'd') {
-          if ( this.props.snowAbilityList.filter(record => record.used === false).length > 0 ) {
-            if ( this.props.backgroundMusicPlaying ) {
-              this.props.backgroundMusic.pause()
-              this.props.snowMusic.play()
-            }
-
-            this.props.useSnowAbility()
-          } else if ( !this.props.backgroundMusicPlaying ) {
-            this.props.snowMusic.pause()
-            this.props.backgroundMusic.play()
-            this.props.snowMusic.currentTime = 0
-          }
-          this.props.toggleBackgroundMusicPlaying()
-
+          this.winterMode()
         }
         this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
       }
@@ -99,6 +86,20 @@ class Player extends Component {
         }
       }
     }
+  }
+
+  winterMode = () => {
+    if ( this.props.snowAbilityList.filter(record => record.used === false).length > 0 && this.props.backgroundMusicPlaying ) {
+      this.props.backgroundMusic.pause()
+      this.props.snowMusic.play()
+      this.props.useSnowAbility()
+
+    } else if ( !this.props.backgroundMusicPlaying ) {
+      this.props.snowMusic.pause()
+      this.props.backgroundMusic.play()
+      this.props.snowMusic.currentTime = 0
+    }
+    this.props.toggleBackgroundMusicPlaying()
   }
 
   syntheticListenerForRelease = () => {
