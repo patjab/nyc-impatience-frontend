@@ -45,7 +45,13 @@ const initialState = {
   playerYelled: false,
   time: 0,
   recordForBonus: [{movement: 0, time: 0}],
-  runningStatus: "WAITING"
+  runningStatus: "WAITING",
+  backgroundMusic: null,
+  backgroundMusicPlaying: false,
+  snowMusic: null,
+  snowMusicPlaying: false,
+  snowAbility: false,
+  snowAbilityList: [{movement: 0, used: true}]
 }
 
 const gameController = (state = initialState, action) => {
@@ -252,6 +258,49 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         runningStatus: action.payload
+      }
+    case "SET_BACKGROUND_MUSIC_REF":
+      return {
+        ...state,
+        backgroundMusic: action.payload
+      }
+    case "TOGGLE_BACKGROUND_MUSIC_PLAYING":
+      return {
+        ...state,
+        backgroundMusicPlaying: !state.backgroundMusicPlaying
+      }
+    case "SET_SNOW_MUSIC_REF":
+      return {
+        ...state,
+        snowMusic: action.payload
+      }
+    case "TOGGLE_SNOW_MUSIC_PLAYING":
+      return {
+        ...state,
+        snowMusicPlaying: !state.snowMusicPlaying
+      }
+    case "TOGGLE_SNOW_ABILITY":
+      return {
+        ...state,
+        snowAbility: !state.snowAbility
+      }
+    case "ADD_TO_SNOW_ABILITY_LIST":
+      return {
+        ...state,
+        snowAbilityList: [...state.snowAbilityList, action.payload]
+      }
+    case "USE_SNOW_ABILITY":
+      const usedList = state.snowAbilityList.filter(record => record.used === true)
+      const unusedList = state.snowAbilityList.filter(record => record.used === false)
+
+      console.log(state.snowAbilityList)
+      return {
+        ...state,
+        snowAbilityList: [
+          ...usedList,
+          {movement: unusedList[0].movement, used: true},
+          ...unusedList.slice(1)
+        ]
       }
     case "RESET_ALL_STATE":
       return {

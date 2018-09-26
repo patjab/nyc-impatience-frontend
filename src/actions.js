@@ -253,3 +253,49 @@ export const changeRunningStatus = (status) => {
     payload: status
   }
 }
+
+export const setBackgroundMusicRef = (musicRef) => {
+  return {
+    type: "SET_BACKGROUND_MUSIC_REF",
+    payload: musicRef
+  }
+}
+
+export const toggleBackgroundMusicPlaying = () => {
+  return {
+    type: "TOGGLE_BACKGROUND_MUSIC_PLAYING"
+  }
+}
+
+export const setSnowMusicRef = (musicRef) => {
+  return {
+    type: "SET_SNOW_MUSIC_REF",
+    payload: musicRef
+  }
+}
+
+export const toggleSnowMusicPlaying = () => {
+  return {
+    type: "TOGGLE_SNOW_MUSIC_PLAYING"
+  }
+}
+
+export const enableSnowAbility = (ability) => {
+  return {
+    type: "TOGGLE_SNOW_ABILITY",
+    payload: ability
+  }
+}
+
+export const addToSnowAbilityList = (record) => {
+  return {
+    type: "ADD_TO_SNOW_ABILITY_LIST",
+    payload: record
+  }
+}
+
+export const useSnowAbility = () => {
+  return {
+    type: "USE_SNOW_ABILITY"
+  }
+}

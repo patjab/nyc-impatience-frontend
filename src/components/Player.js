@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience, signalStartGame, recordForBonus, changeRunningStatus } from '../actions'
+import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience, signalStartGame, recordForBonus, changeRunningStatus, toggleBackgroundMusicPlaying, enableSnowAbility, addToSnowAbilityList, useSnowAbility} from '../actions'
 import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience, movingQuicklyPatience, movingQuicklySecondsRequirement, walking, maximumSecondsOfRunning, maximumSecondsOfRecharge } from '../setupData'
 import { playerStepBigRight, playerStepBigLeft } from '../images'
 import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
@@ -17,6 +17,14 @@ class Player extends Component {
     changeInDirectionCounter: 0
   }
 
+  restAfterRunning = () => {
+    this.props.changeSpeed(2 * walking)
+    this.props.changeRunningStatus('RESTING')
+    setTimeout(() => {
+      this.props.changeRunningStatus('WAITING')
+    }, maximumSecondsOfRecharge * 1000)
+  }
+
   handleWalking = (e) => {
     if (!this.props.gameOver) {
       this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
@@ -28,7 +36,7 @@ class Player extends Component {
       const upperLeft = this.diagonalMapSimultaneous[37] && this.diagonalMapSimultaneous[38]
       const upperRight = this.diagonalMapSimultaneous[38] && this.diagonalMapSimultaneous[39]
 
-      if (!this.props.bumpingShake && (((!upperLeft && !upperRight) && (e.keyCode > 36 && e.keyCode < 41)) || (e.key === 's')) ) {
+      if (!this.props.bumpingShake && (((!upperLeft && !upperRight) && (e.keyCode > 36 && e.keyCode < 41)) || (e.key === 's') || (e.key === 'd') ) ) {
         e.preventDefault()
         if (e.keyCode === 37 && this.props.player.xPosition > 0 ) {
           if ( this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + 0.50*initialPlayerSize ) {
@@ -53,21 +61,28 @@ class Player extends Component {
 
             setTimeout(() => {
               if (this.props.runningStatus === 'RUNNING') {
-                this.props.changeSpeed(2 * walking)
-                this.props.changeRunningStatus('RESTING')
-                setTimeout(() => {
-                  this.props.changeRunningStatus('WAITING')
-                }, maximumSecondsOfRecharge * 1000)
+                this.restAfterRunning()
               }
             }, maximumSecondsOfRunning * 1000)
-
           } else {
-            this.props.changeSpeed(2 * walking)
-            this.props.changeRunningStatus('RESTING')
-            setTimeout(() => {
-              this.props.changeRunningStatus('WAITING')
-            }, maximumSecondsOfRecharge * 1000)
+            this.restAfterRunning()
           }
+
+        }
+        else if (e.key === 'd') {
+          if ( this.props.snowAbilityList.filter(record => record.used === false).length > 0 ) {
+            if ( this.props.backgroundMusicPlaying ) {
+              this.props.backgroundMusic.pause()
+              this.props.snowMusic.play()
+            }
+
+            this.props.useSnowAbility()
+          } else if ( !this.props.backgroundMusicPlaying ) {
+            this.props.snowMusic.pause()
+            this.props.backgroundMusic.play()
+            this.props.snowMusic.currentTime = 0
+          }
+          this.props.toggleBackgroundMusicPlaying()
 
         }
         this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
@@ -168,7 +183,20 @@ class Player extends Component {
       this.props.recordForBonus({movement: lastRecord.movement + 1000, time: this.props.time/1000})
 
     }
-    // console.log(bonusRecord)
+
+    const snowRecord = this.props.snowAbilityList
+    const lastSnowAbilityRecord = snowRecord[snowRecord.length - 1]
+
+    if ( this.props.movement > lastSnowAbilityRecord.movement + 1000 ) {
+      console.log("ADDED SNOW RECORD", this.props.movement)
+      this.props.addToSnowAbilityList({movement: lastSnowAbilityRecord.movement + 1000, used: false})
+    }
+
+    const numberOfSnowAbilities = snowRecord.filter(record => record.used === false).length
+
+    // if ( numberOfSnowAbilities > 0 ) {
+    //   this.props.enableSnowAbility(true)
+    // }
   }
 
   componentWillUnmount() {
@@ -201,6 +229,11 @@ const mapStateToProps = (state) => {
     gameStarted: state.gameStarted,
     bonusRecord: state.recordForBonus,
     runningStatus: state.runningStatus,
+    backgroundMusic: state.backgroundMusic,
+    backgroundMusicPlaying: state.backgroundMusicPlaying,
+    snowMusic: state.snowMusic,
+    snowAbility: state.snowAbility,
+    snowAbilityList: state.snowAbilityList,
     time: state.time // FIX - find a more efficient way of rendering independent of state.time since time is only used for recording, but not rendering (maybe shouldComponentUpdate)
   }
 }
@@ -219,7 +252,11 @@ const mapDispatchToProps = (dispatch) => {
     modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
     signalStartGame: () => dispatch(signalStartGame()),
     recordForBonus: (record) => dispatch(recordForBonus(record)),
-    changeRunningStatus: (status) => dispatch(changeRunningStatus(status))
+    changeRunningStatus: (status) => dispatch(changeRunningStatus(status)),
+    toggleBackgroundMusicPlaying: () => dispatch(toggleBackgroundMusicPlaying()),
+    enableSnowAbility: (ability) => dispatch(enableSnowAbility(ability)),
+    addToSnowAbilityList: (record) => dispatch(addToSnowAbilityList(record)),
+    useSnowAbility: () => dispatch(useSnowAbility())
   }
 }
 

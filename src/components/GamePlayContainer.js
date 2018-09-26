@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { backgroundMusicOn, loudnessSpookLevel, loudnessRechargeInSeconds } from '../setupData'
 import { microphoneRunner, loudEnough } from '../mediaHelper/microphoneHelper'
 
-import { signalPlayerYelled, resetPlayerYelled} from '../actions'
+import { signalPlayerYelled, resetPlayerYelled, setBackgroundMusicRef, toggleBackgroundMusicPlaying, setSnowMusicRef, toggleSnowMusicPlaying } from '../actions'
 
 import GamePlayScreen from './GamePlayScreen'
 import GameStatistics from './GameStatistics'
@@ -18,7 +18,11 @@ class GamePlayContainer extends Component {
   backgroundMusicStart = (e) => {
     if ( e.key === 'ArrowUp' ) {
       if ( backgroundMusicOn ) {
+        this.props.setBackgroundMusicRef(this.refs.backgroundMusic)
+        this.props.setSnowMusicRef(this.refs.snowMusic)
         this.refs.backgroundMusic.play()
+        this.props.toggleBackgroundMusicPlaying()
+        this.props.toggleSnowMusicPlaying()
       }
       window.removeEventListener('keydown', this.backgroundMusicStart)
     }
@@ -41,6 +45,7 @@ class GamePlayContainer extends Component {
 
   componentDidMount() {
     window.addEventListener('keydown', this.backgroundMusicStart)
+
     const scaredTouristListener = this.scaredTouristListener()
     this.setState({scaredTouristListener: scaredTouristListener})
   }
@@ -48,6 +53,7 @@ class GamePlayContainer extends Component {
   componentDidUpdate() {
     if (this.props.timeFinished) {
       this.refs.backgroundMusic.pause()
+      this.refs.snowMusic.pause()
     }
   }
 
@@ -58,7 +64,8 @@ class GamePlayContainer extends Component {
   render() {
     return (
       <Fragment>
-        <audio src='../backgroundMusic.mp3' loop='true' ref='backgroundMusic'/ >
+        <audio src='../backgroundMusic.mp3' loop='true' ref='backgroundMusic' />
+        <audio src='../snowMusic.mp3' loop='true' ref='snowMusic' />
         { this.props.timeFinished === null ? <GamePlayScreen /> : <GameStatistics /> }
         { this.props.gameStarted ? <Map /> : null }
       </Fragment>
@@ -79,6 +86,10 @@ const mapDispatchToProps = (dispatch) => {
   return {
     signalPlayerYelled: () => dispatch(signalPlayerYelled()),
     resetPlayerYelled: () => dispatch(resetPlayerYelled()),
+    setBackgroundMusicRef: (musicRef) => dispatch(setBackgroundMusicRef(musicRef)),
+    toggleBackgroundMusicPlaying: () => dispatch(toggleBackgroundMusicPlaying()),
+    setSnowMusicRef: (musicRef) => dispatch(setSnowMusicRef(musicRef)),
+    toggleSnowMusicPlaying: () => dispatch(toggleSnowMusicPlaying())
   }
 }
 

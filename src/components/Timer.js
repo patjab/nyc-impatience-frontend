@@ -48,22 +48,11 @@ class Timer extends Component {
 
   incrementTime = (e) => {
     if ( e.key === 'ArrowUp' ) {
-      console.log('creating a new interval')
-
       this.setState({startTime: new Date()}, () => {
 
         setInterval(() => {
           this.props.incrementTime((new Date() - this.state.startTime))
           const timeInSec = this.props.time/1000
-          // if (Math.trunc(timeInSec) % 30 === 0 && this.props.time > 0 ) {
-          //   console.log("REACHED 30s INTERVAL")
-          //   this.props.signalBonusOut()
-          //   if ( (this.props.time / 30000) * 1000 < this.props.movement ) {
-          //     console.log("ABOVE 1000")
-          //     this.props.modifyPatience(movingQuicklyPatience)
-          //   }
-          // }
-
         }, 1000)
 
         window.removeEventListener('keydown', this.incrementTime)

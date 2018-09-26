@@ -27,7 +27,7 @@ class Ability extends Component {
     }
 
     const snowIcon = new Image()
-    snowIcon.src = activeSnow
+    snowIcon.src = this.props.snowAbilityList.filter(record => record.used === false).length > 0 ? activeSnow : inactiveSnow
     snowIcon.onload = () => {
       ctx.drawImage(snowIcon, (canvasWidth*0.30)*0.65, 35, 40, 40)
     }
@@ -46,7 +46,9 @@ const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
     playerYelled: state.playerYelled,
-    runningStatus: state.runningStatus
+    runningStatus: state.runningStatus,
+    snowAbility: state.snowAbility,
+    snowAbilityList: state.snowAbilityList
   }
 }
 
