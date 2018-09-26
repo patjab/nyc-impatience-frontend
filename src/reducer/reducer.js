@@ -15,7 +15,7 @@ const initialState = {
   streak: [],
   lives: initialLives,
   startScreenPresent: true,
-  speed: 1,
+  speed: walking * 2,
   stage: 0,
   pathUpdater: 0,
   playerUpdater: 0,

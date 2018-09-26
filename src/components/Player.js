@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience, signalStartGame, recordForBonus } from '../actions'
-import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience, movingQuicklyPatience } from '../setupData'
+import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience, movingQuicklyPatience, movingQuicklySecondsRequirement, walking } from '../setupData'
 import { playerStepBigRight, playerStepBigLeft } from '../images'
 import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
 
@@ -45,7 +45,7 @@ class Player extends Component {
           }
         }
         else if (e.keyCode === 40 && this.props.movement > 0 ) { this.props.moveDown() }
-        else if (e.key === 's') { this.props.speed === 1 ? this.props.changeSpeed(1.5) : this.props.changeSpeed(1) }
+        else if (e.key === 's') { this.props.speed === (2 * walking) ? this.props.changeSpeed(3 * walking) : this.props.changeSpeed(2 * walking) }
         this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
       }
 
@@ -129,11 +129,6 @@ class Player extends Component {
     this.refs.playerImg.src = this.state.walkingCollection[this.state.walkingCycle]
     ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPlayerSize, initialPlayerSize)
 
-
-
-
-
-
     const bonusRecord = this.props.bonusRecord
     const lastRecord = bonusRecord[bonusRecord.length - 1]
 
@@ -141,7 +136,7 @@ class Player extends Component {
       console.log("CURRENT: ", this.props.time)
       console.log("LAST REC: ", lastRecord.time)
 
-      if ( (this.props.time/1000) - (lastRecord.time) < 30 ) {
+      if ( (this.props.time/1000) - (lastRecord.time) < movingQuicklySecondsRequirement ) {
         console.log("AWARDED")
         this.props.modifyPatience(movingQuicklyPatience)
       }

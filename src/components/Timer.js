@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { canvasWidth, statusBarHeight, movingQuicklyPatience } from '../setupData'
+import { canvasWidth, statusBarHeight } from '../setupData'
 import { setGameOver, setGameOverImage, recordTimeFinished, modifyPatience, signalBonusOut, recordStreak, incrementTime } from '../actions'
 import { activeMegaphone, inactiveMegaphone } from '../images'
 
@@ -89,7 +89,7 @@ class Timer extends Component {
   componentDidUpdate() {
     if (this.props.patience <= 0) {
       this.props.recordStreak(this.props.movement)
-      this.props.recordTimeFinished(this.props.time)
+      this.props.recordTimeFinished(this.props.time/1000)
       this.showGameOverScreen()
     }
   }

@@ -9,7 +9,7 @@ export const depthMultiplier = 0.001
 
 export const numOfBricksInARow = 10
 
-export const walking = 0.50
+export const walking = 0.65
 
 export const shiftingSpeed = 20
 
@@ -24,7 +24,7 @@ export const playerStartY = (canvasHeight)-2*(initialPlayerSize*2)
 
 export const movementsPerStage = 1000
 
-export const loudnessSpookLevel = 0.8
+export const loudnessSpookLevel = 0.4
 export const loudnessRechargeInSeconds = 30
 
 export const rendingTouristRowsPercentage = 0.50
@@ -51,3 +51,5 @@ export const releaseCriteriaImpatience = -5
 export const collidedImpatience = -100
 export const waitingImpatience = -10
 export const movingQuicklyPatience = 25
+
+export const movingQuicklySecondsRequirement = 30
