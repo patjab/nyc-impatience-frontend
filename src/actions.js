@@ -246,3 +246,10 @@ export const recordForBonus = (record) => {
     payload: record
   }
 }
+
+export const changeRunningStatus = (status) => {
+  return {
+    type: "CHANGE_RUNNING_STATUS",
+    payload: status
+  }
+}

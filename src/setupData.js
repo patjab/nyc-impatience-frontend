@@ -53,3 +53,6 @@ export const waitingImpatience = -10
 export const movingQuicklyPatience = 25
 
 export const movingQuicklySecondsRequirement = 30
+
+export const maximumSecondsOfRunning = 5
+export const maximumSecondsOfRecharge = 30

@@ -44,7 +44,8 @@ const initialState = {
   gameStarted: false,
   playerYelled: false,
   time: 0,
-  recordForBonus: [{movement: 0, time: 0}]
+  recordForBonus: [{movement: 0, time: 0}],
+  runningStatus: "WAITING"
 }
 
 const gameController = (state = initialState, action) => {
@@ -246,6 +247,11 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         time: action.payload
+      }
+    case "CHANGE_RUNNING_STATUS":
+      return {
+        ...state,
+        runningStatus: action.payload
       }
     case "RESET_ALL_STATE":
       return {

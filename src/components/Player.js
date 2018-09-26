@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience, signalStartGame, recordForBonus } from '../actions'
-import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience, movingQuicklyPatience, movingQuicklySecondsRequirement, walking } from '../setupData'
+import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience, signalStartGame, recordForBonus, changeRunningStatus } from '../actions'
+import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience, movingQuicklyPatience, movingQuicklySecondsRequirement, walking, maximumSecondsOfRunning, maximumSecondsOfRecharge } from '../setupData'
 import { playerStepBigRight, playerStepBigLeft } from '../images'
 import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
 
@@ -45,7 +45,31 @@ class Player extends Component {
           }
         }
         else if (e.keyCode === 40 && this.props.movement > 0 ) { this.props.moveDown() }
-        else if (e.key === 's') { this.props.speed === (2 * walking) ? this.props.changeSpeed(3 * walking) : this.props.changeSpeed(2 * walking) }
+        else if (e.key === 's' && this.props.runningStatus !== 'RESTING') {
+
+          if (this.props.speed === (2 * walking)) {
+            this.props.changeSpeed(4 * walking)
+            this.props.changeRunningStatus('RUNNING')
+
+            setTimeout(() => {
+              if (this.props.runningStatus === 'RUNNING') {
+                this.props.changeSpeed(2 * walking)
+                this.props.changeRunningStatus('RESTING')
+                setTimeout(() => {
+                  this.props.changeRunningStatus('WAITING')
+                }, maximumSecondsOfRecharge * 1000)
+              }
+            }, maximumSecondsOfRunning * 1000)
+
+          } else {
+            this.props.changeSpeed(2 * walking)
+            this.props.changeRunningStatus('RESTING')
+            setTimeout(() => {
+              this.props.changeRunningStatus('WAITING')
+            }, maximumSecondsOfRecharge * 1000)
+          }
+
+        }
         this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
       }
 
@@ -176,6 +200,7 @@ const mapStateToProps = (state) => {
     movement: state.movement,
     gameStarted: state.gameStarted,
     bonusRecord: state.recordForBonus,
+    runningStatus: state.runningStatus,
     time: state.time // FIX - find a more efficient way of rendering independent of state.time since time is only used for recording, but not rendering (maybe shouldComponentUpdate)
   }
 }
@@ -193,7 +218,8 @@ const mapDispatchToProps = (dispatch) => {
     setChangeInDirection: (count) => dispatch(setChangeInDirection(count)),
     modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
     signalStartGame: () => dispatch(signalStartGame()),
-    recordForBonus: (record) => dispatch(recordForBonus(record))
+    recordForBonus: (record) => dispatch(recordForBonus(record)),
+    changeRunningStatus: (status) => dispatch(changeRunningStatus(status))
   }
 }
 
