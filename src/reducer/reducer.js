@@ -292,8 +292,6 @@ const gameController = (state = initialState, action) => {
     case "USE_SNOW_ABILITY":
       const usedList = state.snowAbilityList.filter(record => record.used === true)
       const unusedList = state.snowAbilityList.filter(record => record.used === false)
-
-      console.log(state.snowAbilityList)
       return {
         ...state,
         snowAbilityList: [

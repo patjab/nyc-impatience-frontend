@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience, signalStartGame, recordForBonus, changeRunningStatus, toggleBackgroundMusicPlaying, enableSnowAbility, addToSnowAbilityList, useSnowAbility} from '../actions'
+import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience, signalStartGame, recordForBonus, changeRunningStatus, toggleBackgroundMusicPlaying, enableSnowAbility, addToSnowAbilityList, useSnowAbility, toggleSnowMusicPlaying } from '../actions'
 import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience, movingQuicklyPatience, movingQuicklySecondsRequirement, walking, maximumSecondsOfRunning, maximumSecondsOfRecharge } from '../setupData'
 import { playerStepBigRight, playerStepBigLeft } from '../images'
 import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
@@ -93,13 +93,15 @@ class Player extends Component {
       this.props.backgroundMusic.pause()
       this.props.snowMusic.play()
       this.props.useSnowAbility()
-
+      this.props.toggleSnowMusicPlaying()
+      this.props.toggleBackgroundMusicPlaying()
     } else if ( !this.props.backgroundMusicPlaying ) {
       this.props.snowMusic.pause()
       this.props.backgroundMusic.play()
       this.props.snowMusic.currentTime = 0
+      this.props.toggleSnowMusicPlaying()
+      this.props.toggleBackgroundMusicPlaying()
     }
-    this.props.toggleBackgroundMusicPlaying()
   }
 
   syntheticListenerForRelease = () => {
@@ -257,7 +259,8 @@ const mapDispatchToProps = (dispatch) => {
     toggleBackgroundMusicPlaying: () => dispatch(toggleBackgroundMusicPlaying()),
     enableSnowAbility: (ability) => dispatch(enableSnowAbility(ability)),
     addToSnowAbilityList: (record) => dispatch(addToSnowAbilityList(record)),
-    useSnowAbility: () => dispatch(useSnowAbility())
+    useSnowAbility: () => dispatch(useSnowAbility()),
+    toggleSnowMusicPlaying: () => dispatch(toggleSnowMusicPlaying())
   }
 }
 

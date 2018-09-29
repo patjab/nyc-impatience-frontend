@@ -122,7 +122,7 @@ class Path extends Component {
   makeSideStructures = (ctx) => {
     const centralX = canvasWidth/2
 
-    ctx.fillStyle = sideAreaColor
+    ctx.fillStyle = this.props.snowMusicPlaying ? '#FFFFFF' : sideAreaColor
     ctx.beginPath()
     ctx.moveTo(0, canvasHeight)
     ctx.lineTo(centralX, horizonLine)
@@ -131,7 +131,7 @@ class Path extends Component {
     ctx.stroke()
     ctx.fill()
 
-    ctx.fillStyle = sideAreaColor
+    ctx.fillStyle = this.props.snowMusicPlaying ? '#FFFFFF' : sideAreaColor
     ctx.beginPath()
     ctx.moveTo(canvasWidth, canvasHeight)
     ctx.lineTo(centralX, horizonLine)
@@ -195,7 +195,7 @@ class Path extends Component {
     ctx.lineTo(0, canvasHeight)
     ctx.lineTo(canvasWidth/10, canvasHeight)
     ctx.closePath()
-    ctx.fillStyle = sideAreaColor
+    ctx.fillStyle = this.props.snowMusicPlaying ? '#FFFFFF' : sideAreaColor
     ctx.fill()
   }
 
@@ -228,7 +228,8 @@ const mapStateToProps = (state) => {
     centersOfBricks: state.centersOfBricks,
     movementPerBrick: state.movementPerBrick,
     pathUpdater: state.pathUpdater,
-    gameStarted: state.gameStarted
+    gameStarted: state.gameStarted,
+    snowMusicPlaying: state.snowMusicPlaying
   }
 }
 

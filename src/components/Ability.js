@@ -27,7 +27,6 @@ class Ability extends Component {
     }
 
     const snowIcon = new Image()
-    console.log(this.props.snowAbilityList)
     snowIcon.src = this.props.snowAbilityList.filter(record => record.used === false).length > 0 ? activeSnow : inactiveSnow
 
     snowIcon.onload = () => {

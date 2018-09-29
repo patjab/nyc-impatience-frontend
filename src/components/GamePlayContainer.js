@@ -22,7 +22,7 @@ class GamePlayContainer extends Component {
         this.props.setSnowMusicRef(this.refs.snowMusic)
         this.refs.backgroundMusic.play()
         this.props.toggleBackgroundMusicPlaying()
-        this.props.toggleSnowMusicPlaying()
+        // this.props.toggleSnowMusicPlaying()
       }
       window.removeEventListener('keydown', this.backgroundMusicStart)
     }
