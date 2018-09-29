@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience, signalStartGame, recordForBonus, changeRunningStatus, enableSnowAbility, addToSnowAbilityList, useSnowAbility, changeWeather } from '../actions'
+import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience, signalStartGame, recordForBonus, changeRunningStatus, addToSnowAbilityList, useSnowAbility, changeWeather } from '../actions'
 import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience, movingQuicklyPatience, movingQuicklySecondsRequirement, walking, maximumSecondsOfRunning, maximumSecondsOfRecharge } from '../setupData'
 import { playerStepBigRight, playerStepBigLeft } from '../images'
 import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
@@ -192,12 +192,6 @@ class Player extends Component {
       console.log("ADDED SNOW RECORD", this.props.movement)
       this.props.addToSnowAbilityList({movement: lastSnowAbilityRecord.movement + 1000, used: false})
     }
-
-    // const numberOfSnowAbilities = snowRecord.filter(record => record.used === false).length
-    //
-    // // if ( numberOfSnowAbilities > 0 ) {
-    // //   this.props.enableSnowAbility(true)
-    // // }
   }
 
   componentWillUnmount() {
@@ -232,7 +226,6 @@ const mapStateToProps = (state) => {
     runningStatus: state.runningStatus,
     backgroundMusic: state.backgroundMusic,
     snowMusic: state.snowMusic,
-    snowAbility: state.snowAbility,
     snowAbilityList: state.snowAbilityList,
     weather: state.weather,
     time: state.time // FIX - find a more efficient way of rendering independent of state.time since time is only used for recording, but not rendering (maybe shouldComponentUpdate)
@@ -254,7 +247,6 @@ const mapDispatchToProps = (dispatch) => {
     signalStartGame: () => dispatch(signalStartGame()),
     recordForBonus: (record) => dispatch(recordForBonus(record)),
     changeRunningStatus: (status) => dispatch(changeRunningStatus(status)),
-    enableSnowAbility: (ability) => dispatch(enableSnowAbility(ability)),
     addToSnowAbilityList: (record) => dispatch(addToSnowAbilityList(record)),
     useSnowAbility: () => dispatch(useSnowAbility()),
     changeWeather: (weather) => dispatch(changeWeather(weather))

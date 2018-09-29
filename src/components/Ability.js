@@ -48,7 +48,6 @@ const mapStateToProps = (state) => {
     canvas: state.canvas,
     playerYelled: state.playerYelled,
     runningStatus: state.runningStatus,
-    snowAbility: state.snowAbility,
     snowAbilityList: state.snowAbilityList
   }
 }

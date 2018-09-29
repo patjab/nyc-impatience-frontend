@@ -49,7 +49,6 @@ const initialState = {
   weather: "SUNNY",
   backgroundMusic: null,
   snowMusic: null,
-  snowAbility: false,
   snowAbilityList: [{movement: 0, used: true}]
 }
 
@@ -272,11 +271,6 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         weather: action.payload
-      }
-    case "TOGGLE_SNOW_ABILITY":
-      return {
-        ...state,
-        snowAbility: !state.snowAbility
       }
     case "ADD_TO_SNOW_ABILITY_LIST":
       return {

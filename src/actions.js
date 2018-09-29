@@ -268,13 +268,6 @@ export const setSnowMusicRef = (musicRef) => {
   }
 }
 
-export const enableSnowAbility = (ability) => {
-  return {
-    type: "TOGGLE_SNOW_ABILITY",
-    payload: ability
-  }
-}
-
 export const addToSnowAbilityList = (record) => {
   return {
     type: "ADD_TO_SNOW_ABILITY_LIST",
