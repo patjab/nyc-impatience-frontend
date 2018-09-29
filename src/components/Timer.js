@@ -41,13 +41,11 @@ class Timer extends Component {
     ctx.font = "36px Geneva"
     ctx.fillStyle = "red"
     ctx.fillText(`${("0" + currentTime.minutes).slice(-2)}:${("0" + currentTime.seconds).slice(-2)}`, canvasWidth-110, 70)
-    // ctx.fillText(`${("0" + currentTime.minutes).slice(-2)}:${("0" + currentTime.seconds).slice(-2)}.${("0" + currentTime.milliseconds).slice(-2)}`, canvasWidth-110, 70)
   }
 
   incrementTime = (e) => {
     if ( e.key === 'ArrowUp' ) {
       this.setState({startTime: new Date()}, () => {
-
         setInterval(() => {
           this.props.incrementTime((new Date() - this.state.startTime))
         }, 1000)

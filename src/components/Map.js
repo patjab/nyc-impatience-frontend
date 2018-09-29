@@ -68,8 +68,6 @@ class Map extends Component {
     const canvas = this.props.canvas
     const ctx = canvas.getContext("2d")
 
-
-
     this.drawMap(ctx)
   }
 
