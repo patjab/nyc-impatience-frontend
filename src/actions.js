@@ -136,10 +136,9 @@ export const recordTimeFinished = (time) => {
   }
 }
 
-export const setChangeInDirection = (count) => {
+export const addToChangeInDirection = () => {
   return {
-    type: "SET_CHANGE_IN_DIRECTION_COUNTER",
-    payload: count
+    type: "ADD_TO_CHANGE_IN_DIRECTION",
   }
 }
 

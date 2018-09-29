@@ -25,7 +25,7 @@ const initialState = {
   gameOverImage: null,
   bumpedImages: [],
   timeFinished: null,
-  changeInDirectionCounter: null,
+  changeInDirectionCounter: 0,
   patience: initialPatience,
   dataToBeRecorded: {
     "Name": null,
@@ -166,10 +166,10 @@ const gameController = (state = initialState, action) => {
         ...state,
         timeFinished: action.payload
       }
-    case "SET_CHANGE_IN_DIRECTION_COUNTER":
+    case "ADD_TO_CHANGE_IN_DIRECTION":
       return {
         ...state,
-        changeInDirectionCounter: action.payload
+        changeInDirectionCounter: state.changeInDirectionCounter + 1
       }
     case "SET_NAME":
       return {

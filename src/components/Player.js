@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { movePlayer, changeSpeed, setChangeInDirection, modifyPatience, signalStartGame, recordForBonus, changeRunningStatus, addToSnowAbilityList, useSnowAbility, changeWeather } from '../actions'
+import { movePlayer, changeSpeed, addToChangeInDirection, modifyPatience, signalStartGame, recordForBonus, changeRunningStatus, addToSnowAbilityList, useSnowAbility, changeWeather } from '../actions'
 import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience, movingQuicklyPatience, movingQuicklySecondsRequirement, walking, maximumSecondsOfRunning, maximumSecondsOfRecharge } from '../setupData'
 import { playerStepBigRight, playerStepBigLeft } from '../images'
 import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
@@ -116,37 +116,37 @@ class Player extends Component {
 
   releaseCriteria = (e) => {
     if ( e.keyCode >= 37 && e.keyCode <= 40 ) {
-        this.setState({changeInDirectionCounter: this.state.changeInDirectionCounter+1}, ()=> {
+      this.props.addToChangeInDirection()
 
-          if ( this.props.gameStarted ) {
-            this.props.modifyPatience(releaseCriteriaImpatience)
-          }
+      if ( this.props.gameStarted ) {
+        this.props.modifyPatience(releaseCriteriaImpatience)
+      }
 
-          const previousMovement = this.props.movement
-          const impatientWait = setInterval(() => {
-            setTimeout(() => {
-              if ( this.props.gameStarted && this.props.movement === previousMovement ) {
-                this.props.modifyPatience(waitingImpatience)
-              } else {
-                clearInterval(impatientWait)
-              }
-            })
-          }, 2000)
-          this.highestImpatientInterval = impatientWait
-
-          if (!this.props.gameOver) {
-            this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
-            this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
-            this.stillHoldingUp = e.key !== 'ArrowUp'
-
-            if (!this.props.bumpingShake && ((e.key === 'ArrowLeft' && this.stillHoldingUp) || (e.key === 'ArrowRight' && this.stillHoldingUp)) ) {
-              this.goodForMultipleUps = true
-            } else if (!this.props.bumpingShake && e.key === 'ArrowUp') {
-              this.goodForMultipleUps = false
-            }
+      const previousMovement = this.props.movement
+      const impatientWait = setInterval(() => {
+        setTimeout(() => {
+          if ( this.props.gameStarted && this.props.movement === previousMovement ) {
+            this.props.modifyPatience(waitingImpatience)
+          } else {
+            clearInterval(impatientWait)
           }
         })
+      }, 2000)
+      this.highestImpatientInterval = impatientWait
+
+      if (!this.props.gameOver) {
+        this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
+        this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
+        this.stillHoldingUp = e.key !== 'ArrowUp'
+
+        if (!this.props.bumpingShake && ((e.key === 'ArrowLeft' && this.stillHoldingUp) || (e.key === 'ArrowRight' && this.stillHoldingUp)) ) {
+          this.goodForMultipleUps = true
+        } else if (!this.props.bumpingShake && e.key === 'ArrowUp') {
+          this.goodForMultipleUps = false
+        }
       }
+
+    }
   }
 
   componentDidMount() {
@@ -194,7 +194,6 @@ class Player extends Component {
   }
 
   componentWillUnmount() {
-    this.props.setChangeInDirection(this.state.changeInDirectionCounter)
     window.removeEventListener('keydown', this.handleWalking)
     window.removeEventListener('keyup', this.releaseCriteria)
     clearInterval(this.syntheticInterval)
@@ -240,14 +239,14 @@ const mapDispatchToProps = (dispatch) => {
     moveUpLeft: () => dispatch(movePlayer(-shiftingSpeed, 1)),
     moveUpRight: () => dispatch(movePlayer(shiftingSpeed, 1)),
     changeSpeed: (speed) => dispatch(changeSpeed(speed)),
-    setChangeInDirection: (count) => dispatch(setChangeInDirection(count)),
     modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
     signalStartGame: () => dispatch(signalStartGame()),
     recordForBonus: (record) => dispatch(recordForBonus(record)),
     changeRunningStatus: (status) => dispatch(changeRunningStatus(status)),
     addToSnowAbilityList: (record) => dispatch(addToSnowAbilityList(record)),
     useSnowAbility: () => dispatch(useSnowAbility()),
-    changeWeather: (weather) => dispatch(changeWeather(weather))
+    changeWeather: (weather) => dispatch(changeWeather(weather)),
+    addToChangeInDirection: () => dispatch(addToChangeInDirection())
   }
 }
 
