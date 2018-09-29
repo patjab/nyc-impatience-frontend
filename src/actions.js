@@ -90,21 +90,9 @@ export const recordStreak = (streak) => {
   }
 }
 
-export const forceUpdateOfPathForAnimation = () => {
+export const forcePathPlayerMapUpdate = () => {
   return {
-    type: "FORCE_UPDATE_OF_PATH_FOR_ANIMATION"
-  }
-}
-
-export const forceUpdateOfPlayerForAnimation = () => {
-  return {
-    type: "FORCE_UPDATE_OF_PLAYER_FOR_ANIMATION"
-  }
-}
-
-export const forceUpdateOfMapForAnimation = () => {
-  return {
-    type: "FORCE_UPDATE_OF_MAP_FOR_ANIMATION"
+    type: "FORCE_PATH_PLAYER_MAP_UPDATE"
   }
 }
 

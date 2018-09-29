@@ -5,9 +5,8 @@ import { initialPeopleSizes, initialPlayerSize, canvasHeight, nearnessSpook,
   rendingTouristRowsPercentage, touristRunningMilliseconds, collidedImpatience } from '../setupData'
 import { tourist1, tourist2, tourist3 } from '../images'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
-  resetPlayer, decreaseLife, recordStreak, forceUpdateOfPathForAnimation,
-  forceUpdateOfPlayerForAnimation, changeMovementAbility, toggleBumpingShake,
-  addToBumpedImages, modifyPatience, forceUpdateOfMapForAnimation } from '../actions'
+  resetPlayer, decreaseLife, recordStreak, forcePathPlayerMapUpdate,
+  changeMovementAbility, toggleBumpingShake, addToBumpedImages, modifyPatience } from '../actions'
 import { howBigShouldIBe } from '../AuxiliaryMath'
 
 const Tourist = class extends Component {
@@ -72,9 +71,7 @@ const Tourist = class extends Component {
           for ( let tourist of this.props.touristRoaster ) {
             tourist.setState({touristUpdater: tourist.state.touristUpdater+1})
           }
-          this.props.forceUpdateOfPathForAnimation()
-          this.props.forceUpdateOfPlayerForAnimation()
-          this.props.forceUpdateOfMapForAnimation()
+          this.props.forcePathPlayerMapUpdate()
           this.setState({touristUpdater: this.state.touristUpdater+1})
           i += 1
         })
@@ -203,9 +200,7 @@ const mapDispatchToProps = (dispatch) => {
     resetPlayer: () => dispatch(resetPlayer()),
     decreaseLife: () => dispatch(decreaseLife()),
     recordStreak: (streak) => dispatch(recordStreak(streak)),
-    forceUpdateOfPathForAnimation: () => dispatch(forceUpdateOfPathForAnimation()),
-    forceUpdateOfPlayerForAnimation: () => dispatch(forceUpdateOfPlayerForAnimation()),
-    forceUpdateOfMapForAnimation: () => dispatch(forceUpdateOfMapForAnimation()),
+    forcePathPlayerMapUpdate: () => dispatch(forcePathPlayerMapUpdate()),
     changeMovementAbility: (isDisabled) => dispatch(changeMovementAbility(isDisabled)),
     toggleBumpingShake: () => dispatch(toggleBumpingShake()),
     addToBumpedImages: (image) => dispatch(addToBumpedImages(image)),

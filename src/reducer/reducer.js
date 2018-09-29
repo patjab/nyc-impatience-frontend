@@ -129,19 +129,11 @@ const gameController = (state = initialState, action) => {
         ...state,
         streak: [...state.streak, action.payload]
       }
-    case "FORCE_UPDATE_OF_PATH_FOR_ANIMATION":
+    case "FORCE_PATH_PLAYER_MAP_UPDATE":
       return {
         ...state,
-        pathUpdater: state.pathUpdater + 1
-      }
-    case "FORCE_UPDATE_OF_PLAYER_FOR_ANIMATION":
-      return {
-        ...state,
-        playerUpdater: state.playerUpdater + 1
-      }
-    case "FORCE_UPDATE_OF_MAP_FOR_ANIMATION":
-      return {
-        ...state,
+        pathUpdater: state.pathUpdater + 1,
+        playerUpdater: state.playerUpdater + 1,
         mapUpdater: state.mapUpdater + 1
       }
     case "CHANGE_MOVEMENT_ABILITY":
