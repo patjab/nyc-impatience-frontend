@@ -6,7 +6,7 @@ import { initialPeopleSizes, initialPlayerSize, canvasHeight,
 import { tourist1, tourist2, tourist3 } from '../images'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, recordStreak, forcePathPlayerMapUpdate,
-  changeMovementAbility, toggleBumpingShake, addToBumpedImages, modifyPatience } from '../actions'
+  changeMovementAbility, toggleBumpingShake, addToBumpedImages, modifyPatience, forcePathUpdate } from '../actions'
 import { howBigShouldIBe } from '../AuxiliaryMath'
 
 const Tourist = class extends Component {
@@ -51,6 +51,14 @@ const Tourist = class extends Component {
 
   }
 
+  renderEnvironmentWithOngoingAnimation = () => {
+    for ( let tourist of this.props.touristRoaster ) {
+      tourist.setState({touristUpdater: tourist.state.touristUpdater+1})
+    }
+    this.props.forcePathPlayerMapUpdate()
+    this.setState({touristUpdater: this.state.touristUpdater+1})
+  }
+
   runningAnimation = () => {
     const currentRow = this.state.positionOnArray.row
     const currentCol = this.state.positionOnArray.col
@@ -68,11 +76,7 @@ const Tourist = class extends Component {
           },
           derivedStateOverride: true
         }, () => {
-          for ( let tourist of this.props.touristRoaster ) {
-            tourist.setState({touristUpdater: tourist.state.touristUpdater+1})
-          }
-          this.props.forcePathPlayerMapUpdate()
-          this.setState({touristUpdater: this.state.touristUpdater+1})
+          this.renderEnvironmentWithOngoingAnimation()
           i += 1
         })
       }
@@ -158,6 +162,24 @@ const Tourist = class extends Component {
       try {
         this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
         this.props.addTouristToRoaster(this)
+
+
+        // TRYING WALKING TOURISTS
+        setInterval(() => {
+          const currentRow = this.state.positionOnArray.row
+          const currentCol = this.state.positionOnArray.col
+
+          const potentialCol = currentCol + Math.round((Math.random()*2)-1)
+          this.setState({
+            positionOnArray: {
+              col: potentialCol >= 0 && potentialCol < 10 ? potentialCol : currentCol,
+              row: currentRow
+            }
+          }, this.renderEnvironmentWithOngoingAnimation)
+        }, 1000)
+        // TRYING WALKING TOURISTS
+
+
       } catch (err) {
         console.log("CANVAS ERROR BYPASSED")
       }
@@ -216,7 +238,8 @@ const mapDispatchToProps = (dispatch) => {
     changeMovementAbility: (isDisabled) => dispatch(changeMovementAbility(isDisabled)),
     toggleBumpingShake: () => dispatch(toggleBumpingShake()),
     addToBumpedImages: (image) => dispatch(addToBumpedImages(image)),
-    modifyPatience: (modifier) => dispatch(modifyPatience(modifier))
+    modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
+    forcePathUpdate: () => dispatch(forcePathUpdate())
   }
 }
 

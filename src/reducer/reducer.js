@@ -126,6 +126,11 @@ const gameController = (state = initialState, action) => {
         playerUpdater: state.playerUpdater + 1,
         mapUpdater: state.mapUpdater + 1
       }
+    case "FORCE_PATH_UPDATE":
+      return {
+        ...state,
+        pathUpdater: state.pathUpdater + 1
+      }
     case "CHANGE_MOVEMENT_ABILITY":
       return {
         ...state,

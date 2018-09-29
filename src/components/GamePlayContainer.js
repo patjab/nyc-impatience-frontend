@@ -75,8 +75,8 @@ const mapStateToProps = (state) => {
     timeFinished: state.timeFinished,
     touristRoaster: state.touristRoaster,
     gameStarted: state.gameStarted,
-    playerYelled: state.playerYelled,
-    weather: state.weather
+    playerYelled: state.playerYelled
+    // weather: state.weather
   }
 }
 

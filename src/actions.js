@@ -90,6 +90,12 @@ export const forcePathPlayerMapUpdate = () => {
   }
 }
 
+export const forcePathUpdate = () => {
+  return {
+    type: "FORCE_PATH_UPDATE"
+  }
+}
+
 export const changeMovementAbility = (isDisabled) => {
   return {
     type: "CHANGE_MOVEMENT_ABILITY",
