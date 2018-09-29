@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
 import { initialPeopleSizes, initialPlayerSize, canvasHeight, nearnessSpook,
-  rendingTouristRowsPercentage, touristRunningMilliseconds, collidedImpatience } from '../setupData'
+  rendingTouristRowsPercentage, touristRunningMilliseconds, collidedImpatience, heightOfMap } from '../setupData'
 import { tourist1, tourist2, tourist3 } from '../images'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, recordStreak, forcePathPlayerMapUpdate,
@@ -95,11 +95,9 @@ const Tourist = class extends Component {
     const lowerTourist = this.state.positionY + sizeOfSide
 
     const mysteryConstant = 5
-    const pixelsPerBrickAtLowerPlayer = 10
-
+    const pixelsPerBrickAtLowerPlayer = 20
 
     const upperTourist = lowerTourist - (pixelsPerBrickAtLowerPlayer * this.props.movementPerBrick * mysteryConstant)
-
 
     let withinYRange = ( lowerPlayer <= lowerTourist && lowerPlayer >= upperTourist )
 
@@ -145,7 +143,10 @@ const Tourist = class extends Component {
 
   checkIfTouristStillInView = () => {
     if (this.state.positionY) {
-      if (this.state.positionY > (canvasHeight - (initialPeopleSizes/2))) {
+      const sizeOfSide = howBigShouldIBe(this.state.positionY)
+      const lowerTourist = this.state.positionY + sizeOfSide
+      const endOfVisiblePath = canvasHeight - heightOfMap
+      if ( lowerTourist > endOfVisiblePath ) {
         this.props.addTouristToGarbage(this.props.id)
       }
     }

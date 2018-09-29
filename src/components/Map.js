@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { canvasWidth, canvasHeight } from '../setupData'
+import { canvasWidth, canvasHeight, heightOfMap } from '../setupData'
 
 class Map extends Component {
   previousFirstMarker = 0
@@ -8,7 +8,6 @@ class Map extends Component {
   drawMap = (ctx) => {
     const mapMargins = 0
     const widthOfMap = canvasWidth - (mapMargins*2)
-    const heightOfMap = 150
     ctx.beginPath()
     ctx.rect(mapMargins, canvasHeight - mapMargins - heightOfMap, widthOfMap, heightOfMap)
     ctx.fillStyle = "#000000"

@@ -55,3 +55,5 @@ export const movingQuicklySecondsRequirement = 30
 
 export const maximumSecondsOfRunning = 5
 export const maximumSecondsOfRecharge = 30
+
+export const heightOfMap = 150
