@@ -6,7 +6,6 @@ const initialState = {
     xPosition: playerStartX,
     yPosition: playerStartY
   },
-  playerRef: null,
   movement: 0,
   movementPerBrick: walking,
   centersOfBricks: [],
@@ -149,11 +148,6 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         disabled: action.payload
-      }
-    case "SET_PLAYER":
-      return {
-        ...state,
-        playerRef: action.payload
       }
     case "TOGGLE_BUMPING_SHAKE":
       return {

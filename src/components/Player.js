@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience, signalStartGame, recordForBonus, changeRunningStatus, addToSnowAbilityList, useSnowAbility, changeWeather } from '../actions'
+import { movePlayer, changeSpeed, setChangeInDirection, modifyPatience, signalStartGame, recordForBonus, changeRunningStatus, addToSnowAbilityList, useSnowAbility, changeWeather } from '../actions'
 import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience, movingQuicklyPatience, movingQuicklySecondsRequirement, walking, maximumSecondsOfRunning, maximumSecondsOfRecharge } from '../setupData'
 import { playerStepBigRight, playerStepBigLeft } from '../images'
 import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
@@ -161,7 +161,6 @@ class Player extends Component {
         ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPlayerSize, initialPlayerSize)
       }
     }
-    this.props.setPlayer(this)
   }
 
   componentDidUpdate() {
@@ -241,7 +240,6 @@ const mapDispatchToProps = (dispatch) => {
     moveUpLeft: () => dispatch(movePlayer(-shiftingSpeed, 1)),
     moveUpRight: () => dispatch(movePlayer(shiftingSpeed, 1)),
     changeSpeed: (speed) => dispatch(changeSpeed(speed)),
-    setPlayer: (player) => dispatch(setPlayer(player)),
     setChangeInDirection: (count) => dispatch(setChangeInDirection(count)),
     modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
     signalStartGame: () => dispatch(signalStartGame()),

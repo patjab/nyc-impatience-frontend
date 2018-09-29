@@ -115,13 +115,6 @@ export const changeMovementAbility = (isDisabled) => {
   }
 }
 
-export const setPlayer = (player) => {
-  return {
-    type: "SET_PLAYER",
-    payload: player
-  }
-}
-
 export const toggleBumpingShake = () => {
   return {
     type: "TOGGLE_BUMPING_SHAKE"
