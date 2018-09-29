@@ -46,10 +46,9 @@ const initialState = {
   time: 0,
   recordForBonus: [{movement: 0, time: 0}],
   runningStatus: "WAITING",
+  weather: "SUNNY",
   backgroundMusic: null,
-  backgroundMusicPlaying: false,
   snowMusic: null,
-  snowMusicPlaying: false,
   snowAbility: false,
   snowAbilityList: [{movement: 0, used: true}]
 }
@@ -264,20 +263,15 @@ const gameController = (state = initialState, action) => {
         ...state,
         backgroundMusic: action.payload
       }
-    case "TOGGLE_BACKGROUND_MUSIC_PLAYING":
-      return {
-        ...state,
-        backgroundMusicPlaying: !state.backgroundMusicPlaying
-      }
     case "SET_SNOW_MUSIC_REF":
       return {
         ...state,
         snowMusic: action.payload
       }
-    case "TOGGLE_SNOW_MUSIC_PLAYING":
+    case "CHANGE_WEATHER":
       return {
         ...state,
-        snowMusicPlaying: !state.snowMusicPlaying
+        weather: action.payload
       }
     case "TOGGLE_SNOW_ABILITY":
       return {

@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { backgroundMusicOn, loudnessSpookLevel, loudnessRechargeInSeconds } from '../setupData'
 import { microphoneRunner, loudEnough } from '../mediaHelper/microphoneHelper'
 
-import { signalPlayerYelled, resetPlayerYelled, setBackgroundMusicRef, toggleBackgroundMusicPlaying, setSnowMusicRef, toggleSnowMusicPlaying } from '../actions'
+import { signalPlayerYelled, resetPlayerYelled, setBackgroundMusicRef, setSnowMusicRef } from '../actions'
 
 import GamePlayScreen from './GamePlayScreen'
 import GameStatistics from './GameStatistics'
@@ -12,7 +12,6 @@ import Map from './Map'
 class GamePlayContainer extends Component {
   state = {
     scaredTouristListener: null
-    // playerYelled: null
   }
 
   backgroundMusicStart = (e) => {
@@ -21,8 +20,6 @@ class GamePlayContainer extends Component {
         this.props.setBackgroundMusicRef(this.refs.backgroundMusic)
         this.props.setSnowMusicRef(this.refs.snowMusic)
         this.refs.backgroundMusic.play()
-        this.props.toggleBackgroundMusicPlaying()
-        // this.props.toggleSnowMusicPlaying()
       }
       window.removeEventListener('keydown', this.backgroundMusicStart)
     }
@@ -78,7 +75,8 @@ const mapStateToProps = (state) => {
     timeFinished: state.timeFinished,
     touristRoaster: state.touristRoaster,
     gameStarted: state.gameStarted,
-    playerYelled: state.playerYelled
+    playerYelled: state.playerYelled,
+    weather: state.weather
   }
 }
 
@@ -87,9 +85,7 @@ const mapDispatchToProps = (dispatch) => {
     signalPlayerYelled: () => dispatch(signalPlayerYelled()),
     resetPlayerYelled: () => dispatch(resetPlayerYelled()),
     setBackgroundMusicRef: (musicRef) => dispatch(setBackgroundMusicRef(musicRef)),
-    toggleBackgroundMusicPlaying: () => dispatch(toggleBackgroundMusicPlaying()),
-    setSnowMusicRef: (musicRef) => dispatch(setSnowMusicRef(musicRef)),
-    toggleSnowMusicPlaying: () => dispatch(toggleSnowMusicPlaying())
+    setSnowMusicRef: (musicRef) => dispatch(setSnowMusicRef(musicRef))
   }
 }
 

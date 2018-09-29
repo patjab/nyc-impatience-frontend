@@ -12,6 +12,14 @@ class Path extends Component {
 
   cfBricksList = []
 
+  determineSideWeatherColors = () => {
+    if ( this.props.weather === "SUNNY" ) {
+      return sideAreaColor
+    } else if ( this.props.weather === "SNOWING" ) {
+      return '#FFFFFF'
+    }
+  }
+
   drawPathBackground = (ctx) => {
     ctx.rect(0, horizonLine, canvasWidth, canvasHeight)
     ctx.fillStyle = brickColor
@@ -122,7 +130,7 @@ class Path extends Component {
   makeSideStructures = (ctx) => {
     const centralX = canvasWidth/2
 
-    ctx.fillStyle = this.props.snowMusicPlaying ? '#FFFFFF' : sideAreaColor
+    ctx.fillStyle = this.determineSideWeatherColors()
     ctx.beginPath()
     ctx.moveTo(0, canvasHeight)
     ctx.lineTo(centralX, horizonLine)
@@ -131,7 +139,7 @@ class Path extends Component {
     ctx.stroke()
     ctx.fill()
 
-    ctx.fillStyle = this.props.snowMusicPlaying ? '#FFFFFF' : sideAreaColor
+    ctx.fillStyle = this.determineSideWeatherColors()
     ctx.beginPath()
     ctx.moveTo(canvasWidth, canvasHeight)
     ctx.lineTo(centralX, horizonLine)
@@ -197,7 +205,7 @@ class Path extends Component {
     ctx.lineTo(0, canvasHeight)
     ctx.lineTo(canvasWidth/10, canvasHeight)
     ctx.closePath()
-    ctx.fillStyle = this.props.snowMusicPlaying ? '#FFFFFF' : sideAreaColor
+    ctx.fillStyle = this.determineSideWeatherColors()
     ctx.fill()
   }
 
@@ -231,7 +239,7 @@ const mapStateToProps = (state) => {
     movementPerBrick: state.movementPerBrick,
     pathUpdater: state.pathUpdater,
     gameStarted: state.gameStarted,
-    snowMusicPlaying: state.snowMusicPlaying
+    weather: state.weather
   }
 }
 

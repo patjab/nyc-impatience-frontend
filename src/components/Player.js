@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience, signalStartGame, recordForBonus, changeRunningStatus, toggleBackgroundMusicPlaying, enableSnowAbility, addToSnowAbilityList, useSnowAbility, toggleSnowMusicPlaying } from '../actions'
+import { movePlayer, changeSpeed, setPlayer, setChangeInDirection, modifyPatience, signalStartGame, recordForBonus, changeRunningStatus, enableSnowAbility, addToSnowAbilityList, useSnowAbility, changeWeather } from '../actions'
 import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience, movingQuicklyPatience, movingQuicklySecondsRequirement, walking, maximumSecondsOfRunning, maximumSecondsOfRecharge } from '../setupData'
 import { playerStepBigRight, playerStepBigLeft } from '../images'
 import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
@@ -89,18 +89,16 @@ class Player extends Component {
   }
 
   winterMode = () => {
-    if ( this.props.snowAbilityList.filter(record => record.used === false).length > 0 && this.props.backgroundMusicPlaying ) {
+    if ( this.props.snowAbilityList.filter(record => record.used === false).length > 0 && this.props.weather === "SUNNY" ) {
       this.props.backgroundMusic.pause()
       this.props.snowMusic.play()
       this.props.useSnowAbility()
-      this.props.toggleSnowMusicPlaying()
-      this.props.toggleBackgroundMusicPlaying()
-    } else if ( !this.props.backgroundMusicPlaying ) {
+      this.props.changeWeather("SNOWING")
+    } else if ( this.props.weather === "SNOWING" ) {
       this.props.snowMusic.pause()
       this.props.backgroundMusic.play()
       this.props.snowMusic.currentTime = 0
-      this.props.toggleSnowMusicPlaying()
-      this.props.toggleBackgroundMusicPlaying()
+      this.props.changeWeather("SUNNY")
     }
   }
 
@@ -233,10 +231,10 @@ const mapStateToProps = (state) => {
     bonusRecord: state.recordForBonus,
     runningStatus: state.runningStatus,
     backgroundMusic: state.backgroundMusic,
-    backgroundMusicPlaying: state.backgroundMusicPlaying,
     snowMusic: state.snowMusic,
     snowAbility: state.snowAbility,
     snowAbilityList: state.snowAbilityList,
+    weather: state.weather,
     time: state.time // FIX - find a more efficient way of rendering independent of state.time since time is only used for recording, but not rendering (maybe shouldComponentUpdate)
   }
 }
@@ -256,11 +254,10 @@ const mapDispatchToProps = (dispatch) => {
     signalStartGame: () => dispatch(signalStartGame()),
     recordForBonus: (record) => dispatch(recordForBonus(record)),
     changeRunningStatus: (status) => dispatch(changeRunningStatus(status)),
-    toggleBackgroundMusicPlaying: () => dispatch(toggleBackgroundMusicPlaying()),
     enableSnowAbility: (ability) => dispatch(enableSnowAbility(ability)),
     addToSnowAbilityList: (record) => dispatch(addToSnowAbilityList(record)),
     useSnowAbility: () => dispatch(useSnowAbility()),
-    toggleSnowMusicPlaying: () => dispatch(toggleSnowMusicPlaying())
+    changeWeather: (weather) => dispatch(changeWeather(weather))
   }
 }
 

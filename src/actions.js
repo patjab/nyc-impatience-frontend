@@ -261,22 +261,10 @@ export const setBackgroundMusicRef = (musicRef) => {
   }
 }
 
-export const toggleBackgroundMusicPlaying = () => {
-  return {
-    type: "TOGGLE_BACKGROUND_MUSIC_PLAYING"
-  }
-}
-
 export const setSnowMusicRef = (musicRef) => {
   return {
     type: "SET_SNOW_MUSIC_REF",
     payload: musicRef
-  }
-}
-
-export const toggleSnowMusicPlaying = () => {
-  return {
-    type: "TOGGLE_SNOW_MUSIC_PLAYING"
   }
 }
 
@@ -297,5 +285,12 @@ export const addToSnowAbilityList = (record) => {
 export const useSnowAbility = () => {
   return {
     type: "USE_SNOW_ABILITY"
+  }
+}
+
+export const changeWeather = (weather) => {
+  return {
+    type: "CHANGE_WEATHER",
+    payload: weather
   }
 }
