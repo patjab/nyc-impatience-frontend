@@ -93,7 +93,6 @@ const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
     movement: state.movement,
-    lives: state.lives,
     streak: state.streak,
     patience: state.patience,
     playerYelled: state.playerYelled,

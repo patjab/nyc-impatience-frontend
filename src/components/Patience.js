@@ -63,7 +63,6 @@ class Patience extends Component {
 const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
-    lives: state.lives,
     patience: state.patience
   }
 }

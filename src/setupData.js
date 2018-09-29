@@ -31,7 +31,6 @@ export const rendingTouristRowsPercentage = 0.50
 
 export const touristRunningMilliseconds = 30
 
-export const initialLives = 3
 export const backgroundMusicOn = true
 
 export const statusBarHeight = 90

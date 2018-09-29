@@ -10,7 +10,6 @@ import Player from './Player'
 class GamePlayScreen extends Component {
   renderTourists = (numberOfTourists) => {
     let tourists = []
-    if (this.props.lives > 0) {
       for ( let i = 0; i < (numberOfTourists+this.props.stage); i++ ) {
         if ( !this.props.garbageOfTourists.includes(i) ) {
           tourists.push(<Tourist key={i} id={i} />)
@@ -19,7 +18,7 @@ class GamePlayScreen extends Component {
           numberOfTourists++
         }
       }
-    }
+
     return tourists
   }
 
@@ -37,7 +36,6 @@ class GamePlayScreen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    lives: state.lives,
     garbageOfTourists: state.garbageOfTourists,
     stage: state.stage
   }

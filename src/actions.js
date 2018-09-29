@@ -71,12 +71,6 @@ export const resetPlayer = () => {
   }
 }
 
-export const decreaseLife = () => {
-  return {
-    type: "DECREASE_LIFE"
-  }
-}
-
 export const exitStartScreen = () => {
   return {
     type: "EXIT_START_SCREEN"

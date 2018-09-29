@@ -1,4 +1,4 @@
-import { playerStartX, playerStartY, walking, movementsPerStage, initialLives, initialPatience } from '../setupData'
+import { playerStartX, playerStartY, walking, movementsPerStage, initialPatience } from '../setupData'
 
 const initialState = {
   canvas: null,
@@ -12,7 +12,6 @@ const initialState = {
   garbageOfTourists: [],
   touristRoaster: [],
   streak: [],
-  lives: initialLives,
   startScreenPresent: true,
   speed: walking * 2,
   stage: 0,
@@ -59,19 +58,15 @@ const gameController = (state = initialState, action) => {
       }
     case "MOVE_PLAYER":
       const allowedMovement = state.movement !== 0 && state.movement + (action.payload.y * state.speed) < 0 ? 0 : state.movement + (action.payload.y * state.speed)
-      if (state.lives > 0) {
-        return {
-          ...state,
-          player: {
-            ...state.player,
-            xPosition: state.disabled ? state.player.xPosition : state.player.xPosition + (action.payload.x)
-          },
-          pathUpdater: state.pathUpdater + 1,
-          movement: state.disabled ? state.movement : allowedMovement,
-          stage: Math.trunc(allowedMovement/movementsPerStage)
-        }
-      } else {
-        return state
+      return {
+        ...state,
+        player: {
+          ...state.player,
+          xPosition: state.disabled ? state.player.xPosition : state.player.xPosition + (action.payload.x)
+        },
+        pathUpdater: state.pathUpdater + 1,
+        movement: state.disabled ? state.movement : allowedMovement,
+        stage: Math.trunc(allowedMovement/movementsPerStage)
       }
     case "INITIALIZE_BRICK_LIST":
       return {
@@ -113,11 +108,6 @@ const gameController = (state = initialState, action) => {
         ...state,
         disabled: true,
         movementPerBrick: walking
-      }
-    case "DECREASE_LIFE":
-      return {
-        ...state,
-        lives: state.lives > -1 ? state.lives - 1 : 0
       }
     case "EXIT_START_SCREEN":
       return {

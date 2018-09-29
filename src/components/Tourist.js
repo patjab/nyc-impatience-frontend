@@ -5,7 +5,7 @@ import { initialPeopleSizes, initialPlayerSize, canvasHeight, nearnessSpook,
   rendingTouristRowsPercentage, touristRunningMilliseconds, collidedImpatience } from '../setupData'
 import { tourist1, tourist2, tourist3 } from '../images'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
-  resetPlayer, decreaseLife, recordStreak, forcePathPlayerMapUpdate,
+  resetPlayer, recordStreak, forcePathPlayerMapUpdate,
   changeMovementAbility, toggleBumpingShake, addToBumpedImages, modifyPatience } from '../actions'
 import { howBigShouldIBe } from '../AuxiliaryMath'
 
@@ -125,7 +125,6 @@ const Tourist = class extends Component {
             this.props.recordStreak(this.props.movement)
           }
           this.props.resetPlayer()
-          this.props.decreaseLife()
         }
       })
     }
@@ -198,7 +197,6 @@ const mapDispatchToProps = (dispatch) => {
     removeTouristFromRoaster: (id) => dispatch(removeTouristFromRoaster(id)),
     addTouristToGarbage: (id) => dispatch(addTouristToGarbage(id)),
     resetPlayer: () => dispatch(resetPlayer()),
-    decreaseLife: () => dispatch(decreaseLife()),
     recordStreak: (streak) => dispatch(recordStreak(streak)),
     forcePathPlayerMapUpdate: () => dispatch(forcePathPlayerMapUpdate()),
     changeMovementAbility: (isDisabled) => dispatch(changeMovementAbility(isDisabled)),

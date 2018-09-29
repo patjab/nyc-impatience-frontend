@@ -258,7 +258,6 @@ const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
     dataToBeRecorded: state.dataToBeRecorded,
-    lives: state.lives,
     bumpedImages: state.bumpedImages,
     streak: state.streak,
     timeFinished: state.timeFinished,
