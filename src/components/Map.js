@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { resetCurrentBonus } from '../actions'
 import { canvasWidth, canvasHeight } from '../setupData'
 
 class Map extends Component {
@@ -84,15 +83,8 @@ const mapStateToProps = (state) => {
     canvas: state.canvas,
     movement: state.movement,
     mapUpdater: state.mapUpdater,
-    currentBonus: state.currentBonus,
     player: state.player
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    resetCurrentBonus: () => dispatch(resetCurrentBonus())
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Map)
+export default connect(mapStateToProps)(Map)

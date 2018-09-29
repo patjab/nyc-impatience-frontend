@@ -28,7 +28,6 @@ const initialState = {
   timeFinished: null,
   changeInDirectionCounter: null,
   patience: initialPatience,
-  currentBonus: 1,
   dataToBeRecorded: {
     "Name": null,
     "Distance": null,
@@ -212,20 +211,10 @@ const gameController = (state = initialState, action) => {
         ...state,
         patience: state.patience + action.payload > 0 ? (state.patience + action.payload > initialPatience ? initialPatience : (state.patience + action.payload)) : 0
       }
-    case "SIGNAL_BONUS_OUT":
-      return {
-        ...state,
-        currentBonus: (state.currentBonus + 1) % 6
-      }
     case "SIGNAL_DONE_RECORDING":
       return {
         ...state,
         doneRecording: true
-      }
-    case "RESET_CURRENT_BONUS":
-      return {
-        ...state,
-        currentBonus: action.payload
       }
     case "SIGNAL_PLAYER_YELLED":
       return {

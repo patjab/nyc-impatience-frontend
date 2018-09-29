@@ -196,19 +196,6 @@ export const modifyPatience = (modifier) => {
   }
 }
 
-export const signalBonusOut = () => {
-  return {
-    type: "SIGNAL_BONUS_OUT"
-  }
-}
-
-export const resetCurrentBonus = (num) => {
-  return {
-    type: "RESET_CURRENT_BONUS",
-    payload: num
-  }
-}
-
 export const signalDoneRecording = () => {
   return {
     type: "SIGNAL_DONE_RECORDING"

@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { canvasWidth, statusBarHeight } from '../setupData'
-import { setGameOver, setGameOverImage, recordTimeFinished, modifyPatience, signalBonusOut, recordStreak, incrementTime } from '../actions'
+import { setGameOver, setGameOverImage, recordTimeFinished, modifyPatience, recordStreak, incrementTime } from '../actions'
 
 import Patience from './Patience'
 import Ability from './Ability'
@@ -109,7 +109,6 @@ const mapDispatchToProps = (dispatch) => {
     setGameOverImage: (image) => dispatch(setGameOverImage(image)),
     recordTimeFinished: (time) => dispatch(recordTimeFinished(time)),
     modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
-    signalBonusOut: () => dispatch(signalBonusOut()),
     recordStreak: (streak) => dispatch(recordStreak(streak)),
     incrementTime: (time) => dispatch(incrementTime(time))
   }
