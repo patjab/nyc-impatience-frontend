@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
-import { initialPeopleSizes, initialPlayerSize, canvasHeight, nearnessSpook,
+import { initialPeopleSizes, initialPlayerSize, canvasHeight,
   rendingTouristRowsPercentage, touristRunningMilliseconds, collidedImpatience, heightOfMap } from '../setupData'
 import { tourist1, tourist2, tourist3 } from '../images'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,

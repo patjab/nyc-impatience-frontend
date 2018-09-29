@@ -13,8 +13,6 @@ export const walking = 1.3
 
 export const shiftingSpeed = 20
 
-export const nearnessSpook = 6
-
 export const touristDensity = 3
 
 export const initialPatience = 250
