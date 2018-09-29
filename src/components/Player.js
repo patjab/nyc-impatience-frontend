@@ -18,7 +18,7 @@ class Player extends Component {
   }
 
   restAfterRunning = () => {
-    this.props.changeSpeed(2 * walking)
+    this.props.changeSpeed(walking)
     this.props.changeRunningStatus('RESTING')
     setTimeout(() => {
       this.props.changeRunningStatus('WAITING')
@@ -55,8 +55,8 @@ class Player extends Component {
         else if (e.keyCode === 40 && this.props.movement > 0 ) { this.props.moveDown() }
         else if (e.key === 's' && this.props.runningStatus !== 'RESTING') {
 
-          if (this.props.speed === (2 * walking)) {
-            this.props.changeSpeed(4 * walking)
+          if (this.props.speed === (walking)) {
+            this.props.changeSpeed(2 * walking)
             this.props.changeRunningStatus('RUNNING')
 
             setTimeout(() => {

@@ -88,9 +88,22 @@ const Tourist = class extends Component {
     const lowerLeftPlayer = {x: this.props.playerX, y: this.props.playerY + initialPlayerSize}
     const lowerRightPlayer = {x: this.props.playerX + initialPlayerSize, y: this.props.playerY + initialPlayerSize}
 
-    let bumpOnTheLeft = (lowerLeftPlayer.x >= lowerLeftTourist.x && lowerLeftPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
-    let bumpOnTheRight = (lowerRightPlayer.x >= lowerLeftTourist.x && lowerRightPlayer.x <= lowerRightTourist.x) && (Math.abs(lowerLeftPlayer.y - lowerLeftTourist.y) < nearnessSpook)
-    if ( (bumpOnTheLeft || bumpOnTheRight) && !this.state.dontCallBumpAgain ) {
+    let bumpOnTheLeft = (lowerLeftPlayer.x >= lowerLeftTourist.x && lowerLeftPlayer.x <= lowerRightTourist.x)
+    let bumpOnTheRight = (lowerRightPlayer.x >= lowerLeftTourist.x && lowerRightPlayer.x <= lowerRightTourist.x)
+
+    const lowerPlayer = this.props.playerY + initialPlayerSize
+    const lowerTourist = this.state.positionY + sizeOfSide
+
+    const mysteryConstant = 5
+    const pixelsPerBrickAtLowerPlayer = 10
+
+
+    const upperTourist = lowerTourist - (pixelsPerBrickAtLowerPlayer * this.props.movementPerBrick * mysteryConstant)
+
+
+    let withinYRange = ( lowerPlayer <= lowerTourist && lowerPlayer >= upperTourist )
+
+    if ( (bumpOnTheLeft || bumpOnTheRight) && withinYRange && !this.state.dontCallBumpAgain ) {
       this.props.modifyPatience(collidedImpatience)
       this.runBumpAnimations()
     }

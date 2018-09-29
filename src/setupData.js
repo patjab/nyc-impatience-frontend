@@ -9,7 +9,7 @@ export const depthMultiplier = 0.001
 
 export const numOfBricksInARow = 10
 
-export const walking = 0.65
+export const walking = 1.3
 
 export const shiftingSpeed = 20
 

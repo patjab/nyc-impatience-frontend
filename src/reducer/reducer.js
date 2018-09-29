@@ -7,13 +7,13 @@ const initialState = {
     yPosition: playerStartY
   },
   movement: 0,
-  movementPerBrick: walking,
+  movementPerBrick: walking/2,
+  speed: walking,
   centersOfBricks: [],
   garbageOfTourists: [],
   touristRoaster: [],
   streak: [],
   startScreenPresent: true,
-  speed: walking * 2,
   stage: 0,
   pathUpdater: 0,
   playerUpdater: 0,
@@ -106,8 +106,8 @@ const gameController = (state = initialState, action) => {
     case "RESET_PLAYER":
       return {
         ...state,
-        disabled: true,
-        movementPerBrick: walking
+        disabled: true
+        // movementPerBrick: walking
       }
     case "EXIT_START_SCREEN":
       return {
