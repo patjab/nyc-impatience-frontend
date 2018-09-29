@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { canvasWidth, statusBarHeight, initialPatience } from '../setupData'
+import { canvasWidth, statusBarHeight } from '../setupData'
 import { activeMegaphone, inactiveMegaphone, activeRunning, inactiveRunning, redRunning, activeSnow, inactiveSnow } from '../images'
 
 class Ability extends Component {

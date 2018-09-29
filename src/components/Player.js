@@ -195,11 +195,11 @@ class Player extends Component {
       this.props.addToSnowAbilityList({movement: lastSnowAbilityRecord.movement + 1000, used: false})
     }
 
-    const numberOfSnowAbilities = snowRecord.filter(record => record.used === false).length
-
-    // if ( numberOfSnowAbilities > 0 ) {
-    //   this.props.enableSnowAbility(true)
-    // }
+    // const numberOfSnowAbilities = snowRecord.filter(record => record.used === false).length
+    //
+    // // if ( numberOfSnowAbilities > 0 ) {
+    // //   this.props.enableSnowAbility(true)
+    // // }
   }
 
   componentWillUnmount() {

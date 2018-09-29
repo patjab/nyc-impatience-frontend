@@ -2,8 +2,6 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { canvasWidth, statusBarHeight } from '../setupData'
 import { setGameOver, setGameOverImage, recordTimeFinished, modifyPatience, signalBonusOut, recordStreak, incrementTime } from '../actions'
-import { activeMegaphone, inactiveMegaphone } from '../images'
-
 
 import Patience from './Patience'
 import Ability from './Ability'
@@ -52,7 +50,6 @@ class Timer extends Component {
 
         setInterval(() => {
           this.props.incrementTime((new Date() - this.state.startTime))
-          const timeInSec = this.props.time/1000
         }, 1000)
 
         window.removeEventListener('keydown', this.incrementTime)
