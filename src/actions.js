@@ -202,13 +202,6 @@ export const recordForBonus = (record) => {
   }
 }
 
-export const changeRunningStatus = (status) => {
-  return {
-    type: "CHANGE_RUNNING_STATUS",
-    payload: status
-  }
-}
-
 export const setBackgroundMusicRef = (musicRef) => {
   return {
     type: "SET_BACKGROUND_MUSIC_REF",
@@ -246,6 +239,13 @@ export const changeWeather = (weather) => {
 export const recordTimeOfYell = (time) => {
   return {
     type: "RECORD_TIME_OF_YELL",
+    payload: time
+  }
+}
+
+export const recordTimeOfRun = (time) => {
+  return {
+    type: "RECORD_TIME_OF_RUN",
     payload: time
   }
 }

@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { canvasWidth, statusBarHeight, loudnessRechargeInSeconds } from '../setupData'
+import { canvasWidth, statusBarHeight, loudnessRechargeInSeconds, maximumSecondsOfRecharge, maximumSecondsOfRunning, walking } from '../setupData'
 import { activeMegaphone, inactiveMegaphone, activeRunning, inactiveRunning, redRunning, activeSnow, inactiveSnow } from '../images'
 
 class Ability extends Component {
@@ -15,26 +15,37 @@ class Ability extends Component {
     ctx.fillText(`Abilities`, (canvasWidth*0.30)/2, 30)
 
     const shoutIcon = new Image()
-    const timePassed = Math.round((this.props.time/1000) - this.props.timeOfYell)
-    const readyForYelling = timePassed > loudnessRechargeInSeconds
+    const timePassedYell = Math.round((this.props.time/1000) - this.props.timeOfYell)
+    const readyForYelling = timePassedYell > loudnessRechargeInSeconds
     shoutIcon.src = readyForYelling ? activeMegaphone : inactiveMegaphone
 
 
     shoutIcon.onload = () => {
       ctx.drawImage(shoutIcon, (canvasWidth*0.30)*0.28, 35, 40, 40)
-      if ( !readyForYelling && timePassed > 0) {
+      if ( !readyForYelling && timePassedYell > 0) {
         ctx.font = "25px Impact"
         ctx.textAlign = 'center'
         ctx.fillStyle = "red"
-        ctx.fillText(loudnessRechargeInSeconds - timePassed, (canvasWidth*0.30)*0.35, 85)
+        ctx.fillText(loudnessRechargeInSeconds - timePassedYell, (canvasWidth*0.30)*0.35, 85)
       }
     }
 
 
     const runningIcon = new Image()
-    runningIcon.src = this.props.runningStatus === 'RUNNING' ? redRunning : (this.props.runningStatus === 'RESTING' ? inactiveRunning : activeRunning)
+    const timePassedRun = Math.round((this.props.time/1000) - this.props.timeOfRun)
+    const readyForRunning = timePassedRun >= maximumSecondsOfRecharge
+
+    console.log(this.props.speed)
+
+    if ( readyForRunning ) {
+      runningIcon.src = activeRunning
+    } else if ( !readyForRunning && this.props.speed === 2 * walking ) {
+      runningIcon.src = redRunning
+    } else {
+      runningIcon.src = inactiveRunning
+    }
+
     runningIcon.onload = () => {
-      // ctx.drawImage(runningIcon, (canvasWidth*0.30)*0.40, 35, 40, 40)
       ctx.drawImage(runningIcon, (canvasWidth*0.30)*0.53, 35, 40, 40)
     }
 
@@ -59,10 +70,11 @@ const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
     playerYelled: state.playerYelled,
-    runningStatus: state.runningStatus,
     snowAbilityList: state.snowAbilityList,
     time: state.time,
-    timeOfYell: state.timeOfYell
+    timeOfYell: state.timeOfYell,
+    timeOfRun: state.timeOfRun,
+    speed: state.speed
   }
 }
 

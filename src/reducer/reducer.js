@@ -1,4 +1,4 @@
-import { playerStartX, playerStartY, walking, movementsPerStage, initialPatience, loudnessRechargeInSeconds } from '../setupData'
+import { playerStartX, playerStartY, walking, movementsPerStage, initialPatience, loudnessRechargeInSeconds, maximumSecondsOfRecharge } from '../setupData'
 
 const initialState = {
   canvas: null,
@@ -42,12 +42,12 @@ const initialState = {
   playerYelled: false,
   time: 0,
   recordForBonus: [{movement: 0, time: 0}],
-  runningStatus: "WAITING",
   weather: "SUNNY",
   backgroundMusic: null,
   snowMusic: null,
   snowAbilityList: [{movement: 0, used: true}],
-  timeOfYell: -2*loudnessRechargeInSeconds
+  timeOfYell: -2*loudnessRechargeInSeconds,
+  timeOfRun: -2*maximumSecondsOfRecharge
 }
 
 const gameController = (state = initialState, action) => {
@@ -202,6 +202,11 @@ const gameController = (state = initialState, action) => {
         ...state,
         timeOfYell: action.payload
       }
+    case "RECORD_TIME_OF_RUN":
+      return {
+        ...state,
+        timeOfRun: action.payload
+      }
     case "SIGNAL_START_GAME":
       return {
         ...state,
@@ -216,11 +221,6 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         time: action.payload
-      }
-    case "CHANGE_RUNNING_STATUS":
-      return {
-        ...state,
-        runningStatus: action.payload
       }
     case "SET_BACKGROUND_MUSIC_REF":
       return {

@@ -1,8 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { movePlayer, changeSpeed, addToChangeInDirection, modifyPatience, signalStartGame, recordForBonus, changeRunningStatus, addToSnowAbilityList, useSnowAbility, changeWeather } from '../actions'
-import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth, releaseCriteriaImpatience, waitingImpatience, movingQuicklyPatience, movingQuicklySecondsRequirement, walking, maximumSecondsOfRunning, maximumSecondsOfRecharge } from '../setupData'
+import { movePlayer, changeSpeed, addToChangeInDirection, modifyPatience,
+  signalStartGame, recordForBonus, addToSnowAbilityList,
+  useSnowAbility, changeWeather, recordTimeOfRun } from '../actions'
+import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth,
+  releaseCriteriaImpatience, waitingImpatience, movingQuicklyPatience,
+  movingQuicklySecondsRequirement, walking, maximumSecondsOfRunning,
+  maximumSecondsOfRecharge } from '../setupData'
 import { playerStepBigRight, playerStepBigLeft } from '../images'
 import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
 
@@ -15,14 +20,6 @@ class Player extends Component {
     walkingCycle: 0,
     walkingCollection: [playerStepBigRight, playerStepBigRight, playerStepBigLeft, playerStepBigLeft],
     changeInDirectionCounter: 0
-  }
-
-  restAfterRunning = () => {
-    this.props.changeSpeed(walking)
-    this.props.changeRunningStatus('RESTING')
-    setTimeout(() => {
-      this.props.changeRunningStatus('WAITING')
-    }, maximumSecondsOfRecharge * 1000)
   }
 
   handleWalking = (e) => {
@@ -56,22 +53,22 @@ class Player extends Component {
           }
         }
         else if (e.keyCode === 40 && this.props.movement > 0 ) { this.props.moveDown() }
-        else if (e.key === 's' && this.props.runningStatus !== 'RESTING') {
 
-          if (this.props.speed === (walking)) {
+        else if (e.key === 's') {
+
+          const timePassedSinceRun = (this.props.time/1000) - this.props.timeOfRun
+
+          if ( this.props.speed === walking && timePassedSinceRun > maximumSecondsOfRecharge  ) {
+            this.props.recordTimeOfRun(this.props.time/1000)
             this.props.changeSpeed(2 * walking)
-            this.props.changeRunningStatus('RUNNING')
-
             setTimeout(() => {
-              if (this.props.runningStatus === 'RUNNING') {
-                this.restAfterRunning()
-              }
+              this.props.changeSpeed(walking)
             }, maximumSecondsOfRunning * 1000)
-          } else {
-            this.restAfterRunning()
+          } else if ( this.props.speed === 2 * walking && timePassedSinceRun < maximumSecondsOfRecharge ) {
+            this.props.changeSpeed(walking)
           }
-
         }
+
         else if (e.key === 'd') {
           this.winterMode()
         }
@@ -175,16 +172,10 @@ class Player extends Component {
     const lastRecord = bonusRecord[bonusRecord.length - 1]
 
     if ( this.props.movement > lastRecord.movement + 1000 ) {
-      console.log("CURRENT: ", this.props.time)
-      console.log("LAST REC: ", lastRecord.time)
-
       if ( (this.props.time/1000) - (lastRecord.time) < movingQuicklySecondsRequirement ) {
-        console.log("AWARDED")
         this.props.modifyPatience(movingQuicklyPatience)
       }
-
       this.props.recordForBonus({movement: lastRecord.movement + 1000, time: this.props.time/1000})
-
     }
 
     const snowRecord = this.props.snowAbilityList
@@ -224,11 +215,11 @@ const mapStateToProps = (state) => {
     movement: state.movement,
     gameStarted: state.gameStarted,
     bonusRecord: state.recordForBonus,
-    runningStatus: state.runningStatus,
     backgroundMusic: state.backgroundMusic,
     snowMusic: state.snowMusic,
     snowAbilityList: state.snowAbilityList,
     weather: state.weather,
+    timeOfRun: state.timeOfRun,
     time: state.time // FIX - find a more efficient way of rendering independent of state.time since time is only used for recording, but not rendering (maybe shouldComponentUpdate)
   }
 }
@@ -245,11 +236,11 @@ const mapDispatchToProps = (dispatch) => {
     modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
     signalStartGame: () => dispatch(signalStartGame()),
     recordForBonus: (record) => dispatch(recordForBonus(record)),
-    changeRunningStatus: (status) => dispatch(changeRunningStatus(status)),
     addToSnowAbilityList: (record) => dispatch(addToSnowAbilityList(record)),
     useSnowAbility: () => dispatch(useSnowAbility()),
     changeWeather: (weather) => dispatch(changeWeather(weather)),
-    addToChangeInDirection: () => dispatch(addToChangeInDirection())
+    addToChangeInDirection: () => dispatch(addToChangeInDirection()),
+    recordTimeOfRun: (time) => dispatch(recordTimeOfRun(time))
   }
 }
 
