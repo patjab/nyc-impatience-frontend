@@ -55,3 +55,5 @@ export const maximumSecondsOfRunning = 5
 export const maximumSecondsOfRecharge = 30
 
 export const heightOfMap = 150
+
+export const startTouristMovementAtDistance = 2000

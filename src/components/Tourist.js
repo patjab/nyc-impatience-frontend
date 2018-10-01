@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
-import { initialPeopleSizes, initialPlayerSize, canvasHeight,
-  rendingTouristRowsPercentage, touristRunningMilliseconds, collidedImpatience, heightOfMap } from '../setupData'
+import { initialPlayerSize, canvasHeight, rendingTouristRowsPercentage,
+  touristRunningMilliseconds, collidedImpatience, heightOfMap, startTouristMovementAtDistance } from '../setupData'
 import { tourist1, tourist2, tourist3 } from '../images'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, recordStreak, forcePathPlayerMapUpdate,
@@ -156,30 +156,30 @@ const Tourist = class extends Component {
     }
   }
 
+  makeTouristWalk = () => {
+    this.walkingTouristInterval = setInterval(() => {
+      const currentRow = this.state.positionOnArray.row
+      const currentCol = this.state.positionOnArray.col
+
+      const potentialCol = currentCol + Math.round((Math.random()*2)-1)
+      this.setState({
+        positionOnArray: {
+          col: potentialCol >= 0 && potentialCol < 10 ? potentialCol : currentCol,
+          row: currentRow
+        }
+      }, this.renderEnvironmentWithOngoingAnimation)
+    }, 1000)
+  }
+
   componentDidMount() {
     this.refs.touristImg.onload = () => {
       const sizeOfSide = howBigShouldIBe(this.state.positionY)
       try {
         this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
         this.props.addTouristToRoaster(this)
-
-
-        // TRYING WALKING TOURISTS
-        setInterval(() => {
-          const currentRow = this.state.positionOnArray.row
-          const currentCol = this.state.positionOnArray.col
-
-          const potentialCol = currentCol + Math.round((Math.random()*2)-1)
-          this.setState({
-            positionOnArray: {
-              col: potentialCol >= 0 && potentialCol < 10 ? potentialCol : currentCol,
-              row: currentRow
-            }
-          }, this.renderEnvironmentWithOngoingAnimation)
-        }, 1000)
-        // TRYING WALKING TOURISTS
-
-
+        if ( this.props.movement > startTouristMovementAtDistance ) {
+          this.makeTouristWalk()
+        }
       } catch (err) {
         console.log("CANVAS ERROR BYPASSED")
       }
@@ -201,6 +201,7 @@ const Tourist = class extends Component {
   componentWillUnmount() {
     this.props.removeTouristFromRoaster(this.props.id)
     clearInterval(this.animationInterval)
+    clearInterval(this.walkingTouristInterval)
   }
 
   render() {
