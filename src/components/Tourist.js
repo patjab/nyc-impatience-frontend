@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
 import { initialPlayerSize, canvasHeight, rendingTouristRowsPercentage,
-  touristRunningMilliseconds, collidedImpatience, heightOfMap, startTouristMovementAtDistance } from '../setupData'
+  touristRunningMilliseconds, collidedImpatience, heightOfMap, startTouristMovementAtDistance, yNearnessSpook } from '../setupData'
 import { tourist1, tourist2, tourist3 } from '../images'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, recordStreak, forcePathPlayerMapUpdate,
@@ -98,10 +98,9 @@ const Tourist = class extends Component {
     const lowerPlayer = this.props.playerY + initialPlayerSize
     const lowerTourist = this.state.positionY + sizeOfSide
 
-    const mysteryConstant = 5
     const pixelsPerBrickAtLowerPlayer = 20
 
-    const upperTourist = lowerTourist - (pixelsPerBrickAtLowerPlayer * this.props.movementPerBrick * mysteryConstant)
+    const upperTourist = lowerTourist - (pixelsPerBrickAtLowerPlayer * this.props.movementPerBrick * yNearnessSpook)
 
     let withinYRange = ( lowerPlayer <= lowerTourist && lowerPlayer >= upperTourist )
 

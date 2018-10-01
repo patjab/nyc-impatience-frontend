@@ -188,18 +188,6 @@ export const signalStartGame = () => {
   }
 }
 
-export const signalPlayerYelled = () => {
-  return {
-    type: "SIGNAL_PLAYER_YELLED"
-  }
-}
-
-export const resetPlayerYelled = () => {
-  return {
-    type: "RESET_PLAYER_YELLED"
-  }
-}
-
 export const incrementTime = (time) => {
   return {
     type: "INCREMENT_TIME",
@@ -252,5 +240,12 @@ export const changeWeather = (weather) => {
   return {
     type: "CHANGE_WEATHER",
     payload: weather
+  }
+}
+
+export const recordTimeOfYell = (time) => {
+  return {
+    type: "RECORD_TIME_OF_YELL",
+    payload: time
   }
 }

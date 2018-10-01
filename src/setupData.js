@@ -29,7 +29,7 @@ export const rendingTouristRowsPercentage = 0.50
 
 export const touristRunningMilliseconds = 30
 
-export const backgroundMusicOn = true
+export const backgroundMusicOn = false
 
 export const statusBarHeight = 90
 export const numberOfHighScoresToDisplay = 15
@@ -56,7 +56,9 @@ export const maximumSecondsOfRecharge = 30
 
 export const heightOfMap = 150
 
-export const startTouristMovementAtDistance = 2000
+export const startTouristMovementAtDistance = 5000
 
 export const movementPerMap = 5000
 export const percentageDivisionOnMap = 0.20
+
+export const yNearnessSpook = 5

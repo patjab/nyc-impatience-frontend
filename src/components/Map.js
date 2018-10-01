@@ -14,7 +14,7 @@ class Map extends Component {
     const yPositionOfMap = canvasHeight - 110
 
     const percentOfMap = this.props.movement % movementPerMap
-    const lapsOf5000 = Math.trunc(this.props.movement / movementPerMap)
+    const lapsOfMap = Math.trunc(this.props.movement / movementPerMap)
     const lengthOfMap = (endOfMap - startOfMap)
     const pixelLengthOfCurrentProgress = (percentOfMap*lengthOfMap) / movementPerMap
 
@@ -62,8 +62,8 @@ class Map extends Component {
           ctx.textAlign = 'center'
           ctx.font = "20px Geneva"
           ctx.fillStyle = "white"
-          ctx.fillText(`${Math.trunc((lapsOf5000 * movementPerMap) + percent * movementPerMap)}`, startOfMap + (percent * lengthOfMap), yPositionOfMap + 40)
-          if ( Math.trunc((lapsOf5000 * movementPerMap) + percent * movementPerMap) === nextBonusMovementCheckpoint ) {
+          ctx.fillText(`${Math.trunc((lapsOfMap * movementPerMap) + percent * movementPerMap)}`, startOfMap + (percent * lengthOfMap), yPositionOfMap + 40)
+          if ( Math.trunc((lapsOfMap * movementPerMap) + percent * movementPerMap) === nextBonusMovementCheckpoint ) {
             ctx.font = "15px Geneva"
             ctx.fillStyle = "yellow"
 

@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { backgroundMusicOn, loudnessSpookLevel, loudnessRechargeInSeconds } from '../setupData'
 import { microphoneRunner, loudEnough } from '../mediaHelper/microphoneHelper'
 
-import { signalPlayerYelled, resetPlayerYelled, setBackgroundMusicRef, setSnowMusicRef } from '../actions'
+import { setBackgroundMusicRef, setSnowMusicRef, recordTimeOfYell } from '../actions'
 
 import GamePlayScreen from './GamePlayScreen'
 import GameStatistics from './GameStatistics'
@@ -28,14 +28,12 @@ class GamePlayContainer extends Component {
   scaredTouristListener = () => {
     microphoneRunner(loudnessSpookLevel)
     return setInterval( () => {
-      if (loudEnough && !this.props.playerYelled ) {
-        this.props.signalPlayerYelled()
+      const readyForYelling = (this.props.time/1000) - this.props.timeOfYell > loudnessRechargeInSeconds
+      if (loudEnough && readyForYelling ) {
+        this.props.recordTimeOfYell(this.props.time/1000)
         for ( let tourist of this.props.touristRoaster ) {
           tourist.runningAnimation()
         }
-        setTimeout( () => {
-          this.props.resetPlayerYelled()
-        }, loudnessRechargeInSeconds * 1000)
       }
     }, 100)
   }
@@ -75,17 +73,17 @@ const mapStateToProps = (state) => {
     timeFinished: state.timeFinished,
     touristRoaster: state.touristRoaster,
     gameStarted: state.gameStarted,
-    playerYelled: state.playerYelled
-    // weather: state.weather
+    playerYelled: state.playerYelled,
+    time: state.time,
+    timeOfYell: state.timeOfYell
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    signalPlayerYelled: () => dispatch(signalPlayerYelled()),
-    resetPlayerYelled: () => dispatch(resetPlayerYelled()),
     setBackgroundMusicRef: (musicRef) => dispatch(setBackgroundMusicRef(musicRef)),
-    setSnowMusicRef: (musicRef) => dispatch(setSnowMusicRef(musicRef))
+    setSnowMusicRef: (musicRef) => dispatch(setSnowMusicRef(musicRef)),
+    recordTimeOfYell: (time) => dispatch(recordTimeOfYell(time))
   }
 }
 
