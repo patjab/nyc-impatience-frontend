@@ -26,7 +26,7 @@ class Ability extends Component {
         ctx.font = "25px Impact"
         ctx.textAlign = 'center'
         ctx.fillStyle = "red"
-        ctx.fillText(loudnessRechargeInSeconds - timePassedYell, (canvasWidth*0.30)*0.35, 85)
+        ctx.fillText(loudnessRechargeInSeconds - timePassedYell, (canvasWidth*0.30)*0.42, 85)
       }
     }
 
@@ -35,7 +35,6 @@ class Ability extends Component {
     const timePassedRun = Math.round((this.props.time/1000) - this.props.timeOfRun)
     const readyForRunning = timePassedRun >= maximumSecondsOfRecharge
 
-    console.log(this.props.speed)
 
     if ( readyForRunning ) {
       runningIcon.src = activeRunning
@@ -47,6 +46,12 @@ class Ability extends Component {
 
     runningIcon.onload = () => {
       ctx.drawImage(runningIcon, (canvasWidth*0.30)*0.53, 35, 40, 40)
+      if ( !readyForRunning && this.props.speed === walking ) {
+        ctx.font = "25px Impact"
+        ctx.textAlign = 'center'
+        ctx.fillStyle = "red"
+        ctx.fillText(maximumSecondsOfRecharge - timePassedRun, (canvasWidth*0.30)*0.70, 85)
+      }
     }
 
     // const snowIcon = new Image()
