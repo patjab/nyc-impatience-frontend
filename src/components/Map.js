@@ -68,7 +68,7 @@ class Map extends Component {
             ctx.fillStyle = "yellow"
 
             if ( timeLeftForBonus > 0 ) {
-              ctx.fillText(`NEXT BONUS`, startOfMap + (percent * lengthOfMap), yPositionOfMap + 60)
+              ctx.fillText(`BONUS`, startOfMap + (percent * lengthOfMap), yPositionOfMap + 60)
               ctx.fillText(`${timeLeftForBonus}s`, startOfMap + (percent * lengthOfMap), yPositionOfMap + 80)
             }
           }
