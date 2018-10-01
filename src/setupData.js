@@ -57,3 +57,6 @@ export const maximumSecondsOfRecharge = 30
 export const heightOfMap = 150
 
 export const startTouristMovementAtDistance = 2000
+
+export const movementPerMap = 5000
+export const percentageDivisionOnMap = 0.20

@@ -107,7 +107,6 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         disabled: true
-        // movementPerBrick: walking
       }
     case "EXIT_START_SCREEN":
       return {

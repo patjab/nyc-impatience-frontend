@@ -44,7 +44,10 @@ class Player extends Component {
           }
         }
         else if (e.keyCode === 38) {
-          if ( !this.props.gameStarted ) { this.props.signalStartGame() }
+          if ( !this.props.gameStarted ) {
+            console.log("SIGNAL GAME START")
+            this.props.signalStartGame()
+          }
           this.props.moveUp()
         }
         else if (e.keyCode === 39 && this.props.player.xPosition < this.props.canvas.width ) {

@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { canvasWidth, canvasHeight, heightOfMap } from '../setupData'
+import { canvasWidth, canvasHeight, heightOfMap, movementPerMap, percentageDivisionOnMap } from '../setupData'
 
 class Map extends Component {
   previousFirstMarker = 0
@@ -25,11 +25,11 @@ class Map extends Component {
     ctx.stroke()
     ctx.closePath()
 
-    const percentOf5000 = this.props.movement % 5000
-    const lapsOf5000 = Math.trunc(this.props.movement / 5000)
+    const percentOfMap = this.props.movement % movementPerMap
+    const lapsOf5000 = Math.trunc(this.props.movement / movementPerMap)
 
     const lengthOfMap = (endOfMap - startOfMap)
-    const pixelLengthOfCurrentProgress = (percentOf5000*lengthOfMap) / 5000
+    const pixelLengthOfCurrentProgress = (percentOfMap*lengthOfMap) / movementPerMap
     ctx.beginPath()
     ctx.moveTo(startOfMap, yPositionOfMap)
     ctx.lineTo(startOfMap + pixelLengthOfCurrentProgress, yPositionOfMap)
@@ -38,17 +38,17 @@ class Map extends Component {
     ctx.stroke()
     ctx.closePath()
 
-    for ( let percent = 0.0; percent <= 1.0; percent += 0.20) {
+    for ( let percent = 0.0; percent <= 1.0; percent += percentageDivisionOnMap) {
       ctx.beginPath()
       ctx.arc(startOfMap + (percent * lengthOfMap), yPositionOfMap, 10, 0, 2 * Math.PI)
-      ctx.fillStyle = percentOf5000 > (percent * 5000) ? "red" : "white"
+      ctx.fillStyle = percentOfMap > (percent * movementPerMap) ? "red" : "white"
       ctx.fill()
       ctx.closePath()
 
       ctx.textAlign = 'center'
       ctx.font = "20px Geneva"
       ctx.fillStyle = "white"
-      ctx.fillText(`${Math.trunc((lapsOf5000 * 5000) + percent * 5000)}`, startOfMap + (percent * lengthOfMap), yPositionOfMap + 40)
+      ctx.fillText(`${Math.trunc((lapsOf5000 * movementPerMap) + percent * movementPerMap)}`, startOfMap + (percent * lengthOfMap), yPositionOfMap + 40)
     }
 
     ctx.strokeStyle = '#000000'
