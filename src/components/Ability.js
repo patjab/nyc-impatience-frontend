@@ -4,69 +4,66 @@ import { canvasWidth, statusBarHeight, loudnessRechargeInSeconds, maximumSeconds
 import { activeMegaphone, inactiveMegaphone, activeRunning, inactiveRunning, redRunning, activeSnow, inactiveSnow } from '../images'
 
 class Ability extends Component {
-  drawYellStatus = (ctx) => {
+  clearAbilityBackground = (ctx) => {
     ctx.clearRect(0, 0, canvasWidth*0.30, statusBarHeight)
     ctx.fillStyle = 'black'
     ctx.fillRect(0, 0, canvasWidth*0.30, statusBarHeight)
+  }
 
+  drawUpdatedImagesAndTimers = (ctx, shoutIcon, timePassedYell, readyForYelling, runningIcon, timePassedRun, readyForRunning) => {
     ctx.textAlign = 'center'
     ctx.font = "20px Geneva"
     ctx.fillStyle = "white"
     ctx.fillText(`Abilities`, (canvasWidth*0.30)/2, 30)
 
-    const shoutIcon = new Image()
-    const timePassedYell = Math.round((this.props.time/1000) - this.props.timeOfYell)
-    const readyForYelling = timePassedYell > loudnessRechargeInSeconds
-    shoutIcon.src = readyForYelling ? activeMegaphone : inactiveMegaphone
-
-
-    shoutIcon.onload = () => {
-      ctx.drawImage(shoutIcon, (canvasWidth*0.30)*0.28, 35, 40, 40)
-      if ( !readyForYelling && timePassedYell > 0) {
-        ctx.font = "25px Impact"
-        ctx.textAlign = 'center'
-        ctx.fillStyle = "red"
-        ctx.fillText(loudnessRechargeInSeconds - timePassedYell, (canvasWidth*0.30)*0.42, 85)
-      }
+    ctx.drawImage(shoutIcon, (canvasWidth*0.30)*0.28, 35, 40, 40)
+    if ( !readyForYelling && timePassedYell > 0) {
+      ctx.font = "25px Impact"
+      ctx.textAlign = 'center'
+      ctx.fillStyle = "red"
+      ctx.fillText(loudnessRechargeInSeconds - timePassedYell, (canvasWidth*0.30)*0.42, 85)
     }
 
+    ctx.drawImage(runningIcon, (canvasWidth*0.30)*0.53, 35, 40, 40)
+    if ( !readyForRunning && this.props.speed === walking ) {
+      ctx.font = "25px Impact"
+      ctx.textAlign = 'center'
+      ctx.fillStyle = "red"
+      ctx.fillText(maximumSecondsOfRecharge - timePassedRun, (canvasWidth*0.30)*0.70, 85)
+    }
+  }
 
-    const runningIcon = new Image()
+  componentDidMount() {
+    if (this.props.canvas) {
+      const ctx = this.props.canvas.getContext("2d")
+      this.clearAbilityBackground(ctx)
+    }
+  }
+
+  componentDidUpdate() {
+    const ctx = this.props.canvas.getContext("2d")
+
+    const timePassedYell = Math.round((this.props.time/1000) - this.props.timeOfYell)
     const timePassedRun = Math.round((this.props.time/1000) - this.props.timeOfRun)
+
+    const readyForYelling = timePassedYell > loudnessRechargeInSeconds
     const readyForRunning = timePassedRun >= maximumSecondsOfRecharge
 
+    const shoutIcon = new Image()
+    shoutIcon.src = readyForYelling ? activeMegaphone : inactiveMegaphone
 
-    if ( readyForRunning ) {
-      runningIcon.src = activeRunning
-    } else if ( !readyForRunning && this.props.speed === 2 * walking ) {
-      runningIcon.src = redRunning
-    } else {
-      runningIcon.src = inactiveRunning
-    }
+    const runningIcon = new Image()
+    runningIcon.src = readyForRunning ? activeRunning : ( this.props.speed === 2 * walking ? redRunning : inactiveRunning )
 
-    runningIcon.onload = () => {
-      ctx.drawImage(runningIcon, (canvasWidth*0.30)*0.53, 35, 40, 40)
-      if ( !readyForRunning && this.props.speed === walking ) {
-        ctx.font = "25px Impact"
-        ctx.textAlign = 'center'
-        ctx.fillStyle = "red"
-        ctx.fillText(maximumSecondsOfRecharge - timePassedRun, (canvasWidth*0.30)*0.70, 85)
+    shoutIcon.onload = () => {
+      runningIcon.onload = () => {
+        this.clearAbilityBackground(ctx)
+        this.drawUpdatedImagesAndTimers(ctx, shoutIcon, timePassedYell, readyForYelling, runningIcon, timePassedRun, readyForRunning)
       }
     }
-
-    // const snowIcon = new Image()
-    // snowIcon.src = this.props.snowAbilityList.filter(record => record.used === false).length > 0 ? activeSnow : inactiveSnow
-    //
-    // snowIcon.onload = () => {
-    //   ctx.drawImage(snowIcon, (canvasWidth*0.30)*0.65, 35, 40, 40)
-    // }
   }
 
   render() {
-    const ctx = this.props.canvas ? this.props.canvas.getContext("2d") : null
-    if (ctx) {
-      this.drawYellStatus(ctx)
-    }
     return <Fragment></Fragment>
   }
 }
