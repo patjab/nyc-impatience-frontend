@@ -18,18 +18,32 @@ class Ability extends Component {
 
     ctx.drawImage(shoutIcon, (canvasWidth*0.30)*0.28, 35, 40, 40)
     if ( !readyForYelling && timePassedYell > 0) {
-      ctx.font = "25px Impact"
-      ctx.textAlign = 'center'
+
+      ctx.beginPath()
+      ctx.arc((canvasWidth*0.30)*0.42, 70, 15, 0, 2 * Math.PI)
       ctx.fillStyle = "red"
-      ctx.fillText(loudnessRechargeInSeconds - timePassedYell, (canvasWidth*0.30)*0.42, 85)
+      ctx.fill()
+      ctx.closePath()
+
+      ctx.font = "20px Impact"
+      ctx.textAlign = 'center'
+      ctx.fillStyle = "white"
+      ctx.fillText(loudnessRechargeInSeconds - timePassedYell, (canvasWidth*0.30)*0.42, 78)
+
     }
 
     ctx.drawImage(runningIcon, (canvasWidth*0.30)*0.53, 35, 40, 40)
     if ( !readyForRunning && this.props.speed === walking ) {
-      ctx.font = "25px Impact"
-      ctx.textAlign = 'center'
+      ctx.beginPath()
+      ctx.arc((canvasWidth*0.30)*0.70, 70, 15, 0, 2 * Math.PI)
       ctx.fillStyle = "red"
-      ctx.fillText(maximumSecondsOfRecharge - timePassedRun, (canvasWidth*0.30)*0.70, 85)
+      ctx.fill()
+      ctx.closePath()
+
+      ctx.font = "20px Impact"
+      ctx.textAlign = 'center'
+      ctx.fillStyle = "white"
+      ctx.fillText(maximumSecondsOfRecharge - timePassedRun, (canvasWidth*0.30)*0.70, 78)
     }
   }
 
@@ -72,11 +86,11 @@ const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
     playerYelled: state.playerYelled,
-    snowAbilityList: state.snowAbilityList,
     time: state.time,
     timeOfYell: state.timeOfYell,
     timeOfRun: state.timeOfRun,
-    speed: state.speed
+    speed: state.speed,
+    movement: state.movement
   }
 }
 

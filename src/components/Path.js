@@ -21,9 +21,11 @@ class Path extends Component {
   }
 
   drawPathBackground = (ctx) => {
+    ctx.beginPath()
     ctx.rect(0, horizonLine, canvasWidth, canvasHeight)
     ctx.fillStyle = brickColor
     ctx.fill()
+    ctx.beginPath()
   }
 
   findAngle = () => {
@@ -138,6 +140,8 @@ class Path extends Component {
     ctx.closePath()
     ctx.stroke()
     ctx.fill()
+    // Added
+    ctx.closePath()
 
     ctx.fillStyle = this.determineSideWeatherColors()
     ctx.beginPath()
@@ -207,6 +211,8 @@ class Path extends Component {
     ctx.closePath()
     ctx.fillStyle = this.determineSideWeatherColors()
     ctx.fill()
+    // Added
+    ctx.closePath()
   }
 
   drawLeftPathBorder = (ctx) => {
@@ -215,6 +221,8 @@ class Path extends Component {
     ctx.lineTo(canvasWidth/2, horizonLine)
     ctx.strokeStyle = brickBorderColor
     ctx.stroke()
+    // Added
+    ctx.closePath()
   }
 
   render() {
