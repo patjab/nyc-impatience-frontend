@@ -31,10 +31,15 @@ class Map extends Component {
     ctx.closePath()
 
     if ( timeLeftForBonus > 27 && (lastRecBonusTime - penultimateRecBonusTime < movingQuicklySecondsRequirement ) ) {
+      if ( timeLeftForBonus > 29 ) {
+        this.refs.bonusAwardedMusic.play()
+      }
+      
       ctx.font = "50px Geneva"
       ctx.fillStyle = "yellow"
       ctx.textAlign = 'center'
       ctx.fillText(`BONUS AWARDED`, canvasWidth/2, canvasHeight - (heightOfMap/2))
+
     } else {
         ctx.beginPath()
         ctx.moveTo(startOfMap, yPositionOfMap)
@@ -96,7 +101,7 @@ class Map extends Component {
   }
 
   render() {
-    return <Fragment></Fragment>
+    return <audio src='../bonusAwarded.mp3' ref='bonusAwardedMusic' />
   }
 }
 
