@@ -22,6 +22,26 @@ class Player extends Component {
     changeInDirectionCounter: 0
   }
 
+  handleRunning = (e) => {
+    const timePassedSinceRun = (this.props.time/1000) - this.props.timeOfRun
+    if ( timePassedSinceRun > maximumSecondsOfRecharge  ) {
+      this.props.recordTimeOfRun(this.props.time/1000)
+      this.props.changeSpeed(2 * walking)
+      setTimeout(() => {
+        this.props.changeSpeed(walking)
+      }, maximumSecondsOfRunning * 1000)
+    }
+
+    window.addEventListener('keyup', this.runningRelease)
+  }
+
+  runningRelease = (e) => {
+    if (e.key === 's') {
+      this.props.changeSpeed(walking)
+      window.removeEventListener('keyup', this.runningRelease)
+    }
+  }
+
   handleWalking = (e) => {
     if (!this.props.gameOver) {
       this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
@@ -42,7 +62,6 @@ class Player extends Component {
         }
         else if (e.keyCode === 38) {
           if ( !this.props.gameStarted ) {
-            console.log("SIGNAL GAME START")
             this.props.signalStartGame()
           }
           this.props.moveUp()
@@ -53,25 +72,9 @@ class Player extends Component {
           }
         }
         else if (e.keyCode === 40 && this.props.movement > 0 ) { this.props.moveDown() }
+        else if (e.key === 's') { this.handleRunning(e) }
+        else if (e.key === 'd') { this.winterMode() }
 
-        else if (e.key === 's') {
-
-          const timePassedSinceRun = (this.props.time/1000) - this.props.timeOfRun
-
-          if ( this.props.speed === walking && timePassedSinceRun > maximumSecondsOfRecharge  ) {
-            this.props.recordTimeOfRun(this.props.time/1000)
-            this.props.changeSpeed(2 * walking)
-            setTimeout(() => {
-              this.props.changeSpeed(walking)
-            }, maximumSecondsOfRunning * 1000)
-          } else if ( this.props.speed === 2 * walking && timePassedSinceRun < maximumSecondsOfRecharge ) {
-            this.props.changeSpeed(walking)
-          }
-        }
-
-        else if (e.key === 'd') {
-          this.winterMode()
-        }
         this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
       }
 
@@ -153,6 +156,8 @@ class Player extends Component {
     window.addEventListener('keydown', this.handleWalking)
     this.syntheticListenerForRelease()
     window.addEventListener('keyup', this.releaseCriteria)
+
+    window.addEventListener('keyup', this.runningRelease)
 
     this.refs.playerImg.onload = () => {
       const ctx = this.props.canvas.getContext("2d")
