@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
 import { movePlayer, changeSpeed, addToChangeInDirection, modifyPatience,
@@ -22,13 +22,23 @@ class Player extends Component {
     changeInDirectionCounter: 0
   }
 
+
+
   handleRunning = (e) => {
     const timePassedSinceRun = (this.props.time/1000) - this.props.timeOfRun
     if ( timePassedSinceRun > maximumSecondsOfRecharge  ) {
       this.props.recordTimeOfRun(this.props.time/1000)
+
       this.props.changeSpeed(2 * walking)
+      this.props.backgroundMusic.pause()
+      this.refs.runSoundEffectMusic.currentTime = 0
+      this.refs.runSoundEffectMusic.play()
+
       setTimeout(() => {
         this.props.changeSpeed(walking)
+        this.refs.runSoundEffectMusic.pause()
+        this.props.backgroundMusic.play()
+
       }, maximumSecondsOfRunning * 1000)
     }
 
@@ -38,6 +48,9 @@ class Player extends Component {
   runningRelease = (e) => {
     if (e.key === 's') {
       this.props.changeSpeed(walking)
+      this.refs.runSoundEffectMusic.pause()
+      this.props.backgroundMusic.play()
+
       window.removeEventListener('keyup', this.runningRelease)
     }
   }
@@ -204,7 +217,10 @@ class Player extends Component {
   render() {
     const currentImageSrc = this.state.walkingCollection[this.state.walkingCycle]
     return (
-      <img src={currentImageSrc} ref='playerImg' className='hidden' alt='player'/>
+      <Fragment>
+        <audio src='../runSoundEffect.mp3' ref='runSoundEffectMusic' />
+        <img src={currentImageSrc} ref='playerImg' className='hidden' alt='player'/>
+      </Fragment>
     )
   }
 }
