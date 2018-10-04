@@ -50,7 +50,7 @@ class Player extends Component {
       this.props.changeSpeed(walking)
       this.refs.runSoundEffectMusic.pause()
       this.props.backgroundMusic.play()
-
+      
       window.removeEventListener('keyup', this.runningRelease)
     }
   }
@@ -208,6 +208,7 @@ class Player extends Component {
   componentWillUnmount() {
     window.removeEventListener('keydown', this.handleWalking)
     window.removeEventListener('keyup', this.releaseCriteria)
+    window.removeEventListener('keyup', this.runningRelease)
     clearInterval(this.syntheticInterval)
     for (let i = 0; i <= this.highestImpatientInterval; i++) {
       clearInterval(i)
