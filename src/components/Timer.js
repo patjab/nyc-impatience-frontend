@@ -47,7 +47,9 @@ class Timer extends Component {
     if ( e.key === 'ArrowUp' ) {
       this.setState({startTime: new Date()}, () => {
         setInterval(() => {
-          this.props.incrementTime((new Date() - this.state.startTime))
+          if ( !this.props.isPaused ) {
+            this.props.incrementTime((new Date() - this.state.startTime) - this.props.totalPausedTime)
+          }
         }, 1000)
 
         window.removeEventListener('keydown', this.incrementTime)
@@ -96,7 +98,9 @@ const mapStateToProps = (state) => {
     streak: state.streak,
     patience: state.patience,
     playerYelled: state.playerYelled,
-    time: state.time
+    time: state.time,
+    totalPausedTime: state.totalPausedTime,
+    isPaused: state.isPaused
   }
 }
 
