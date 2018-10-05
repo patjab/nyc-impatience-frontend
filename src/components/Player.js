@@ -56,9 +56,8 @@ class Player extends Component {
   }
 
   handleWalking = (e) => {
-    if (!this.props.gameOver) {
+    if (!this.props.gameOver && !this.props.isPaused) {
       this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
-      // this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
 
       // REMEMBER TO FIX - MAKE SURE FUNCTION ONLY CHANGES STATE IN RESPONSE TO ARROW KEYS AND NOTHING ELSE
       this.stillHoldingUp = e.keyCode === 38 ? true : false
@@ -87,7 +86,6 @@ class Player extends Component {
         else if (e.keyCode === 40 && this.props.movement > 0 ) { this.props.moveDown() }
         else if (e.key === 's' && this.props.gameStarted ) { this.handleRunning(e) }
         else if (e.key === 'd' && this.props.gameStarted ) { this.winterMode() }
-
 
         if (e.keyCode > 36 && e.keyCode < 41) {
           this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
@@ -122,10 +120,10 @@ class Player extends Component {
   }
 
   syntheticListenerForRelease = () => {
-    if (!this.props.gameOver) {
+    if (!this.props.gameOver && !this.props.isPaused) {
       const syntheticConstant = 40
       this.syntheticInterval = setInterval(() => {
-        if (!this.props.bumpingShake && this.goodForMultipleUps && this.diagonalMapSimultaneous[38] ) {
+        if (!this.props.bumpingShake && this.goodForMultipleUps && this.diagonalMapSimultaneous[38] && !this.props.isPaused) {
           this.props.moveUp()
           this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
         }
@@ -153,7 +151,7 @@ class Player extends Component {
       }, 2000)
       this.highestImpatientInterval = impatientWait
 
-      if (!this.props.gameOver) {
+      if (!this.props.gameOver && !this.props.isPaused) {
         this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
         this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
         this.stillHoldingUp = e.key !== 'ArrowUp'
@@ -245,6 +243,7 @@ const mapStateToProps = (state) => {
     snowAbilityList: state.snowAbilityList,
     weather: state.weather,
     timeOfRun: state.timeOfRun,
+    isPaused: state.isPaused,
     time: state.time // FIX - find a more efficient way of rendering independent of state.time since time is only used for recording, but not rendering (maybe shouldComponentUpdate)
   }
 }

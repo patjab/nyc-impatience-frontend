@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { touristDensity } from '../setupData'
+import { changePauseStatus } from '../actions'
 
 import Tourist from './Tourist'
 import Timer from './Timer'
@@ -22,6 +23,14 @@ class GamePlayScreen extends Component {
     return tourists
   }
 
+  componentDidMount() {
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'q') {
+        this.props.changePauseStatus()
+      }
+    })
+  }
+
   render() {
     return (
       <Fragment>
@@ -41,4 +50,10 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(GamePlayScreen)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    changePauseStatus: () => dispatch(changePauseStatus())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(GamePlayScreen)

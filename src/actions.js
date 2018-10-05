@@ -249,3 +249,9 @@ export const recordTimeOfRun = (time) => {
     payload: time
   }
 }
+
+export const changePauseStatus = () => {
+  return {
+    type: "CHANGE_PAUSE_STATUS"
+  }
+}

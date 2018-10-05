@@ -47,7 +47,8 @@ const initialState = {
   snowMusic: null,
   snowAbilityList: [{movement: 0, used: true}],
   timeOfYell: -2*loudnessRechargeInSeconds,
-  timeOfRun: -2*maximumSecondsOfRecharge
+  timeOfRun: -2*maximumSecondsOfRecharge,
+  isPaused: false
 }
 
 const gameController = (state = initialState, action) => {
@@ -190,7 +191,7 @@ const gameController = (state = initialState, action) => {
     case "MODIFY_PATIENCE":
       return {
         ...state,
-        patience: state.patience + action.payload > 0 ? (state.patience + action.payload > initialPatience ? initialPatience : (state.patience + action.payload)) : 0
+        patience: state.patience + action.payload > 0 ? ( state.patience + action.payload > initialPatience ? initialPatience : ( state.isPaused ? state.patience : (state.patience + action.payload))) : 0
       }
     case "SIGNAL_DONE_RECORDING":
       return {
@@ -252,6 +253,11 @@ const gameController = (state = initialState, action) => {
           {movement: unusedList[0].movement, used: true},
           ...unusedList.slice(1)
         ]
+      }
+    case "CHANGE_PAUSE_STATUS":
+      return {
+        ...state,
+        isPaused: !state.isPaused
       }
     case "RESET_ALL_STATE":
       return {
