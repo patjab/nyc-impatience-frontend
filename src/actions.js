@@ -71,12 +71,6 @@ export const resetPlayer = () => {
   }
 }
 
-export const exitStartScreen = () => {
-  return {
-    type: "EXIT_START_SCREEN"
-  }
-}
-
 export const recordStreak = (streak) => {
   return {
     type: "RECORD_STREAK",

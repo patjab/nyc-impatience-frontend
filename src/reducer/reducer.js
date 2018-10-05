@@ -13,7 +13,6 @@ const initialState = {
   garbageOfTourists: [],
   touristRoaster: [],
   streak: [],
-  startScreenPresent: true,
   stage: 0,
   pathUpdater: 0,
   playerUpdater: 0,
@@ -50,7 +49,6 @@ const initialState = {
   timeOfRun: -2*maximumSecondsOfRecharge,
   isPaused: false,
   timePaused: null,
-  // timeUnpaused: null,
   totalPausedTime: null
 }
 
@@ -112,11 +110,6 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         disabled: true
-      }
-    case "EXIT_START_SCREEN":
-      return {
-        ...state,
-        startScreenPresent: false
       }
     case "RECORD_STREAK":
       return {
@@ -262,7 +255,6 @@ const gameController = (state = initialState, action) => {
         ...state,
         isPaused: !state.isPaused,
         timePaused: !state.isPaused ? new Date() : state.timePaused,
-        // timeUnpaused: state.isPaused ? new Date() : state.timeUnpaused,
         totalPausedTime: state.isPaused ? state.totalPausedTime + (new Date() - state.timePaused) : state.totalPausedTime
       }
     case "RESET_ALL_STATE":

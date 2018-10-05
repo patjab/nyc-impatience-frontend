@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { touristDensity } from '../setupData'
-import { changePauseStatus } from '../actions'
+import { changePauseStatus, changeCurrentScreen, resetAllState } from '../actions'
 
 import Tourist from './Tourist'
 import Timer from './Timer'
@@ -23,17 +23,32 @@ class GamePlayScreen extends Component {
     return tourists
   }
 
-  componentDidMount() {
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'q') {
-        if (this.props.isPaused) {
-          this.props.backgroundMusic.play()
-        } else {
-          this.props.backgroundMusic.pause()
-        }
-        this.props.changePauseStatus()
+  handlePause = (e) => {
+    if (e.key === 'q') {
+      if (this.props.isPaused) {
+        window.removeEventListener('keydown', this.handleExitAfterPause)
+        this.props.backgroundMusic.play()
+      } else {
+        window.addEventListener('keydown', this.handleExitAfterPause)
+        this.props.backgroundMusic.pause()
       }
-    })
+      this.props.changePauseStatus()
+    }
+  }
+
+  handleExitAfterPause = (e) => {
+    if (e.key === 'w') {
+      this.props.changeCurrentScreen("start")
+      this.props.resetAllState()
+    }
+  }
+
+  componentDidMount() {
+    window.addEventListener('keydown', this.handlePause)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.handlePause)
   }
 
   render() {
@@ -59,7 +74,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    changePauseStatus: () => dispatch(changePauseStatus())
+    changePauseStatus: () => dispatch(changePauseStatus()),
+    changeCurrentScreen: (screen) => dispatch(changeCurrentScreen(screen)),
+    resetAllState: () => dispatch(resetAllState())
   }
 }
 
