@@ -26,6 +26,11 @@ class GamePlayScreen extends Component {
   componentDidMount() {
     window.addEventListener('keydown', (e) => {
       if (e.key === 'q') {
+        if (this.props.isPaused) {
+          this.props.backgroundMusic.play()
+        } else {
+          this.props.backgroundMusic.pause()
+        }
         this.props.changePauseStatus()
       }
     })
@@ -46,7 +51,9 @@ class GamePlayScreen extends Component {
 const mapStateToProps = (state) => {
   return {
     garbageOfTourists: state.garbageOfTourists,
-    stage: state.stage
+    stage: state.stage,
+    backgroundMusic: state.backgroundMusic,
+    isPaused: state.isPaused
   }
 }
 
