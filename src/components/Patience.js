@@ -47,6 +47,10 @@ class Patience extends Component {
     } else {
       ctx.fillStyle = "red"
       this.refs.lowPatienceSound.play()
+
+      if ( this.props.isPaused ) {
+        this.refs.lowPatienceSound.pause()
+      } 
     }
 
     ctx.fillRect(250, 40, this.props.patience, 30)
@@ -63,7 +67,8 @@ class Patience extends Component {
 const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
-    patience: state.patience
+    patience: state.patience,
+    isPaused: state.isPaused
   }
 }
 
