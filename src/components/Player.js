@@ -161,6 +161,8 @@ class Player extends Component {
         } else if (!this.props.bumpingShake && e.key === 'ArrowUp') {
           this.goodForMultipleUps = false
         }
+      } else if (this.props.isPaused) {
+        this.goodForMultipleUps = false
       }
 
     }
