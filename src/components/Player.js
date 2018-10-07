@@ -57,6 +57,12 @@ class Player extends Component {
   }
 
   handleWalking = (e) => {
+    if ( this.props.isPaused ) {
+      this.diagonalMapSimultaneous[37] = false
+      this.diagonalMapSimultaneous[38] = false
+      this.diagonalMapSimultaneous[39] = false
+    }
+
     if (!this.props.gameOver && !this.props.isPaused) {
       this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
 
@@ -173,8 +179,6 @@ class Player extends Component {
     window.addEventListener('keydown', this.handleWalking)
     this.syntheticListenerForRelease()
     window.addEventListener('keyup', this.releaseCriteria)
-
-    // window.addEventListener('keyup', this.runningRelease)
 
     this.refs.playerImg.onload = () => {
       const ctx = this.props.canvas.getContext("2d")
