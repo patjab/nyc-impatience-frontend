@@ -35,10 +35,11 @@ class Player extends Component {
       this.refs.runSoundEffectMusic.play()
 
       setTimeout(() => {
-        this.props.changeSpeed(walking)
-        this.refs.runSoundEffectMusic.pause()
-        this.props.backgroundMusic.play()
-
+        if (this.refs.runSoundEffectMusic) {
+          this.props.changeSpeed(walking)
+          this.refs.runSoundEffectMusic.pause()
+          this.props.backgroundMusic.play()
+        }
       }, maximumSecondsOfRunning * 1000)
     }
 
