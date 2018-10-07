@@ -57,6 +57,7 @@ class Player extends Component {
   }
 
   handleWalking = (e) => {
+    // Fixed the release problem after pausing that caused release to never occur
     if ( this.props.isPaused ) {
       this.diagonalMapSimultaneous[37] = false
       this.diagonalMapSimultaneous[38] = false

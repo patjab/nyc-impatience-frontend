@@ -76,6 +76,7 @@ class GamePlayScreen extends Component {
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.handlePause)
+    window.removeEventListener('keydown', this.handleExitAfterPause)
   }
 
   render() {
