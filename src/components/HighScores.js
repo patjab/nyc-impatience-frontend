@@ -25,6 +25,8 @@ class HighScores extends Component {
       ctx.drawImage(loadingImg, (canvasWidth/2) - (680/2), canvasHeight/2 - 170, 680, 170)
     }
 
+    window.addEventListener('keydown', this.switchToMainScreen)
+
     getHighScores()
     .then(allScores => allScores.sort((score1, score2) => score2.distance - score1.distance))
     .then(sortedScores => sortedScores.slice(0, numberOfHighScoresToDisplay))
@@ -82,18 +84,17 @@ class HighScores extends Component {
       ctx.textAlign = 'right'
       ctx.fillText("[ESC] for Main Screen", canvasWidth-100, canvasHeight-100)
 
-      window.addEventListener('keydown', this.switchToMainScreen)
     }
   }
 
   switchToMainScreen = (e) => {
     if (e.keyCode === 27) {
       this.props.changeCurrentScreen("start")
+      this.props.resetAllState()
     }
   }
 
   componentWillUnmount() {
-    this.props.resetAllState()
     window.removeEventListener('keydown', this.switchToMainScreen)
   }
 

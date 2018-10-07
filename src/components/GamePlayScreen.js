@@ -31,7 +31,7 @@ class GamePlayScreen extends Component {
   }
 
   handlePause = (e) => {
-    if (e.key === 'q') {
+    if (e.keyCode === 27) {
       if (this.props.isPaused) {
         window.removeEventListener('keydown', this.handleExitAfterPause)
         this.props.backgroundMusic.play()
@@ -39,15 +39,22 @@ class GamePlayScreen extends Component {
       } else {
         const ctx = this.props.canvas.getContext("2d")
         ctx.beginPath()
-        ctx.fillStyle = 'black'
-        ctx.fillRect(50, canvasHeight/2 - 75, canvasWidth - 100, 100)
+        ctx.fillStyle = 'maroon'
+        ctx.fillRect(50, canvasHeight/2 - 75 - 200, canvasWidth - 100, 150)
         ctx.closePath()
 
         ctx.textAlign = 'center'
         ctx.fillStyle = 'white'
-        ctx.font = "60px Geneva"
+        ctx.font = "50px Geneva"
 
-        ctx.fillText(`PAUSED`, canvasWidth/2, canvasHeight/2)
+        ctx.fillText(`PAUSED`, canvasWidth/2, canvasHeight/2 - 200)
+
+
+        ctx.textAlign = 'center'
+        ctx.fillStyle = 'white'
+        ctx.font = "20px Geneva"
+
+        ctx.fillText(`Press q to exit`, canvasWidth/2, canvasHeight/2 - 200 + 40)
 
         window.addEventListener('keydown', this.handleExitAfterPause)
         this.props.backgroundMusic.pause()
@@ -57,7 +64,7 @@ class GamePlayScreen extends Component {
   }
 
   handleExitAfterPause = (e) => {
-    if (e.key === 'w') {
+    if (e.key === 'q') {
       this.props.changeCurrentScreen("start")
       this.props.resetAllState()
     }
