@@ -22,36 +22,33 @@ class Player extends Component {
     changeInDirectionCounter: 0
   }
 
+  setBackToWalking = () => {
+    if (this.refs.runSoundEffectMusic) {
+      this.props.changeSpeed(walking)
+      this.refs.runSoundEffectMusic.pause()
+      if ( !this.props.isPaused ) {
+        this.props.backgroundMusic.play()
+      }
+    }
+  }
 
 
   handleRunning = (e) => {
     const timePassedSinceRun = (this.props.time/1000) - this.props.timeOfRun
     if ( timePassedSinceRun > maximumSecondsOfRecharge  ) {
       this.props.recordTimeOfRun(this.props.time/1000)
-
       this.props.changeSpeed(2 * walking)
       this.props.backgroundMusic.pause()
       this.refs.runSoundEffectMusic.currentTime = 0
       this.refs.runSoundEffectMusic.play()
-
-      setTimeout(() => {
-        if (this.refs.runSoundEffectMusic) {
-          this.props.changeSpeed(walking)
-          this.refs.runSoundEffectMusic.pause()
-          this.props.backgroundMusic.play()
-        }
-      }, maximumSecondsOfRunning * 1000)
+      setTimeout(this.setBackToWalking, maximumSecondsOfRunning * 1000)
     }
-
     window.addEventListener('keyup', this.runningRelease)
   }
 
   runningRelease = (e) => {
     if (e.key === 's') {
-      this.props.changeSpeed(walking)
-      this.refs.runSoundEffectMusic.pause()
-      this.props.backgroundMusic.play()
-
+      this.setBackToWalking()
       window.removeEventListener('keyup', this.runningRelease)
     }
   }
