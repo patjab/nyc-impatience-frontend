@@ -110,18 +110,27 @@ const Tourist = class extends Component {
     }
   }
 
+  takeAPictureOfCollision = () => {
+    const quality = 1
+    const snapshot = this.props.canvas.toDataURL("image/jpeg", quality)
+    this.props.addToBumpedImages(snapshot)
+  }
+
   runBumpAnimations = () => {
     if (!this.props.gameOver) {
       this.props.toggleBumpingShake()
 
+      setTimeout(this.takeAPictureOfCollision, 10)
+
       setTimeout(()=>{
         if (!this.props.gameOver) {
           this.props.toggleBumpingShake()
-          const quality = 1
-          const snapshot = this.props.canvas.toDataURL("image/jpeg", quality)
-          this.props.addToBumpedImages(snapshot)
+          // this.takeAPictureOfCollision()
           this.props.changeMovementAbility(false)
         }
+        // if (this.props.isPaused) {
+        //   this.props.forcePauseUpdate()
+        // }
       }, 1000)
 
       if (!this.refs.bumpSoundEl.paused) {
