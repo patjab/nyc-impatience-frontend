@@ -39,6 +39,7 @@ class GamePlayScreen extends Component {
       } else {
         window.addEventListener('keydown', this.handleExitAfterPause)
         this.props.backgroundMusic.pause()
+        this.props.runningMusic.pause()
       }
       this.renderEnvironmentWithOngoingAnimation()
       this.props.changePauseStatus()
@@ -81,7 +82,8 @@ const mapStateToProps = (state) => {
     stage: state.stage,
     backgroundMusic: state.backgroundMusic,
     isPaused: state.isPaused,
-    touristRoaster: state.touristRoaster
+    touristRoaster: state.touristRoaster,
+    runningMusic: state.runningMusic
   }
 }
 

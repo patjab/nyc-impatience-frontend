@@ -209,6 +209,13 @@ export const setBackgroundMusicRef = (musicRef) => {
   }
 }
 
+export const setRunningMusicRef = (musicRef) => {
+  return {
+    type: "SET_RUNNING_MUSIC_REF",
+    payload: musicRef
+  }
+}
+
 export const setSnowMusicRef = (musicRef) => {
   return {
     type: "SET_SNOW_MUSIC_REF",

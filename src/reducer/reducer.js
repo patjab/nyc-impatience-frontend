@@ -44,6 +44,7 @@ const initialState = {
   recordForBonus: [{movement: 0, time: 0}],
   weather: "SUNNY",
   backgroundMusic: null,
+  runningMusic: null, 
   snowMusic: null,
   snowAbilityList: [{movement: 0, used: true}],
   timeOfYell: -2*loudnessRechargeInSeconds,
@@ -229,6 +230,11 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         backgroundMusic: action.payload
+      }
+    case "SET_RUNNING_MUSIC_REF":
+      return {
+        ...state,
+        runningMusic: action.payload
       }
     case "SET_SNOW_MUSIC_REF":
       return {

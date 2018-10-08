@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { movePlayer, changeSpeed, addToChangeInDirection, modifyPatience,
   signalStartGame, recordForBonus, addToSnowAbilityList,
-  useSnowAbility, changeWeather, recordTimeOfRun } from '../actions'
+  useSnowAbility, changeWeather, recordTimeOfRun, setRunningMusicRef } from '../actions'
 import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth,
   releaseCriteriaImpatience, waitingImpatience, movingQuicklyPatience,
   movingQuicklySecondsRequirement, walking, maximumSecondsOfRunning,
@@ -178,6 +178,8 @@ class Player extends Component {
     this.syntheticListenerForRelease()
     window.addEventListener('keyup', this.releaseCriteria)
 
+    this.props.setRunningMusicRef(this.refs.runSoundEffectMusic)
+
     this.refs.playerImg.onload = () => {
       const ctx = this.props.canvas.getContext("2d")
 
@@ -269,7 +271,8 @@ const mapDispatchToProps = (dispatch) => {
     useSnowAbility: () => dispatch(useSnowAbility()),
     changeWeather: (weather) => dispatch(changeWeather(weather)),
     addToChangeInDirection: () => dispatch(addToChangeInDirection()),
-    recordTimeOfRun: (time) => dispatch(recordTimeOfRun(time))
+    recordTimeOfRun: (time) => dispatch(recordTimeOfRun(time)),
+    setRunningMusicRef: (musicRef) => dispatch(setRunningMusicRef(musicRef))
   }
 }
 
