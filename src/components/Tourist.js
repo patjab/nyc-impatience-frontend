@@ -2,11 +2,11 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
 import { initialPlayerSize, canvasHeight, rendingTouristRowsPercentage,
-  touristRunningMilliseconds, collidedImpatience, heightOfMap, startTouristMovementAtDistance, yNearnessSpook } from '../setupData'
+  touristRunningMilliseconds, collidedImpatience, heightOfMap, startTouristMovementAtDistance, yNearnessSpook, canvasWidth } from '../setupData'
 import { tourist1, tourist2, tourist3 } from '../images'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, recordStreak, forcePathPlayerMapUpdate,
-  changeMovementAbility, toggleBumpingShake, addToBumpedImages, modifyPatience, forcePathUpdate } from '../actions'
+  changeMovementAbility, toggleBumpingShake, addToBumpedImages, modifyPatience, forcePathUpdate, forcePauseUpdate } from '../actions'
 import { howBigShouldIBe } from '../AuxiliaryMath'
 
 const Tourist = class extends Component {
@@ -53,10 +53,10 @@ const Tourist = class extends Component {
 
   renderEnvironmentWithOngoingAnimation = () => {
     for ( let tourist of this.props.touristRoaster ) {
-      tourist.setState({touristUpdater: tourist.state.touristUpdater+1})
+      tourist.setState({touristUpdater: tourist.state.touristUpdater+1}, this.props.forcePauseUpdate)
     }
     this.props.forcePathPlayerMapUpdate()
-    this.setState({touristUpdater: this.state.touristUpdater+1})
+    this.setState({touristUpdater: this.state.touristUpdater+1}, this.props.forcePauseUpdate)
   }
 
   runningAnimation = () => {
@@ -239,7 +239,8 @@ const mapDispatchToProps = (dispatch) => {
     toggleBumpingShake: () => dispatch(toggleBumpingShake()),
     addToBumpedImages: (image) => dispatch(addToBumpedImages(image)),
     modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
-    forcePathUpdate: () => dispatch(forcePathUpdate())
+    forcePathUpdate: () => dispatch(forcePathUpdate()),
+    forcePauseUpdate: () => dispatch(forcePauseUpdate())
   }
 }
 

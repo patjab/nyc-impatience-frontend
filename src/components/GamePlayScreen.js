@@ -7,6 +7,7 @@ import Tourist from './Tourist'
 import Timer from './Timer'
 import Path from './Path'
 import Player from './Player'
+import Pause from './Pause'
 
 class GamePlayScreen extends Component {
   renderTourists = (numberOfTourists) => {
@@ -37,25 +38,6 @@ class GamePlayScreen extends Component {
         this.props.backgroundMusic.play()
         this.renderEnvironmentWithOngoingAnimation()
       } else {
-        const ctx = this.props.canvas.getContext("2d")
-        ctx.beginPath()
-        ctx.fillStyle = 'maroon'
-        ctx.fillRect(50, canvasHeight/2 - 75 - 200, canvasWidth - 100, 150)
-        ctx.closePath()
-
-        ctx.textAlign = 'center'
-        ctx.fillStyle = 'white'
-        ctx.font = "50px Geneva"
-
-        ctx.fillText(`PAUSED`, canvasWidth/2, canvasHeight/2 - 200)
-
-
-        ctx.textAlign = 'center'
-        ctx.fillStyle = 'white'
-        ctx.font = "20px Geneva"
-
-        ctx.fillText(`Press q to exit`, canvasWidth/2, canvasHeight/2 - 200 + 40)
-
         window.addEventListener('keydown', this.handleExitAfterPause)
         this.props.backgroundMusic.pause()
       }
@@ -85,6 +67,7 @@ class GamePlayScreen extends Component {
         <Timer />
         <Path />
         {this.renderTourists(touristDensity)}
+        {this.props.isPaused ? <Pause /> : null}
         <Player />
       </Fragment>
     )

@@ -90,6 +90,12 @@ export const forcePathUpdate = () => {
   }
 }
 
+export const forcePauseUpdate = () => {
+  return {
+    type: "FORCE_PAUSE_UPDATE"
+  }
+}
+
 export const changeMovementAbility = (isDisabled) => {
   return {
     type: "CHANGE_MOVEMENT_ABILITY",
