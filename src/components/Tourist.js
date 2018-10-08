@@ -125,12 +125,8 @@ const Tourist = class extends Component {
       setTimeout(()=>{
         if (!this.props.gameOver) {
           this.props.toggleBumpingShake()
-          // this.takeAPictureOfCollision()
           this.props.changeMovementAbility(false)
         }
-        // if (this.props.isPaused) {
-        //   this.props.forcePauseUpdate()
-        // }
       }, 1000)
 
       if (!this.refs.bumpSoundEl.paused) {
@@ -183,7 +179,9 @@ const Tourist = class extends Component {
     this.refs.touristImg.onload = () => {
       const sizeOfSide = howBigShouldIBe(this.state.positionY)
       try {
-        this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
+        if (!this.props.isPaused) {
+          this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
+        }
         this.props.addTouristToRoaster(this)
         if ( this.props.movement > startTouristMovementAtDistance ) {
           this.makeTouristWalk()
@@ -199,10 +197,12 @@ const Tourist = class extends Component {
     if (this.state.awaitingGarbage) {
       this.props.addTouristToGarbage(this.props.id)
     } else {
-      const sizeOfSide = howBigShouldIBe(this.state.positionY)
-      this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
-      this.checkForCollision()
-      this.checkIfTouristStillInView()
+      if (!this.props.isPaused) {
+        const sizeOfSide = howBigShouldIBe(this.state.positionY)
+        this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
+        this.checkForCollision()
+        this.checkIfTouristStillInView()
+      } 
     }
   }
 
@@ -232,7 +232,8 @@ const mapStateToProps = (state) => {
     movementPerBrick: state.movementPerBrick,
     touristRoaster: state.touristRoaster,
     gameOver: state.gameOver,
-    patience: state.patience
+    patience: state.patience,
+    isPaused: state.isPaused
   }
 }
 

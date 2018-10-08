@@ -25,10 +25,10 @@ class GamePlayScreen extends Component {
   }
 
   renderEnvironmentWithOngoingAnimation = () => {
-    this.props.forcePathPlayerMapUpdate()
     for ( let tourist of this.props.touristRoaster ) {
-      tourist.setState({touristUpdater: tourist.state.touristUpdater+1})
+      tourist.setState({touristUpdater: tourist.state.touristUpdater+1}, this.props.forcePauseUpdate)
     }
+    this.props.forcePathPlayerMapUpdate()
   }
 
   handlePause = (e) => {
@@ -36,11 +36,11 @@ class GamePlayScreen extends Component {
       if (this.props.isPaused) {
         window.removeEventListener('keydown', this.handleExitAfterPause)
         this.props.backgroundMusic.play()
-        this.renderEnvironmentWithOngoingAnimation()
       } else {
         window.addEventListener('keydown', this.handleExitAfterPause)
         this.props.backgroundMusic.pause()
       }
+      this.renderEnvironmentWithOngoingAnimation()
       this.props.changePauseStatus()
     }
   }
