@@ -68,7 +68,7 @@ const Tourist = class extends Component {
       if ( this.state.positionOnArray.row <= 0 ) {
         clearInterval(this.animationInterval)
         this.props.addTouristToGarbage(this.props.id)
-      } else {
+      } else if ( this.state.positionOnArray.row > 0 && !this.props.isPaused ) {
         this.setState({
           positionOnArray: {
             col: currentCol,
@@ -202,7 +202,7 @@ const Tourist = class extends Component {
         this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
         this.checkForCollision()
         this.checkIfTouristStillInView()
-      } 
+      }
     }
   }
 
