@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { canvasWidth, canvasHeight, heightOfMap, movementPerMap, percentageDivisionOnMap, movingQuicklySecondsRequirement } from '../setupData'
 
@@ -34,7 +34,7 @@ class Map extends Component {
       if ( timeLeftForBonus > 29 ) {
         this.refs.bonusAwardedMusic.play()
       }
-      
+
       ctx.font = "50px Geneva"
       ctx.fillStyle = "yellow"
       ctx.textAlign = 'center'

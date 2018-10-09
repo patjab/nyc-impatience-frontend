@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { canvasWidth, statusBarHeight, loudnessRechargeInSeconds, maximumSecondsOfRecharge, maximumSecondsOfRunning, walking } from '../setupData'
-import { activeMegaphone, inactiveMegaphone, activeRunning, inactiveRunning, redRunning, activeSnow, inactiveSnow } from '../images'
+import { canvasWidth, statusBarHeight, loudnessRechargeInSeconds, maximumSecondsOfRecharge, walking } from '../setupData'
+import { activeMegaphone, inactiveMegaphone, activeRunning, inactiveRunning, redRunning } from '../images'
 
 class Ability extends Component {
   clearAbilityBackground = (ctx) => {

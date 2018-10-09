@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { touristDensity, canvasWidth, canvasHeight } from '../setupData'
-import { changePauseStatus, changeCurrentScreen, resetAllState, forcePathPlayerMapUpdate } from '../actions'
+import { canvasWidth, canvasHeight } from '../setupData'
 
 class Pause extends Component {
   render() {
