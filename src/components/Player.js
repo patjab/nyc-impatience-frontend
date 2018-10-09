@@ -56,57 +56,47 @@ class Player extends Component {
   handleWalking = (e) => {
     // Fixed the release problem after pausing that caused release to never occur
     if ( this.props.isPaused ) {
-      this.diagonalMapSimultaneous[37] = false
-      this.diagonalMapSimultaneous[38] = false
-      this.diagonalMapSimultaneous[39] = false
+      for ( let i = 37; i < 40; i++ ) {
+        this.diagonalMapSimultaneous[i] = false
+      }
+    }
+
+    if (!this.props.gameStarted && e.keyCode == 38) {
+      this.props.signalStartGame()
     }
 
     if (!this.props.gameOver && !this.props.isPaused) {
       this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
-
-      // REMEMBER TO FIX - MAKE SURE FUNCTION ONLY CHANGES STATE IN RESPONSE TO ARROW KEYS AND NOTHING ELSE
       this.stillHoldingUp = e.keyCode === 38 ? true : false
 
-      const upperLeft = this.diagonalMapSimultaneous[37] && this.diagonalMapSimultaneous[38]
-      const upperRight = this.diagonalMapSimultaneous[38] && this.diagonalMapSimultaneous[39]
+      const upperLeftPressed = this.diagonalMapSimultaneous[37] && this.diagonalMapSimultaneous[38]
+      const upperRightPressed = this.diagonalMapSimultaneous[38] && this.diagonalMapSimultaneous[39]
+      const simultaneousKeyPress = upperLeftPressed || upperRightPressed
 
-      if (!this.props.bumpingShake && (((!upperLeft && !upperRight) && (e.keyCode > 36 && e.keyCode < 41)) || (e.key === 's') || (e.key === 'd') ) ) {
-        e.preventDefault()
-        if (e.keyCode === 37 && this.props.player.xPosition > 0 ) {
-          if ( this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + 0.50*initialPlayerSize ) {
-            this.props.moveLeft()
-          }
-        }
-        else if (e.keyCode === 38) {
-          if ( !this.props.gameStarted ) {
-            this.props.signalStartGame()
-          }
-          this.props.moveUp()
-        }
-        else if (e.keyCode === 39 && this.props.player.xPosition < this.props.canvas.width ) {
-          if ( this.props.player.xPosition + initialPlayerSize < ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + pixelLengthOfBrickPath(playerStartY) + 0.50*initialPlayerSize ) {
-            this.props.moveRight()
-          }
-        }
-        else if (e.keyCode === 40 && this.props.movement > 0 ) { this.props.moveDown() }
-        else if (e.key === 's' && this.props.gameStarted ) { this.handleRunning(e) }
-        else if (e.key === 'd' && this.props.gameStarted ) { this.winterMode() }
+      const withinLeftBound = this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + 0.50*initialPlayerSize
+      const withinRightBound = this.props.player.xPosition + initialPlayerSize < ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + pixelLengthOfBrickPath(playerStartY) + 0.50*initialPlayerSize
 
+      if (!this.props.bumpingShake ) {
+
+        if (e.key === 's' && this.props.gameStarted ) { this.handleRunning(e) }
         if (e.keyCode > 36 && e.keyCode < 41) {
-          this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
+
+            e.preventDefault()
+            if (e.keyCode === 37 && withinLeftBound && !simultaneousKeyPress) { this.props.moveLeft() }
+            else if (e.keyCode === 39 && withinRightBound && !simultaneousKeyPress ) { this.props.moveRight() }
+            else if (e.keyCode === 38 && !simultaneousKeyPress) { this.props.moveUp() }
+            else if (e.keyCode === 40 && this.props.movement > 0  ) { this.props.moveDown() }
+
+            if ( upperLeftPressed && withinLeftBound ) { this.props.moveUpLeft() }
+            else if ( upperRightPressed && withinRightBound ) { this.props.moveUpRight() }
+            this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
+
         }
+
+
       }
 
-      if (!this.props.bumpingShake && upperLeft) {
-        if ( this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + 0.50*initialPlayerSize ) {
-          this.props.moveUpLeft()
-        }
-      }
-      if (!this.props.bumpingShake && upperRight) {
-        if ( this.props.player.xPosition + initialPlayerSize < ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + pixelLengthOfBrickPath(playerStartY) + 0.50*initialPlayerSize ) {
-          this.props.moveUpRight()
-        }
-      }
+
     }
   }
 
@@ -126,7 +116,7 @@ class Player extends Component {
 
   syntheticListenerForRelease = () => {
     if (!this.props.gameOver && !this.props.isPaused) {
-      const syntheticConstant = 40
+      const syntheticConstant = 1000/60
       this.syntheticInterval = setInterval(() => {
         if (!this.props.bumpingShake && this.goodForMultipleUps && this.diagonalMapSimultaneous[38] && !this.props.isPaused) {
           this.props.moveUp()
