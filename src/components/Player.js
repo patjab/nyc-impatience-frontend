@@ -84,7 +84,7 @@ class Player extends Component {
             e.preventDefault()
             if (e.keyCode === 37 && withinLeftBound && !simultaneousKeyPress) { this.props.moveLeft() }
             else if (e.keyCode === 39 && withinRightBound && !simultaneousKeyPress ) { this.props.moveRight() }
-            else if (e.keyCode === 38 && !simultaneousKeyPress) { this.props.moveUp() }
+            else if (e.keyCode === 38 && !simultaneousKeyPress ) { this.props.moveUp() }
             else if (e.keyCode === 40 && this.props.movement > 0  ) { this.props.moveDown() }
 
             if ( upperLeftPressed && withinLeftBound ) { this.props.moveUpLeft() }
@@ -128,9 +128,9 @@ class Player extends Component {
 
   releaseCriteria = (e) => {
     if ( e.keyCode >= 37 && e.keyCode <= 40 && !this.props.isPaused) {
-      this.props.addToChangeInDirection()
 
       if ( this.props.gameStarted ) {
+        this.props.addToChangeInDirection()
         this.props.modifyPatience(releaseCriteriaImpatience)
       }
 
