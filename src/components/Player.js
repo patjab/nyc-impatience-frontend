@@ -82,13 +82,13 @@ class Player extends Component {
         if (e.keyCode > 36 && e.keyCode < 41) {
 
             e.preventDefault()
-            if (e.keyCode === 37 && withinLeftBound && !simultaneousKeyPress) { this.props.moveLeft() }
+            if ( upperLeftPressed && withinLeftBound ) { this.props.moveUpLeft() }
+            else if ( upperRightPressed && withinRightBound ) { this.props.moveUpRight() }
+            else if (e.keyCode === 37 && withinLeftBound && !simultaneousKeyPress) { this.props.moveLeft() }
             else if (e.keyCode === 39 && withinRightBound && !simultaneousKeyPress ) { this.props.moveRight() }
             else if (e.keyCode === 38 && !simultaneousKeyPress ) { this.props.moveUp() }
             else if (e.keyCode === 40 && this.props.movement > 0  ) { this.props.moveDown() }
 
-            if ( upperLeftPressed && withinLeftBound ) { this.props.moveUpLeft() }
-            else if ( upperRightPressed && withinRightBound ) { this.props.moveUpRight() }
             this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
 
         }

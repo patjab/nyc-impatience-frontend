@@ -23,6 +23,15 @@ class HighScores extends Component {
     loadingImg.src = '../loading.png'
     loadingImg.onload = () => {
       ctx.drawImage(loadingImg, (canvasWidth/2) - (680/2), canvasHeight/2 - 170, 680, 170)
+
+      setTimeout( () => {
+        if (!this.state.topScores) {
+          ctx.font = "24px Geneva"
+          ctx.fillStyle = "white"
+          ctx.textAlign = 'right'
+          ctx.fillText("[ESC] for Main Screen", canvasWidth-100, canvasHeight-100)
+        }
+      }, 5000)
     }
 
     window.addEventListener('keydown', this.switchToMainScreen)
