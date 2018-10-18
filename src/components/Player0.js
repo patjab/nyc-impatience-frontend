@@ -69,16 +69,28 @@ class Player extends Component {
       this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
       this.stillHoldingUp = e.keyCode === 38 ? true : false
 
+      const upperLeftPressed = this.diagonalMapSimultaneous[37] && this.diagonalMapSimultaneous[38]
+      const upperRightPressed = this.diagonalMapSimultaneous[38] && this.diagonalMapSimultaneous[39]
+      const simultaneousKeyPress = upperLeftPressed || upperRightPressed
+
+      const withinLeftBound = this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + 0.50*initialPlayerSize
+      const withinRightBound = this.props.player.xPosition + initialPlayerSize < ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + pixelLengthOfBrickPath(playerStartY) + 0.50*initialPlayerSize
 
       if (!this.props.bumpingShake ) {
 
-        if (e.key === 's' && this.props.gameStarted ) {
-          this.handleRunning(e)
-          this.mapMovementKeys(e)
-        }
+        if (e.key === 's' && this.props.gameStarted ) { this.handleRunning(e) }
         if (e.keyCode > 36 && e.keyCode < 41) {
-          e.preventDefault()
-          this.mapMovementKeys(e)
+
+            e.preventDefault()
+            if ( upperLeftPressed && withinLeftBound ) { this.props.moveUpLeft() }
+            else if ( upperRightPressed && withinRightBound ) { this.props.moveUpRight() }
+            else if (e.keyCode === 37 && withinLeftBound && !simultaneousKeyPress) { this.props.moveLeft() }
+            else if (e.keyCode === 39 && withinRightBound && !simultaneousKeyPress ) { this.props.moveRight() }
+            else if (e.keyCode === 38 && !simultaneousKeyPress ) { this.props.moveUp() }
+            else if (e.keyCode === 40 && this.props.movement > 0  ) { this.props.moveDown() }
+
+            this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
+
         }
 
 
@@ -86,32 +98,6 @@ class Player extends Component {
 
 
     }
-  }
-
-  mapMovementKeys = (e) => {
-    const leftPressed = this.diagonalMapSimultaneous[37]
-    const rightPressed = this.diagonalMapSimultaneous[39]
-    const upPressed = this.diagonalMapSimultaneous[38]
-
-    const upperLeftPressed = leftPressed && upPressed
-    const upperRightPressed = upPressed && rightPressed
-
-    const sPressed = this.diagonalMapSimultaneous[83]
-
-    const simultaneousKeyPress = upperLeftPressed || upperRightPressed
-    console.log("mapping", simultaneousKeyPress)
-
-    const withinLeftBound = this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + 0.50*initialPlayerSize
-    const withinRightBound = this.props.player.xPosition + initialPlayerSize < ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + pixelLengthOfBrickPath(playerStartY) + 0.50*initialPlayerSize
-
-    if ( upperLeftPressed && withinLeftBound ) { this.props.moveUpLeft() }
-    else if ( upperRightPressed && withinRightBound ) { this.props.moveUpRight() }
-    else if (this.diagonalMapSimultaneous[37] && withinLeftBound && !simultaneousKeyPress) { this.props.moveLeft() }
-    else if (this.diagonalMapSimultaneous[39] && withinRightBound && !simultaneousKeyPress ) { this.props.moveRight() }
-    else if (this.diagonalMapSimultaneous[38] && !simultaneousKeyPress ) { this.props.moveUp() }
-    else if (this.diagonalMapSimultaneous[40] && this.props.movement > 0  ) { this.props.moveDown() }
-
-    this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
   }
 
   winterMode = () => {
@@ -179,7 +165,7 @@ class Player extends Component {
 
   componentDidMount() {
     window.addEventListener('keydown', this.handleWalking)
-    // this.syntheticListenerForRelease()
+    this.syntheticListenerForRelease()
     window.addEventListener('keyup', this.releaseCriteria)
 
     this.props.setRunningMusicRef(this.refs.runSoundEffectMusic)
