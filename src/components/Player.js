@@ -2,8 +2,7 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
 import { movePlayer, changeSpeed, addToChangeInDirection, modifyPatience,
-  signalStartGame, recordForBonus, addToSnowAbilityList,
-  useSnowAbility, changeWeather, recordTimeOfRun, setRunningMusicRef } from '../actions'
+  signalStartGame, recordForBonus, recordTimeOfRun, setRunningMusicRef } from '../actions'
 import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth,
   releaseCriteriaImpatience, waitingImpatience, movingQuicklyPatience,
   movingQuicklySecondsRequirement, walking, maximumSecondsOfRunning,
@@ -26,7 +25,7 @@ class Player extends Component {
     if (this.refs.runSoundEffectMusic) {
       this.props.changeSpeed(walking)
       this.refs.runSoundEffectMusic.pause()
-      if ( !this.props.isPaused ) {
+      if ( !this.props.isPaused && this.props.backgroundMusic ) {
         this.props.backgroundMusic.play()
       }
     }
@@ -38,7 +37,9 @@ class Player extends Component {
     if ( timePassedSinceRun > maximumSecondsOfRecharge  ) {
       this.props.recordTimeOfRun(this.props.time/1000)
       this.props.changeSpeed(2 * walking)
-      this.props.backgroundMusic.pause()
+      if (this.props.backgroundMusic) {
+        this.props.backgroundMusic.pause()
+      }
       this.refs.runSoundEffectMusic.currentTime = 0
       this.refs.runSoundEffectMusic.play()
       setTimeout(this.setBackToWalking, maximumSecondsOfRunning * 1000)
@@ -54,14 +55,13 @@ class Player extends Component {
   }
 
   handleWalking = (e) => {
-    // Fixed the release problem after pausing that caused release to never occur
     if ( this.props.isPaused ) {
       for ( let i = 37; i < 40; i++ ) {
         this.diagonalMapSimultaneous[i] = false
       }
     }
 
-    if (!this.props.gameStarted && e.keyCode == 38) {
+    if (!this.props.gameStarted && e.keyCode === 38) {
       this.props.signalStartGame()
     }
 
@@ -71,7 +71,6 @@ class Player extends Component {
 
 
       if (!this.props.bumpingShake ) {
-
         if (e.key === 's' && this.props.gameStarted ) {
           this.handleRunning(e)
           this.mapMovementKeys(e)
@@ -80,11 +79,7 @@ class Player extends Component {
           e.preventDefault()
           this.mapMovementKeys(e)
         }
-
-
       }
-
-
     }
   }
 
@@ -99,7 +94,6 @@ class Player extends Component {
     const sPressed = this.diagonalMapSimultaneous[83]
 
     const simultaneousKeyPress = upperLeftPressed || upperRightPressed
-    console.log("mapping", simultaneousKeyPress)
 
     const withinLeftBound = this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + 0.50*initialPlayerSize
     const withinRightBound = this.props.player.xPosition + initialPlayerSize < ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + pixelLengthOfBrickPath(playerStartY) + 0.50*initialPlayerSize
@@ -114,25 +108,13 @@ class Player extends Component {
     this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
   }
 
-  winterMode = () => {
-    if ( this.props.snowAbilityList.filter(record => record.used === false).length > 0 && this.props.weather === "SUNNY" ) {
-      this.props.backgroundMusic.pause()
-      this.props.snowMusic.play()
-      this.props.useSnowAbility()
-      this.props.changeWeather("SNOWING")
-    } else if ( this.props.weather === "SNOWING" ) {
-      this.props.snowMusic.pause()
-      this.props.backgroundMusic.play()
-      this.props.snowMusic.currentTime = 0
-      this.props.changeWeather("SUNNY")
-    }
-  }
-
   syntheticListenerForRelease = () => {
     if (!this.props.gameOver && !this.props.isPaused) {
-      const syntheticConstant = 1000/60
+      const eventsPerSecond = 27
+      const syntheticConstant = 1000/eventsPerSecond
       this.syntheticInterval = setInterval(() => {
-        if (!this.props.bumpingShake && this.goodForMultipleUps && this.diagonalMapSimultaneous[38] && !this.props.isPaused) {
+        if (!this.props.bumpingShake && this.goodForMultipleUps && !this.diagonalMapSimultaneous[37] && this.diagonalMapSimultaneous[38] && !this.diagonalMapSimultaneous[39] && !this.props.isPaused) {
+          console.log("REGISTERED")
           this.props.moveUp()
           this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
         }
@@ -179,7 +161,7 @@ class Player extends Component {
 
   componentDidMount() {
     window.addEventListener('keydown', this.handleWalking)
-    // this.syntheticListenerForRelease()
+    this.syntheticListenerForRelease()
     window.addEventListener('keyup', this.releaseCriteria)
 
     this.props.setRunningMusicRef(this.refs.runSoundEffectMusic)
@@ -206,14 +188,6 @@ class Player extends Component {
         this.props.modifyPatience(movingQuicklyPatience)
       }
       this.props.recordForBonus({movement: lastRecord.movement + 1000, time: this.props.time/1000})
-    }
-
-    const snowRecord = this.props.snowAbilityList
-    const lastSnowAbilityRecord = snowRecord[snowRecord.length - 1]
-
-    if ( this.props.movement > lastSnowAbilityRecord.movement + 1000 ) {
-      console.log("ADDED SNOW RECORD", this.props.movement)
-      this.props.addToSnowAbilityList({movement: lastSnowAbilityRecord.movement + 1000, used: false})
     }
   }
 
@@ -250,9 +224,6 @@ const mapStateToProps = (state) => {
     gameStarted: state.gameStarted,
     bonusRecord: state.recordForBonus,
     backgroundMusic: state.backgroundMusic,
-    snowMusic: state.snowMusic,
-    snowAbilityList: state.snowAbilityList,
-    weather: state.weather,
     timeOfRun: state.timeOfRun,
     isPaused: state.isPaused,
     time: state.time // FIX - find a more efficient way of rendering independent of state.time since time is only used for recording, but not rendering (maybe shouldComponentUpdate)
@@ -271,9 +242,6 @@ const mapDispatchToProps = (dispatch) => {
     modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
     signalStartGame: () => dispatch(signalStartGame()),
     recordForBonus: (record) => dispatch(recordForBonus(record)),
-    addToSnowAbilityList: (record) => dispatch(addToSnowAbilityList(record)),
-    useSnowAbility: () => dispatch(useSnowAbility()),
-    changeWeather: (weather) => dispatch(changeWeather(weather)),
     addToChangeInDirection: () => dispatch(addToChangeInDirection()),
     recordTimeOfRun: (time) => dispatch(recordTimeOfRun(time)),
     setRunningMusicRef: (musicRef) => dispatch(setRunningMusicRef(musicRef))

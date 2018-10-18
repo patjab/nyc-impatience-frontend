@@ -35,10 +35,14 @@ class GamePlayScreen extends Component {
     if (e.keyCode === 27) {
       if (this.props.isPaused) {
         window.removeEventListener('keydown', this.handleExitAfterPause)
-        this.props.backgroundMusic.play()
+        if (this.props.backgroundMusic) {
+          this.props.backgroundMusic.play()
+        }
       } else {
         window.addEventListener('keydown', this.handleExitAfterPause)
-        this.props.backgroundMusic.pause()
+        if (this.props.backgroundMusic) {
+          this.props.backgroundMusic.pause()
+        }
         this.props.runningMusic.pause()
       }
       this.renderEnvironmentWithOngoingAnimation()
