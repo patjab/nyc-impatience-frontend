@@ -69,16 +69,18 @@ class Player extends Component {
       this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
       this.stillHoldingUp = e.keyCode === 38 ? true : false
 
-
+      const sPressed = e.key === 's'
+      const arrowPressed = e.keyCode > 36 && e.keyCode < 41
       if (!this.props.bumpingShake ) {
-        if (e.key === 's' && this.props.gameStarted ) {
-          this.handleRunning(e)
-          this.mapMovementKeys(e)
-        }
-        if (e.keyCode > 36 && e.keyCode < 41) {
+
+        if (arrowPressed || sPressed) {
           e.preventDefault()
+          if (sPressed ) {
+            this.handleRunning(e)
+          }
           this.mapMovementKeys(e)
         }
+
       }
     }
   }
@@ -100,10 +102,10 @@ class Player extends Component {
 
     if ( upperLeftPressed && withinLeftBound ) { this.props.moveUpLeft() }
     else if ( upperRightPressed && withinRightBound ) { this.props.moveUpRight() }
-    else if (this.diagonalMapSimultaneous[37] && withinLeftBound && !simultaneousKeyPress) { this.props.moveLeft() }
-    else if (this.diagonalMapSimultaneous[39] && withinRightBound && !simultaneousKeyPress ) { this.props.moveRight() }
-    else if (this.diagonalMapSimultaneous[38] && !simultaneousKeyPress ) { this.props.moveUp() }
-    else if (this.diagonalMapSimultaneous[40] && this.props.movement > 0  ) { this.props.moveDown() }
+    else if ( e.keyCode === 37 && withinLeftBound && !simultaneousKeyPress) { this.props.moveLeft() }
+    else if (e.keyCode === 39 && withinRightBound && !simultaneousKeyPress ) { this.props.moveRight() }
+    else if (e.keyCode === 38 && !simultaneousKeyPress ) { this.props.moveUp() }
+    else if (e.keyCode === 40 && this.props.movement > 0  ) { this.props.moveDown() }
 
     this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
   }
@@ -114,7 +116,6 @@ class Player extends Component {
       const syntheticConstant = 1000/eventsPerSecond
       this.syntheticInterval = setInterval(() => {
         if (!this.props.bumpingShake && this.goodForMultipleUps && !this.diagonalMapSimultaneous[37] && this.diagonalMapSimultaneous[38] && !this.diagonalMapSimultaneous[39] && !this.props.isPaused) {
-          console.log("REGISTERED")
           this.props.moveUp()
           this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
         }

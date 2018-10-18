@@ -29,7 +29,7 @@ export const rendingTouristRowsPercentage = 0.50
 
 export const touristRunningMilliseconds = 30
 
-export const backgroundMusicOn = false
+export const backgroundMusicOn = true
 
 export const statusBarHeight = 90
 export const numberOfHighScoresToDisplay = 15
