@@ -44,16 +44,10 @@ export const sideAreaColor = '#0CBE00'
 export const skyColor = '#6BD7FF'
 
 
-// export const releaseCriteriaImpatience = -5
-// export const collidedImpatience = -100
-// export const waitingImpatience = -10
-// export const movingQuicklyPatience = 25
-
-export const releaseCriteriaImpatience = 0
-export const collidedImpatience = 0
-export const waitingImpatience = 0
-export const movingQuicklyPatience = 0
-
+export const releaseCriteriaImpatience = -5
+export const collidedImpatience = -100
+export const waitingImpatience = -10
+export const movingQuicklyPatience = 25
 
 export const movingQuicklySecondsRequirement = 30
 
