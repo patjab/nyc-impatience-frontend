@@ -1,3 +1,5 @@
+/*eslint no-loop-func: 'ignore'*/
+
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { recordGameStatistics, changeCurrentScreen, signalDoneRecording } from '../actions'

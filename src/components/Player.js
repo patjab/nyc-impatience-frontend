@@ -78,48 +78,47 @@ class Player extends Component {
           if (sPressed ) {
             this.handleRunning(e)
           }
-          this.mapMovementKeys(e)
         }
 
       }
     }
   }
 
-  mapMovementKeys = (e) => {
-    const leftPressed = this.diagonalMapSimultaneous[37]
-    const rightPressed = this.diagonalMapSimultaneous[39]
-    const upPressed = this.diagonalMapSimultaneous[38]
-
-    const upperLeftPressed = leftPressed && upPressed
-    const upperRightPressed = upPressed && rightPressed
-
-    const sPressed = this.diagonalMapSimultaneous[83]
-
-    const simultaneousKeyPress = upperLeftPressed || upperRightPressed
-
-    const withinLeftBound = this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + 0.50*initialPlayerSize
-    const withinRightBound = this.props.player.xPosition + initialPlayerSize < ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + pixelLengthOfBrickPath(playerStartY) + 0.50*initialPlayerSize
-
-    if ( upperLeftPressed && withinLeftBound ) { this.props.moveUpLeft() }
-    else if ( upperRightPressed && withinRightBound ) { this.props.moveUpRight() }
-    else if ( e.keyCode === 37 && withinLeftBound && !simultaneousKeyPress) { this.props.moveLeft() }
-    else if (e.keyCode === 39 && withinRightBound && !simultaneousKeyPress ) { this.props.moveRight() }
-    else if (e.keyCode === 38 && !simultaneousKeyPress ) { this.props.moveUp() }
-    else if (e.keyCode === 40 && this.props.movement > 0  ) { this.props.moveDown() }
-
-    this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
-  }
-
   syntheticListenerForRelease = () => {
     if (!this.props.gameOver && !this.props.isPaused) {
       const eventsPerSecond = 27
       const syntheticConstant = 1000/eventsPerSecond
-      this.syntheticInterval = setInterval(() => {
-        if (!this.props.bumpingShake && this.goodForMultipleUps && !this.diagonalMapSimultaneous[37] && this.diagonalMapSimultaneous[38] && !this.diagonalMapSimultaneous[39] && !this.props.isPaused) {
-          this.props.moveUp()
-          this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
-        }
-      }, syntheticConstant)
+      this.syntheticInterval = setInterval(this.applyMovement, syntheticConstant)
+    }
+  }
+
+  applyMovement = () => {
+    if ( !this.props.isPaused ) {
+      const leftPressed = this.diagonalMapSimultaneous[37]
+      const rightPressed = this.diagonalMapSimultaneous[39]
+      const upPressed = this.diagonalMapSimultaneous[38]
+      const downPressed = this.diagonalMapSimultaneous[40]
+
+      const upperLeftPressed = leftPressed && upPressed
+      const upperRightPressed = upPressed && rightPressed
+      const simultaneousKeyPress = upperLeftPressed || upperRightPressed
+
+      const withinLeftBound = this.props.player.xPosition > ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + 0.50*initialPlayerSize
+      const withinRightBound = this.props.player.xPosition + initialPlayerSize < ((canvasWidth - pixelLengthOfBrickPath(playerStartY))/ 2) + pixelLengthOfBrickPath(playerStartY) + 0.50*initialPlayerSize
+
+      if ( upperLeftPressed && withinLeftBound ) { this.props.moveUpLeft() }
+      else if ( upperRightPressed && withinRightBound ) { this.props.moveUpRight() }
+      else if ( leftPressed && withinLeftBound && !simultaneousKeyPress) { this.props.moveLeft() }
+      else if ( rightPressed && withinRightBound && !simultaneousKeyPress ) { this.props.moveRight() }
+      else if ( upPressed && !simultaneousKeyPress ) { this.props.moveUp() }
+      else if ( downPressed && this.props.movement > 0  ) { this.props.moveDown() }
+      else if (!this.props.bumpingShake && this.goodForMultipleUps && !this.diagonalMapSimultaneous[37] && this.diagonalMapSimultaneous[38] && !this.diagonalMapSimultaneous[39] ) {
+        this.props.moveUp()
+      }
+
+      if ( leftPressed || rightPressed || upPressed || downPressed ) {
+        this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
+      }
     }
   }
 
