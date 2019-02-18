@@ -247,7 +247,7 @@ class GameStatistics extends Component {
     return (
       <Fragment>
         <audio src='../losingScream.wav' ref='losingScream'/ >
-        <audio src='../gameOver.mp3' loop='true' ref='gameOverMusic'/ >
+        <audio src='../gameOver.mp3' loop={true} ref='gameOverMusic'/ >
         <img src={this.props.gameOverImage} alt='frozenGameOverScreen' ref='frozenGameOverScreen' className='hidden'/>
         { this.state.nameInputReady ? <NameInput/> : null }
       </Fragment>

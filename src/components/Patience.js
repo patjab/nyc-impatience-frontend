@@ -60,7 +60,7 @@ class Patience extends Component {
   }
 
   render() {
-    return <audio src='../lowPatience.wav' loop='true' ref='lowPatienceSound'/ >
+    return <audio src='../lowPatience.wav' loop={true} ref='lowPatienceSound'/ >
   }
 }
 

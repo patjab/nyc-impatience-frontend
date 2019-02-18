@@ -59,8 +59,8 @@ class GamePlayContainer extends Component {
   render() {
     return (
       <Fragment>
-        <audio src='../backgroundMusic.mp3' loop='true' ref='backgroundMusic' />
-        <audio src='../snowMusic.mp3' loop='true' ref='snowMusic' />
+        <audio src='../backgroundMusic.mp3' loop={true} ref='backgroundMusic' />
+        <audio src='../snowMusic.mp3' loop={true} ref='snowMusic' />
         { this.props.timeFinished === null ? <GamePlayScreen /> : <GameStatistics /> }
         { this.props.gameStarted || this.props.movement > 0 ? <Map /> : null }
       </Fragment>
