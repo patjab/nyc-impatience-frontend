@@ -26,7 +26,6 @@ const Tourist = class extends Component {
 
   static getDerivedStateFromProps(props, state) {
     let chosenRow, chosenCol, initialRow, mountedOnMovement
-
     if (state.positionOnArray === null && props.centersOfBricks.length > 0 ) {
       initialRow = chosenRow = Math.trunc(Math.trunc(Math.random()*(props.centersOfBricks.length-1)) * rendingTouristRowsPercentage)
       chosenCol = Math.trunc(Math.random()*(props.centersOfBricks[0].length-1))
