@@ -22,7 +22,7 @@ export class BrickUtils {
                                 brickSpacingBetweenRows: number,
                                 movement: number,
                                 movementPerBrick: number,
-                                depthMultiplier: number): Row[] {
+                                depthMultiplier: number) {
 
         const rowsWithBrickBorders = this.getRows(
             horizonLine, 
@@ -77,19 +77,19 @@ export class BrickUtils {
         depthMultiplier: number,
     ) {
         const rowsWithBrickBorders = []
-        for ( let row = horizonLine; row <= canvasHeight; row += brickSpacingBetweenRows ) {
+        let copyOfBrickSpacingBetweenRows = brickSpacingBetweenRows;
+        for ( let row = horizonLine; row <= canvasHeight; row += copyOfBrickSpacingBetweenRows ) {
           const distanceFromHorizon = row - horizonLine
           const percentageOfBrick = (movement * movementPerBrick) % 2
-          const absoluteChunkOfBrick = brickSpacingBetweenRows * percentageOfBrick
+          const absoluteChunkOfBrick = copyOfBrickSpacingBetweenRows * percentageOfBrick
           const rowWithBorderBrick = row + (absoluteChunkOfBrick)
           rowsWithBrickBorders.push(rowWithBorderBrick)
-
-          // FIX IMPURE
-          brickSpacingBetweenRows = brickSpacingBetweenRows + (depthMultiplier*distanceFromHorizon)
+          copyOfBrickSpacingBetweenRows = copyOfBrickSpacingBetweenRows + (depthMultiplier*distanceFromHorizon);
         }
         rowsWithBrickBorders.push(canvasHeight)
         rowsWithBrickBorders.sort((a,b)=>a-b)
-        return rowsWithBrickBorders
+
+        return rowsWithBrickBorders;
       }
 
     private static recordCurrentPoints(horizontalPathLength: number, xStartOfHorizontalLines: number, row: number, numOfBricksInARow: number) {

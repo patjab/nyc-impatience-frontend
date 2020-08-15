@@ -19,13 +19,6 @@ export const changeSpeed = (speed) => {
   }
 }
 
-export const initializeBrickList = (brickList) => {
-  return {
-    type: "INITIALIZE_BRICK_LIST",
-    payload: brickList
-  }
-}
-
 export const addTouristToGarbage = (id) => {
   return {
     type: "ADD_TOURIST_TO_GARBAGE",

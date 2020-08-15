@@ -1,28 +1,13 @@
-import React, { Component, Fragment } from 'react'
-import { connect } from 'react-redux'
-import { touristDensity } from '../setupData'
-import { changePauseStatus, changeCurrentScreen, resetAllState, forcePathPlayerMapUpdate } from '../actions'
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import {changePauseStatus, changeCurrentScreen, resetAllState, forcePathPlayerMapUpdate} from '../actions'
 
-import Tourist from './Tourist'
 import Timer from './Timer'
 import GameBackground from './GameBackground'
 import Player from './Player'
 import Pause from './Pause'
 
 class GamePlayScreen extends Component {
-  renderTourists = (numberOfTourists) => {
-    let tourists = []
-      for ( let i = 0; i < (numberOfTourists+this.props.stage); i++ ) {
-        if ( !this.props.garbageOfTourists.includes(i) ) {
-          tourists.push(<Tourist key={i} id={i} />)
-        }
-        else {
-          numberOfTourists++
-        }
-      }
-
-    return tourists
-  }
 
   renderEnvironmentWithOngoingAnimation = () => {
     for ( let tourist of this.props.touristRoaster ) {
@@ -68,13 +53,12 @@ class GamePlayScreen extends Component {
 
   render() {
     return (
-      <Fragment>
+      <>
         <Timer />
         <GameBackground />
-        {this.renderTourists(touristDensity)}
         {this.props.isPaused ? <Pause /> : null}
         <Player />
-      </Fragment>
+      </>
     )
   }
 }
@@ -82,7 +66,6 @@ class GamePlayScreen extends Component {
 const mapStateToProps = (state) => {
   return {
     canvas: state.canvas,
-    garbageOfTourists: state.garbageOfTourists,
     stage: state.stage,
     backgroundMusic: state.backgroundMusic,
     isPaused: state.isPaused,

@@ -7,9 +7,7 @@ const initialState = {
     yPosition: playerStartY
   },
   movement: 0,
-  movementPerBrick: walking/2,
   speed: walking,
-  centersOfBricks: [],
   garbageOfTourists: [],
   touristRoaster: [],
   streak: [],
@@ -55,15 +53,6 @@ const initialState = {
 
 const gameController = (state = initialState, action) => {
   switch(action.type) {
-    case "INITIALIZE_BRICK_LIST":
-      return {
-        ...state,
-        centersOfBricks: action.payload
-      }
-    
-
-
-
     case "SET_CANVAS":
       return {
         ...state,

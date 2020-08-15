@@ -9,7 +9,10 @@ export const depthMultiplier = 0.001
 
 export const numOfBricksInARow = 10
 
+export const brickSpacingBetweenRows = 1;
+
 export const walking = 1.3
+export const movementPerBrick = walking/2;
 
 export const shiftingSpeed = 20
 

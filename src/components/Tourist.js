@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
 import { initialPlayerSize, canvasHeight, rendingTouristRowsPercentage,
-  touristRunningMilliseconds, collidedImpatience, heightOfMap, startTouristMovementAtDistance, yNearnessSpook } from '../setupData'
+  touristRunningMilliseconds, collidedImpatience, heightOfMap, startTouristMovementAtDistance, yNearnessSpook, movementPerBrick} from '../setupData'
 import { tourist1, tourist2, tourist3 } from '../images'
 import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, recordStreak, forcePathPlayerMapUpdate,
@@ -26,13 +26,13 @@ const Tourist = class extends Component {
 
   static getDerivedStateFromProps(props, state) {
     let chosenRow, chosenCol, initialRow, mountedOnMovement
-    if (state.positionOnArray === null && props.centersOfBricks.length > 0 ) {
-      initialRow = chosenRow = Math.trunc(Math.trunc(Math.random()*(props.centersOfBricks.length-1)) * rendingTouristRowsPercentage)
-      chosenCol = Math.trunc(Math.random()*(props.centersOfBricks[0].length-1))
+    if (state.positionOnArray === null && props.brickPositions.length > 0 ) {
+      initialRow = chosenRow = Math.trunc(Math.trunc(Math.random()*(props.brickPositions.length-1)) * rendingTouristRowsPercentage)
+      chosenCol = Math.trunc(Math.random()*(props.brickPositions[0].length-1))
       mountedOnMovement = props.movement
     } else if (state.positionOnArray !== null ) {
-      let brickTransitionHelper = (Math.trunc(props.movementPerBrick * (props.movement) * 0.5) * 2) - (Math.trunc(props.movementPerBrick * (state.mountedOnMovement) * 0.5) * 2)
-      chosenRow = state.derivedStateOverride ? state.positionOnArray.row : (state.initialRow + brickTransitionHelper ) % props.centersOfBricks.length
+      let brickTransitionHelper = (Math.trunc(movementPerBrick * (props.movement) * 0.5) * 2) - (Math.trunc(movementPerBrick * (state.mountedOnMovement) * 0.5) * 2)
+      chosenRow = state.derivedStateOverride ? state.positionOnArray.row : (state.initialRow + brickTransitionHelper ) % props.brickPositions.length
       chosenCol = state.positionOnArray.col
     } else {
       return state
@@ -41,8 +41,8 @@ const Tourist = class extends Component {
     return {
       ...state,
       awaitingGarbage: chosenRow < 0,
-      positionX: chosenRow < 0 ? 0 : props.centersOfBricks[chosenRow][chosenCol].x,
-      positionY: chosenRow < 0 ? 0 : props.centersOfBricks[chosenRow][chosenCol].y,
+      positionX: chosenRow < 0 ? 0 : props.brickPositions[chosenRow][chosenCol].x,
+      positionY: chosenRow < 0 ? 0 : props.brickPositions[chosenRow][chosenCol].y,
       initialRow: initialRow || state.initialRow,
       positionOnArray: {col: chosenCol, row: chosenRow},
       mountedOnMovement: mountedOnMovement || state.mountedOnMovement
@@ -99,7 +99,7 @@ const Tourist = class extends Component {
 
     const pixelsPerBrickAtLowerPlayer = 20
 
-    const upperTourist = lowerTourist - (pixelsPerBrickAtLowerPlayer * this.props.movementPerBrick * yNearnessSpook)
+    const upperTourist = lowerTourist - (pixelsPerBrickAtLowerPlayer * movementPerBrick * yNearnessSpook)
 
     let withinYRange = ( lowerPlayer <= lowerTourist && lowerPlayer >= upperTourist )
 
@@ -227,9 +227,6 @@ const mapStateToProps = (state) => {
     movement: state.movement,
     playerX: state.player.xPosition,
     playerY: state.player.yPosition,
-
-    centersOfBricks: state.centersOfBricks,
-    movementPerBrick: state.movementPerBrick,
     
     touristRoaster: state.touristRoaster,
     gameOver: state.gameOver,

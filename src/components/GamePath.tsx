@@ -1,12 +1,16 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { horizonLine, canvasWidth, canvasHeight, brickColor, brickBorderColor } from '../setupData';
-import { BrickUtils } from '../utils/BrickUtils';
+import { horizonLine, canvasWidth, canvasHeight, brickColor, brickBorderColor, numOfBricksInARow, depthMultiplier, movementPerBrick, brickSpacingBetweenRows, touristDensity } from '../setupData';
+import { BrickUtils, Row } from '../utils/BrickUtils';
 import { Weather } from './GameBackground';
+import Tourist from './Tourist';
 
 interface GamePathProps {
     canvas: HTMLCanvasElement;
     weather: Weather;
+    movement: number;
+    garbageOfTourists: number[];
+    stage: number;
 }
 
 class GamePath extends React.PureComponent<GamePathProps> {
@@ -14,19 +18,40 @@ class GamePath extends React.PureComponent<GamePathProps> {
         super(props);
     }
 
-    public render(): React.ReactElement {
-        console.log('RENDER GamePath')
+    public render(): JSX.Element | JSX.Element[] {
         const ctx = this.props.canvas && this.props.canvas.getContext("2d");
         if (ctx) {
             this.drawPathBackground(ctx)
-            // this.makeBricks(ctx)
+            const bricksList: Row[] = this.makeBricks(ctx)
             this.makeSideStructures(ctx, this.props.weather)
             this.drawLeftPathBorder(ctx)
             this.drawBicycleLane(ctx, this.props.weather)
+            return this.renderTourists(touristDensity, bricksList);
+
+        } else {
+            return (<></>);
         }
-        return (<div></div>);
     }
 
+    private renderTourists = (numberOfTourists: number, bricksList: Row[]): JSX.Element[] => {
+
+        const totalNumOfTourists: number = numberOfTourists + this.props.stage;
+
+        
+        let tourists = []
+          for ( let i = 0; i < totalNumOfTourists; i++ ) {
+            if ( !this.props.garbageOfTourists.includes(i) ) {
+              tourists.push(<Tourist key={i} id={i} brickPositions={bricksList} />)
+            }
+            else {
+              numberOfTourists++
+            }
+          }
+    
+        return tourists;
+    }
+
+    // BEFORE THIS
     private drawPathBackground = (ctx: CanvasRenderingContext2D) => {
         ctx.beginPath()
         ctx.rect(0, horizonLine, canvasWidth, canvasHeight)
@@ -81,6 +106,21 @@ class GamePath extends React.PureComponent<GamePathProps> {
         // Added
         ctx.closePath()
     }
+
+    private makeBricks = (ctx: any): Row[] => {
+        return BrickUtils.makeBricks(
+          horizonLine,
+          canvasWidth,
+          true,
+          numOfBricksInARow,
+          brickBorderColor,
+          ctx,
+          brickSpacingBetweenRows,
+          this.props.movement,
+          movementPerBrick,
+          depthMultiplier
+        );
+    }
     
 }
 
@@ -88,8 +128,11 @@ class GamePath extends React.PureComponent<GamePathProps> {
 const mapStateToProps = (state: any) => {
     return {
         canvas: state.canvas,
-        weather: state.weather
+        weather: state.weather,
+        movement: state.movement,
+        garbageOfTourists: state.garbageOfTourists,
+        stage: state.stage
     }
 }
-  
+
 export default connect(mapStateToProps)(GamePath);
