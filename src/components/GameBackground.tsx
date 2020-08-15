@@ -4,7 +4,7 @@ import {connect} from 'react-redux'
 import {nySkyline} from '../images'
 import {horizonLine, statusBarHeight, canvasWidth, canvasHeight, skyColor} from '../setupData'
 import GamePath from './GamePath'
-
+import Map from './Map';
 export enum Weather {
   SUNNY = 'SUNNY',
   SNOWING = 'SNOWING'
@@ -34,16 +34,15 @@ class GameBackground extends React.Component<PathProps> {
     this.nySkyline = React.createRef();
   }
 
-  // public componentDidMount(): void {
-  //   if (this.nySkyline.current) {
-  //     this.nySkyline.current.onload
-  //     this.nySkyline.current.onload = () => {
-  //       const ctx = this.props.canvas.getContext("2d")
-  //       ctx.drawImage(this.refs.nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
-  //       this.drawStartInstructions(ctx)
-  //     }
-  //   }
-  // }
+  public componentDidMount(): void {
+    if (this.nySkyline.current) {
+      this.nySkyline.current.onload = () => {
+        const ctx = this.props.canvas.getContext("2d")
+        ctx.drawImage(this.nySkyline.current, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
+        this.drawStartInstructions(ctx)
+      }
+    }
+  }
 
   public componentDidUpdate(prevProps: PathProps): void {
     const nySkyline = this.nySkyline.current;
@@ -63,8 +62,6 @@ class GameBackground extends React.Component<PathProps> {
   }
 
   public render(): React.ReactElement {
-    console.log('RENDER GameBackground')
-
     const ctx = this.props.canvas && this.props.canvas.getContext("2d");
     if (ctx) {
       this.drawSky(ctx)
@@ -78,6 +75,8 @@ class GameBackground extends React.Component<PathProps> {
           ref={this.nySkyline}
         />
         <GamePath/>
+        { this.props.gameStarted  ? <Map /> : null }
+
       </>
     );
   }

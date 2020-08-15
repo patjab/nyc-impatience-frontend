@@ -109,23 +109,23 @@ export function microphoneRunner(loudness) {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     audioContext = new AudioContext();
     try {
-        // navigator.getUserMedia =
-        // 	navigator.getUserMedia ||
-        // 	navigator.webkitGetUserMedia ||
-        // 	navigator.mozGetUserMedia;
+        navigator.getUserMedia =
+        	navigator.getUserMedia ||
+        	navigator.webkitGetUserMedia ||
+        	navigator.mozGetUserMedia;
 
-        // navigator.getUserMedia(
-        // {
-        //     "audio": {
-        //         "mandatory": {
-        //             "googEchoCancellation": "false",
-        //             "googAutoGainControl": "false",
-        //             "googNoiseSuppression": "false",
-        //             "googHighpassFilter": "false"
-        //         },
-        //         "optional": []
-        //     },
-        // }, (stream) => onMicrophoneGranted(stream, loudness), onMicrophoneDenied);
+        navigator.getUserMedia(
+        {
+            "audio": {
+                "mandatory": {
+                    "googEchoCancellation": "false",
+                    "googAutoGainControl": "false",
+                    "googNoiseSuppression": "false",
+                    "googHighpassFilter": "false"
+                },
+                "optional": []
+            },
+        }, (stream) => onMicrophoneGranted(stream, loudness), onMicrophoneDenied);
     } catch (e) {
         alert('getUserMedia threw exception :' + e);
     }

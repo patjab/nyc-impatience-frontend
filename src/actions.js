@@ -19,18 +19,24 @@ export const changeSpeed = (speed) => {
   }
 }
 
-export const addTouristToGarbage = (id) => {
+export const addTouristGoneCounter = () => {
   return {
-    type: "ADD_TOURIST_TO_GARBAGE",
-    payload: id
+    type: "ADD_TOURIST_GONE_COUNTER"
   }
 }
 
-export const emptyGarbageOfTourists = (id) => {
-  return {
-    type: "EMPTY_GARBAGE_OF_TOURISTS"
-  }
-}
+// export const addTouristToGarbage = (id) => {
+//   return {
+//     type: "ADD_TOURIST_TO_GARBAGE",
+//     payload: id
+//   }
+// }
+
+// export const emptyGarbageOfTourists = (id) => {
+//   return {
+//     type: "EMPTY_GARBAGE_OF_TOURISTS"
+//   }
+// }
 
 export const addTouristToRoaster = (tourist) => {
   return {

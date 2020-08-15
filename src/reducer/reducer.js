@@ -48,11 +48,18 @@ const initialState = {
   timeOfRun: -2*maximumSecondsOfRecharge,
   isPaused: false,
   timePaused: null,
-  totalPausedTime: null
+  totalPausedTime: null,
+
+  touristGoneCounter: 0
 }
 
 const gameController = (state = initialState, action) => {
   switch(action.type) {
+    case "ADD_TOURIST_GONE_COUNTER":
+      return {
+        ...state,
+        touristGoneCounter: state.touristGoneCounter + 1
+      }
     case "SET_CANVAS":
       return {
         ...state,
@@ -69,7 +76,6 @@ const gameController = (state = initialState, action) => {
         movement: state.disabled ? state.movement : allowedMovement,
         stage: Math.trunc(allowedMovement/movementsPerStage)
       }
-
     case "CHANGE_SPEED":
       return {
         ...state,

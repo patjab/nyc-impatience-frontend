@@ -1,12 +1,12 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { initialPlayerSize, canvasHeight, rendingTouristRowsPercentage,
   touristRunningMilliseconds, collidedImpatience, heightOfMap, startTouristMovementAtDistance, yNearnessSpook, movementPerBrick} from '../setupData'
 import { tourist1, tourist2, tourist3 } from '../images'
-import { addTouristToGarbage, addTouristToRoaster, removeTouristFromRoaster,
+import { addTouristToRoaster, removeTouristFromRoaster,
   resetPlayer, recordStreak, forcePathPlayerMapUpdate,
-  changeMovementAbility, toggleBumpingShake, addToBumpedImages, modifyPatience, forcePathUpdate, forcePauseUpdate } from '../actions'
+  changeMovementAbility, toggleBumpingShake, addToBumpedImages, modifyPatience, forcePathUpdate, forcePauseUpdate, addTouristGoneCounter} from '../actions'
 import { howBigShouldIBe } from '../AuxiliaryMath'
 
 const Tourist = class extends Component {
@@ -20,8 +20,18 @@ const Tourist = class extends Component {
     dontCallBumpAgain: false,
     mountedOnMovement: null,
     derivedStateOverride: false,
-    touristUpdater: 0,
+    // touristUpdater: 0,
     awaitingGarbage: false
+  }
+
+  randomSpot = () => {
+    const chosenRow = Math.trunc(Math.trunc(Math.random()*(this.props.brickPositions.length-1)) * rendingTouristRowsPercentage);
+    const chosenCol = Math.trunc(Math.random()*(this.props.brickPositions[0].length-1))
+
+    return {
+      positionX: chosenRow < 0 ? 0 : this.props.brickPositions[chosenRow][chosenCol].x,
+      positionY: chosenRow < 0 ? 0 : this.props.brickPositions[chosenRow][chosenCol].y
+    };
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -40,7 +50,7 @@ const Tourist = class extends Component {
 
     return {
       ...state,
-      awaitingGarbage: chosenRow < 0,
+      // awaitingGarbage: chosenRow < 0,
       positionX: chosenRow < 0 ? 0 : props.brickPositions[chosenRow][chosenCol].x,
       positionY: chosenRow < 0 ? 0 : props.brickPositions[chosenRow][chosenCol].y,
       initialRow: initialRow || state.initialRow,
@@ -50,13 +60,13 @@ const Tourist = class extends Component {
 
   }
 
-  renderEnvironmentWithOngoingAnimation = () => {
-    for ( let tourist of this.props.touristRoaster ) {
-      tourist.setState({touristUpdater: tourist.state.touristUpdater+1}, this.props.forcePauseUpdate)
-    }
-    this.props.forcePathPlayerMapUpdate()
-    this.setState({touristUpdater: this.state.touristUpdater+1}, this.props.forcePauseUpdate)
-  }
+  // renderEnvironmentWithOngoingAnimation = () => {
+  //   for ( let tourist of this.props.touristRoaster ) {
+  //     tourist.setState({touristUpdater: tourist.state.touristUpdater+1}, this.props.forcePauseUpdate)
+  //   }
+  //   this.props.forcePathPlayerMapUpdate()
+  //   this.setState({touristUpdater: this.state.touristUpdater+1}, this.props.forcePauseUpdate)
+  // }
 
   runningAnimation = () => {
     const currentRow = this.state.positionOnArray.row
@@ -66,7 +76,13 @@ const Tourist = class extends Component {
     this.animationInterval = setInterval(() => {
       if ( this.state.positionOnArray.row <= 0 ) {
         clearInterval(this.animationInterval)
-        this.props.addTouristToGarbage(this.props.id)
+        console.log('tourist gone dead')
+        this.setState({ awaitingGarbage: true }, this.props.addTouristGoneCounter);
+
+        // this.setState({
+        //   ...this.randomSpot()
+        // });
+        // this.props.addTouristToGarbage(this.props.id)
       } else if ( this.state.positionOnArray.row > 0 && !this.props.isPaused ) {
         this.setState({
           positionOnArray: {
@@ -75,7 +91,7 @@ const Tourist = class extends Component {
           },
           derivedStateOverride: true
         }, () => {
-          this.renderEnvironmentWithOngoingAnimation()
+          // this.renderEnvironmentWithOngoingAnimation()
           i += 1
         })
       }
@@ -154,7 +170,12 @@ const Tourist = class extends Component {
       const lowerTourist = this.state.positionY + sizeOfSide
       const endOfVisiblePath = canvasHeight - heightOfMap
       if ( lowerTourist > endOfVisiblePath ) {
-        this.props.addTouristToGarbage(this.props.id)
+        console.log(this.props.id, 'tourist gone ')
+        this.setState({ awaitingGarbage: true }, this.props.addTouristGoneCounter);
+        // this.setState({
+        //   ...this.randomSpot()
+        // });
+        // this.props.addTouristToGarbage(this.props.id)
       }
     }
   }
@@ -192,17 +213,20 @@ const Tourist = class extends Component {
   }
 
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.state.awaitingGarbage) {
-      this.props.addTouristToGarbage(this.props.id)
-    } else {
-      if (!this.props.isPaused) {
-        const sizeOfSide = howBigShouldIBe(this.state.positionY)
-        this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
-        this.checkForCollision()
-        this.checkIfTouristStillInView()
+  componentDidUpdate() {
+    // if (this.state.awaitingGarbage) {
+    //   this.props.addTouristToGarbage(this.props.id)
+    // } else {
+      if (this.state.awaitingGarbage === false) {
+        if (!this.props.isPaused) {
+          const sizeOfSide = howBigShouldIBe(this.state.positionY)
+          this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
+          this.checkForCollision()
+          this.checkIfTouristStillInView()
+        }
       }
-    }
+      
+    // }
   }
 
   componentWillUnmount() {
@@ -213,10 +237,10 @@ const Tourist = class extends Component {
 
   render() {
     return (
-      <Fragment>
+      <>
         <audio src='../bump.wav' ref='bumpSoundEl'/>
         <img src={`${this.state.images[this.state.image]}`} ref='touristImg' className='hidden' alt='tourist'/>
-      </Fragment>
+      </>
     )
   }
 }
@@ -239,7 +263,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     addTouristToRoaster: (tourist) => dispatch(addTouristToRoaster(tourist)),
     removeTouristFromRoaster: (id) => dispatch(removeTouristFromRoaster(id)),
-    addTouristToGarbage: (id) => dispatch(addTouristToGarbage(id)),
+    // addTouristToGarbage: (id) => dispatch(addTouristToGarbage(id)),
+    addTouristGoneCounter: () => dispatch(addTouristGoneCounter()),
     resetPlayer: () => dispatch(resetPlayer()),
     recordStreak: (streak) => dispatch(recordStreak(streak)),
     forcePathPlayerMapUpdate: () => dispatch(forcePathPlayerMapUpdate()),

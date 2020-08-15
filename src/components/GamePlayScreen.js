@@ -1,6 +1,6 @@
-import React, {Component} from 'react'
-import {connect} from 'react-redux'
-import {changePauseStatus, changeCurrentScreen, resetAllState, forcePathPlayerMapUpdate} from '../actions'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { changePauseStatus, changeCurrentScreen, resetAllState, forcePathPlayerMapUpdate } from '../actions'
 
 import Timer from './Timer'
 import GameBackground from './GameBackground'
@@ -8,13 +8,12 @@ import Player from './Player'
 import Pause from './Pause'
 
 class GamePlayScreen extends Component {
-
-  renderEnvironmentWithOngoingAnimation = () => {
-    for ( let tourist of this.props.touristRoaster ) {
-      tourist.setState({touristUpdater: tourist.state.touristUpdater+1}, this.props.forcePauseUpdate)
-    }
-    this.props.forcePathPlayerMapUpdate()
-  }
+  // renderEnvironmentWithOngoingAnimation = () => {
+  //   for ( let tourist of this.props.touristRoaster ) {
+  //     tourist.setState({touristUpdater: tourist.state.touristUpdater+1}, this.props.forcePauseUpdate)
+  //   }
+  //   this.props.forcePathPlayerMapUpdate()
+  // }
 
   handlePause = (e) => {
     if (e.keyCode === 27) {
@@ -69,8 +68,8 @@ const mapStateToProps = (state) => {
     stage: state.stage,
     backgroundMusic: state.backgroundMusic,
     isPaused: state.isPaused,
-    touristRoaster: state.touristRoaster,
-    runningMusic: state.runningMusic
+    // touristRoaster: state.touristRoaster,
+    runningMusic: state.runningMusic,
   }
 }
 

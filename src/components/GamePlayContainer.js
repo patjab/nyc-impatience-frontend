@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { backgroundMusicOn, loudnessSpookLevel, loudnessRechargeInSeconds } from '../setupData'
 import { microphoneRunner, loudEnough } from '../mediaHelper/microphoneHelper'
@@ -7,7 +7,6 @@ import { setBackgroundMusicRef, setSnowMusicRef, recordTimeOfYell } from '../act
 
 import GamePlayScreen from './GamePlayScreen'
 import GameStatistics from './GameStatistics'
-import Map from './Map'
 
 class GamePlayContainer extends Component {
   state = {
@@ -58,12 +57,11 @@ class GamePlayContainer extends Component {
 
   render() {
     return (
-      <Fragment>
+      <>
         <audio src='../backgroundMusic.mp3' loop={true} ref='backgroundMusic' />
         <audio src='../snowMusic.mp3' loop={true} ref='snowMusic' />
         { this.props.timeFinished === null ? <GamePlayScreen /> : <GameStatistics /> }
-        { this.props.gameStarted || this.props.movement > 0 ? <Map /> : null }
-      </Fragment>
+      </>
     )
   }
 }
@@ -72,7 +70,7 @@ const mapStateToProps = (state) => {
   return {
     timeFinished: state.timeFinished,
     touristRoaster: state.touristRoaster,
-    gameStarted: state.gameStarted,
+    // gameStarted: state.gameStarted,
     playerYelled: state.playerYelled,
     time: state.time,
     timeOfYell: state.timeOfYell
