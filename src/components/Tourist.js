@@ -227,8 +227,10 @@ const mapStateToProps = (state) => {
     movement: state.movement,
     playerX: state.player.xPosition,
     playerY: state.player.yPosition,
+
     centersOfBricks: state.centersOfBricks,
     movementPerBrick: state.movementPerBrick,
+    
     touristRoaster: state.touristRoaster,
     gameOver: state.gameOver,
     patience: state.patience,

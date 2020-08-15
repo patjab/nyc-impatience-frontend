@@ -5,7 +5,7 @@ import { changePauseStatus, changeCurrentScreen, resetAllState, forcePathPlayerM
 
 import Tourist from './Tourist'
 import Timer from './Timer'
-import Path from './Path'
+import GameBackground from './GameBackground'
 import Player from './Player'
 import Pause from './Pause'
 
@@ -70,7 +70,7 @@ class GamePlayScreen extends Component {
     return (
       <Fragment>
         <Timer />
-        <Path />
+        <GameBackground />
         {this.renderTourists(touristDensity)}
         {this.props.isPaused ? <Pause /> : null}
         <Player />

@@ -14,7 +14,6 @@ const initialState = {
   touristRoaster: [],
   streak: [],
   stage: 0,
-  pathUpdater: 0,
   playerUpdater: 0,
   mapUpdater: 0,
   pauseUpdater: 0,
@@ -56,6 +55,15 @@ const initialState = {
 
 const gameController = (state = initialState, action) => {
   switch(action.type) {
+    case "INITIALIZE_BRICK_LIST":
+      return {
+        ...state,
+        centersOfBricks: action.payload
+      }
+    
+
+
+
     case "SET_CANVAS":
       return {
         ...state,
@@ -69,15 +77,10 @@ const gameController = (state = initialState, action) => {
           ...state.player,
           xPosition: state.disabled ? state.player.xPosition : state.player.xPosition + (action.payload.x)
         },
-        pathUpdater: state.pathUpdater + 1,
         movement: state.disabled ? state.movement : allowedMovement,
         stage: Math.trunc(allowedMovement/movementsPerStage)
       }
-    case "INITIALIZE_BRICK_LIST":
-      return {
-        ...state,
-        centersOfBricks: action.payload
-      }
+
     case "CHANGE_SPEED":
       return {
         ...state,
@@ -121,14 +124,8 @@ const gameController = (state = initialState, action) => {
     case "FORCE_PATH_PLAYER_MAP_UPDATE":
       return {
         ...state,
-        pathUpdater: state.pathUpdater + 1,
         playerUpdater: state.playerUpdater + 1,
         mapUpdater: state.mapUpdater + 1
-      }
-    case "FORCE_PATH_UPDATE":
-      return {
-        ...state,
-        pathUpdater: state.pathUpdater + 1
       }
     case "FORCE_PAUSE_UPDATE":
       return {
@@ -252,8 +249,8 @@ const gameController = (state = initialState, action) => {
         snowAbilityList: [...state.snowAbilityList, action.payload]
       }
     case "USE_SNOW_ABILITY":
-      const usedList = state.snowAbilityList.filter(record => record.used === true)
-      const unusedList = state.snowAbilityList.filter(record => record.used === false)
+      const usedList = state.snowAbilityList.filter(record => !!record.used)
+      const unusedList = state.snowAbilityList.filter(record => !record.used)
       return {
         ...state,
         snowAbilityList: [
