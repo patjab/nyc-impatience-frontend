@@ -9,29 +9,26 @@ import { addTouristToRoaster, removeTouristFromRoaster,
   changeMovementAbility, toggleBumpingShake, addToBumpedImages, modifyPatience, forcePathUpdate, forcePauseUpdate, addTouristGoneCounter} from '../actions'
 import { howBigShouldIBe } from '../AuxiliaryMath'
 
-const Tourist = class extends Component {
-  state = {
-    positionX: null,
-    positionY: null,
-    initialRow: null,
-    positionOnArray: null,
-    image: Math.trunc(Math.random() * 3),
-    images: [tourist1, tourist2, tourist3],
-    dontCallBumpAgain: false,
-    mountedOnMovement: null,
-    derivedStateOverride: false,
-    awaitingGarbage: false
-  }
-
-  randomSpot = () => {
-    const chosenRow = Math.trunc(Math.trunc(Math.random()*(this.props.brickPositions.length-1)) * rendingTouristRowsPercentage);
-    const chosenCol = Math.trunc(Math.random()*(this.props.brickPositions[0].length-1))
-
-    return {
-      positionX: chosenRow < 0 ? 0 : this.props.brickPositions[chosenRow][chosenCol].x,
-      positionY: chosenRow < 0 ? 0 : this.props.brickPositions[chosenRow][chosenCol].y
+class Tourist extends Component {
+  constructor(props) {
+    super(props);
+    this.bumpSoundEl = React.createRef();
+    this.touristImg = React.createRef();
+    this.state = {
+      positionX: null,
+      positionY: null,
+      initialRow: null,
+      positionOnArray: null,
+      image: Math.trunc(Math.random() * 3),
+      images: [tourist1, tourist2, tourist3],
+      dontCallBumpAgain: false,
+      mountedOnMovement: null,
+      derivedStateOverride: false,
+      awaitingGarbage: false
     };
   }
+
+
 
   static getDerivedStateFromProps(props, state) {
     let chosenRow, chosenCol, initialRow, mountedOnMovement
@@ -58,6 +55,64 @@ const Tourist = class extends Component {
 
   }
 
+  componentDidMount() {
+    const touristImg = this.touristImg.current;
+    if (touristImg) {
+      touristImg.onload = () => {
+        const sizeOfSide = howBigShouldIBe(this.state.positionY)
+        try {
+          if (!this.props.isPaused) {
+            this.props.canvas.getContext("2d").drawImage(touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
+          }
+          this.props.addTouristToRoaster(this)
+          if ( this.props.movement > startTouristMovementAtDistance ) {
+            this.makeTouristWalk()
+          }
+        } catch (err) {
+          console.log("CANVAS ERROR BYPASSED")
+        }
+      }
+    }
+  }
+
+
+  componentDidUpdate() {
+    const touristImg = this.touristImg.current;
+    if (touristImg && this.state.awaitingGarbage === false) {
+      if (!this.props.isPaused) {
+        const sizeOfSide = howBigShouldIBe(this.state.positionY)
+        this.props.canvas.getContext("2d").drawImage(touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
+        this.checkForCollision()
+        this.checkIfTouristStillInView()
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.removeTouristFromRoaster(this.props.id)
+    clearInterval(this.animationInterval)
+    clearInterval(this.walkingTouristInterval)
+  }
+
+  render() {
+    return (
+      <>
+        <audio src='../bump.wav' ref={this.bumpSoundEl}/>
+        <img src={`${this.state.images[this.state.image]}`} ref={this.touristImg} className='hidden' alt='tourist'/>
+      </>
+    )
+  }
+
+  randomSpot = () => {
+    const chosenRow = Math.trunc(Math.trunc(Math.random()*(this.props.brickPositions.length-1)) * rendingTouristRowsPercentage);
+    const chosenCol = Math.trunc(Math.random()*(this.props.brickPositions[0].length-1))
+
+    return {
+      positionX: chosenRow < 0 ? 0 : this.props.brickPositions[chosenRow][chosenCol].x,
+      positionY: chosenRow < 0 ? 0 : this.props.brickPositions[chosenRow][chosenCol].y
+    };
+  }
+  
   runningAnimation = () => {
     const currentRow = this.state.positionOnArray.row
     const currentCol = this.state.positionOnArray.col
@@ -128,14 +183,19 @@ const Tourist = class extends Component {
         }
       }, 1000)
 
-      if (!this.refs.bumpSoundEl.paused) {
-        this.refs.bumpSoundEl.pause().then(() => {
-          this.refs.bumpSoundEl.play()
-        })
-      } else {
-        this.refs.bumpSoundEl.play()
-      }
+      const bumpSoundEl = this.bumpSoundEl.current ;
+      if ( bumpSoundEl ) {
 
+        if (!bumpSoundEl.paused) {
+          bumpSoundEl.pause().then(() => {
+            bumpSoundEl.play()
+          })
+        } else {
+          bumpSoundEl.play()
+        }
+  
+      }
+      
       this.setState({dontCallBumpAgain: true}, () => {
         if (!this.props.gameOver) {
           this.runningAnimation()
@@ -175,49 +235,6 @@ const Tourist = class extends Component {
     }, 1000)
   }
 
-  componentDidMount() {
-    this.refs.touristImg.onload = () => {
-      const sizeOfSide = howBigShouldIBe(this.state.positionY)
-      try {
-        if (!this.props.isPaused) {
-          this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
-        }
-        this.props.addTouristToRoaster(this)
-        if ( this.props.movement > startTouristMovementAtDistance ) {
-          this.makeTouristWalk()
-        }
-      } catch (err) {
-        console.log("CANVAS ERROR BYPASSED")
-      }
-    }
-  }
-
-
-  componentDidUpdate() {
-    if (this.state.awaitingGarbage === false) {
-      if (!this.props.isPaused) {
-        const sizeOfSide = howBigShouldIBe(this.state.positionY)
-        this.props.canvas.getContext("2d").drawImage(this.refs.touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
-        this.checkForCollision()
-        this.checkIfTouristStillInView()
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    this.props.removeTouristFromRoaster(this.props.id)
-    clearInterval(this.animationInterval)
-    clearInterval(this.walkingTouristInterval)
-  }
-
-  render() {
-    return (
-      <>
-        <audio src='../bump.wav' ref='bumpSoundEl'/>
-        <img src={`${this.state.images[this.state.image]}`} ref='touristImg' className='hidden' alt='tourist'/>
-      </>
-    )
-  }
 }
 
 const mapStateToProps = (state) => {
