@@ -20,7 +20,6 @@ const Tourist = class extends Component {
     dontCallBumpAgain: false,
     mountedOnMovement: null,
     derivedStateOverride: false,
-    // touristUpdater: 0,
     awaitingGarbage: false
   }
 

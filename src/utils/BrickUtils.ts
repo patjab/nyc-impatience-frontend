@@ -35,7 +35,7 @@ export class BrickUtils {
 
             const bricksListInRow: Row[] = this.calculateBrickVerticals(acc.previousPoints, currentPoints);
             
-            return {brickMatrix: [...acc.brickMatrix, ...bricksListInRow], previousPoints: currentPoints};
+            return { brickMatrix: [...acc.brickMatrix, ...bricksListInRow], previousPoints: currentPoints };
 
         }, { previousPoints: [], brickMatrix: [] }).brickMatrix;
     }
@@ -60,10 +60,10 @@ export class BrickUtils {
         for (   let row = horizonLine; row <= canvasHeight; 
                 row += (brickSpacingBetweenRows = brickSpacingBetweenRows + (depthMultiplier*(row - horizonLine)))  ) {
                     
-                    const percentageOfBrick = (movement * movementPerBrick) % 2;
-                    const absoluteChunkOfBrick = brickSpacingBetweenRows * percentageOfBrick;
-                    const rowWithBorderBrick = row + (absoluteChunkOfBrick);
-                    rowsWithBrickBorders.push(rowWithBorderBrick);
+            const percentageOfBrick = (movement * movementPerBrick) % 2;
+            const absoluteChunkOfBrick = brickSpacingBetweenRows * percentageOfBrick;
+            const rowWithBorderBrick = row + (absoluteChunkOfBrick);
+            rowsWithBrickBorders.push(rowWithBorderBrick);
                     
         }
         return rowsWithBrickBorders;
@@ -76,15 +76,13 @@ export class BrickUtils {
     }
 
     private static calculateBrickVerticals(previousPoints: Row, currentPoints: Row): Row[] {
-        let previousY: number | undefined;
-
         return previousPoints.reduce((acc: Row[], previousPoint: Position, i: number) => {
             if ( i < previousPoints.length - 1 ) {
                 const brickCenterX: number = ((previousPoints[i+1].x - previousPoint.x) / 2) + previousPoints[i].x;
                 const brickCenterY: number = ((currentPoints[i+1].y - previousPoints[i+1].y) / 2) + previousPoints[i+1].y;
+                const previousY: number | undefined = i === 0 ? undefined : ((currentPoints[i+0].y - previousPoints[i+0].y) / 2) + previousPoints[i+0].y;
 
                 if ( previousY === brickCenterY ) {
-                    previousY = brickCenterY;
                     return [
                         ...acc.slice(0, -1), 
                         [
@@ -93,8 +91,12 @@ export class BrickUtils {
                         ]
                     ];
                 } else {
-                    previousY = brickCenterY;
-                    return [...acc, [{ x: brickCenterX, y: brickCenterY }]];
+                    return [
+                        ...acc,
+                        [
+                            { x: brickCenterX, y: brickCenterY }
+                        ]
+                    ];
                 }
             } else {
                 return acc;
