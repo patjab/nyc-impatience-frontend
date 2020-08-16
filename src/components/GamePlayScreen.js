@@ -8,13 +8,6 @@ import Player from './Player'
 import Pause from './Pause'
 
 class GamePlayScreen extends Component {
-  // renderEnvironmentWithOngoingAnimation = () => {
-  //   for ( let tourist of this.props.touristRoaster ) {
-  //     tourist.setState({touristUpdater: tourist.state.touristUpdater+1}, this.props.forcePauseUpdate)
-  //   }
-  //   this.props.forcePathPlayerMapUpdate()
-  // }
-
   handlePause = (e) => {
     if (e.keyCode === 27) {
       if (this.props.isPaused) {
@@ -68,7 +61,6 @@ const mapStateToProps = (state) => {
     stage: state.stage,
     backgroundMusic: state.backgroundMusic,
     isPaused: state.isPaused,
-    // touristRoaster: state.touristRoaster,
     runningMusic: state.runningMusic,
   }
 }

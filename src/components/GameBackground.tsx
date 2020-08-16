@@ -5,6 +5,7 @@ import {nySkyline} from '../images'
 import {horizonLine, statusBarHeight, canvasWidth, canvasHeight, skyColor} from '../setupData'
 import GamePath from './GamePath'
 import Map from './Map';
+
 export enum Weather {
   SUNNY = 'SUNNY',
   SNOWING = 'SNOWING'

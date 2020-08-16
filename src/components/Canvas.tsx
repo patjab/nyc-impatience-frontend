@@ -51,4 +51,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Canvas)
+export default connect(mapStateToProps, mapDispatchToProps)(Canvas);

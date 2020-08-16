@@ -70,7 +70,6 @@ const mapStateToProps = (state) => {
   return {
     timeFinished: state.timeFinished,
     touristRoaster: state.touristRoaster,
-    // gameStarted: state.gameStarted,
     playerYelled: state.playerYelled,
     time: state.time,
     timeOfYell: state.timeOfYell
