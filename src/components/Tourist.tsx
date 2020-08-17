@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import * as React from 'react'
 import { connect } from 'react-redux'
 
 import { canvasHeight, rendingTouristRowsPercentage,
@@ -22,7 +22,6 @@ interface TouristProps {
   playerY: number;
   gameOver: boolean;
   patience: number;
-
 
   addTouristToRoaster: (arg: React.ReactNode) => void;
   removeTouristFromRoaster: (id: number) => void;
@@ -59,60 +58,52 @@ class Tourist extends React.PureComponent<TouristProps, TouristState> {
     super(props);
     this.bumpSoundEl = React.createRef();
     this.touristImg = React.createRef();
+
+    const chosenRow: number = Math.trunc(Math.trunc(Math.random()*(props.brickPositions.length-1)) * rendingTouristRowsPercentage);
+    const chosenCol: number = Math.trunc(Math.random()*(props.brickPositions[0].length-1));
+
     this.state = {
-      positionX: null,
-      positionY: null,
-      initialRow: null,
-      positionOnArray: null,
+      positionX: chosenRow < 0 ? 0 : props.brickPositions[chosenRow][chosenCol].x,
+      positionY: chosenRow < 0 ? 0 : props.brickPositions[chosenRow][chosenCol].y,
+      initialRow: chosenRow,
+      positionOnArray: {col: chosenCol, row: chosenRow},
       image: Math.trunc(Math.random() * 3),
       images: [tourist1, tourist2, tourist3],
       dontCallBumpAgain: false,
-      mountedOnMovement: null,
+      mountedOnMovement: props.movement,
       derivedStateOverride: false,
       awaitingGarbage: false
     };
   }
 
   public static getDerivedStateFromProps(props: TouristProps, state: TouristState) {
-    let chosenRow, chosenCol, initialRow, mountedOnMovement
-    if (state.positionOnArray === null && props.brickPositions.length > 0 ) {
-      initialRow = chosenRow = Math.trunc(Math.trunc(Math.random()*(props.brickPositions.length-1)) * rendingTouristRowsPercentage)
-      chosenCol = Math.trunc(Math.random()*(props.brickPositions[0].length-1))
-      mountedOnMovement = props.movement
-    } else if (state.positionOnArray !== null ) {
-      let brickTransitionHelper = (Math.trunc(movementPerBrick * (props.movement) * 0.5) * 2) - (Math.trunc(movementPerBrick * Number(state.mountedOnMovement) * 0.5) * 2)
-      chosenRow = state.derivedStateOverride ? state.positionOnArray.row : (Number(state.initialRow)+ brickTransitionHelper ) % props.brickPositions.length
-      chosenCol = state.positionOnArray.col
-    } else {
-      return state
-    }
+    const brickTransitionHelper = TouristUtils.brickTransitionHelper(props.movement, Number(state.mountedOnMovement));
+    const chosenRow = state.positionOnArray && state.derivedStateOverride ? state.positionOnArray.row : (Number(state.initialRow)+ brickTransitionHelper ) % props.brickPositions.length
+    const chosenCol = state.positionOnArray ? state.positionOnArray.col : 0;
 
     return {
       ...state,
       positionX: chosenRow < 0 ? 0 : props.brickPositions[chosenRow][chosenCol].x,
       positionY: chosenRow < 0 ? 0 : props.brickPositions[chosenRow][chosenCol].y,
-      initialRow: initialRow || state.initialRow,
-      positionOnArray: {col: chosenCol, row: chosenRow},
-      mountedOnMovement: mountedOnMovement || state.mountedOnMovement
+      positionOnArray: {col: chosenCol, row: chosenRow}
     }
-
   }
 
- public componentDidMount(): void {
+  public componentDidMount(): void {
     const touristImg = this.touristImg.current;
     if (touristImg) {
       touristImg.onload = () => {
-        const sizeOfSide = howBigShouldIBe(this.state.positionY)
+        const sizeOfSide = howBigShouldIBe(this.state.positionY);
         try {
           if (!this.props.isPaused && this.state.positionX && this.state.positionY) {
-            this.props.canvas.getContext("2d")?.drawImage(touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
+            this.props.canvas.getContext("2d")?.drawImage(touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide);
           }
           this.props.addTouristToRoaster(this)
           if ( this.props.movement > startTouristMovementAtDistance ) {
-            this.makeTouristWalk()
+            this.makeTouristWalk();
           }
         } catch (err) {
-          console.log("CANVAS ERROR BYPASSED")
+          console.log("CANVAS ERROR BYPASSED");
         }
       }
     }
@@ -123,18 +114,18 @@ class Tourist extends React.PureComponent<TouristProps, TouristState> {
     const touristImg = this.touristImg.current;
     if (touristImg && this.state.awaitingGarbage === false) {
       if (!this.props.isPaused && this.state.positionX && this.state.positionY) {
-        const sizeOfSide = howBigShouldIBe(this.state.positionY)
-        this.props.canvas.getContext("2d")?.drawImage(touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide)
+        const sizeOfSide = howBigShouldIBe(this.state.positionY);
+        this.props.canvas.getContext("2d")?.drawImage(touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide);
         this.checkForCollision(this.state.positionX, this.state.positionY, this.props.playerX, this.props.playerY);
-        this.checkIfTouristStillInView()
+        this.checkIfTouristStillInView();
       }
     }
   }
 
   public componentWillUnmount(): void {
-    this.props.removeTouristFromRoaster(this.props.id)
-    clearInterval(this.animationInterval)
-    clearInterval(this.walkingTouristInterval)
+    this.props.removeTouristFromRoaster(this.props.id);
+    clearInterval(this.animationInterval);
+    clearInterval(this.walkingTouristInterval);
   }
 
   public render(): React.ReactElement {
@@ -155,9 +146,8 @@ class Tourist extends React.PureComponent<TouristProps, TouristState> {
   
   private runningAnimation = (): void => {
     if ( this.state.positionOnArray ) {
-      const currentRow = this.state.positionOnArray.row
-      const currentCol = this.state.positionOnArray.col
-      let i = 1
+      let currentRow = this.state.positionOnArray.row;
+      let currentCol = this.state.positionOnArray.col;
 
       this.animationInterval = window.setInterval(() => {
         if ( this.state.positionOnArray ) {
@@ -169,70 +159,73 @@ class Tourist extends React.PureComponent<TouristProps, TouristState> {
             this.setState({
               positionOnArray: {
                 col: currentCol,
-                row: currentRow-i
+                row: currentRow--
               },
               derivedStateOverride: true
-            }, () => {
-              i += 1
-            })
+            });
           }
         }
         
-      }, touristRunningMilliseconds)
+      }, touristRunningMilliseconds);
 
     }
   }
 
 
   private takeAPictureOfCollision = (): void => {
-    const quality = 1
-    const snapshot = this.props.canvas.toDataURL("image/jpeg", quality)
-    this.props.addToBumpedImages(snapshot)
+    const quality = 1;
+    const snapshot = this.props.canvas.toDataURL("image/jpeg", quality);
+    this.props.addToBumpedImages(snapshot);
+  }
+
+  private afterBumpEffects = (): void =>{
+    if (!this.props.gameOver) {
+      this.props.toggleBumpingShake();
+      this.props.changeMovementAbility(false);
+    }
+  }
+
+  private playerRecoveryEffects = (): void => {
+    if (!this.props.gameOver) {
+      this.runningAnimation();
+      if ( this.props.patience > 0 ) {
+        this.props.recordStreak(this.props.movement);
+      }
+      this.props.resetPlayer();
+    }
+  }
+
+  private bumpSoundEffects = () => {
+    const bumpSoundEl: HTMLAudioElement | null = this.bumpSoundEl.current;
+    if ( bumpSoundEl ) {
+
+      if (!bumpSoundEl.paused) {
+        (bumpSoundEl.pause() as unknown as Promise<any>)
+          .then(() => {
+            bumpSoundEl.play();
+          });
+      } else {
+        bumpSoundEl.play();
+      }
+
+    }
   }
 
   private runBumpAnimations = (): void => {
     if (!this.props.gameOver) {
-      this.props.toggleBumpingShake()
-
-      window.setTimeout(this.takeAPictureOfCollision, 10)
-
-      window.setTimeout(()=>{
-        if (!this.props.gameOver) {
-          this.props.toggleBumpingShake()
-          this.props.changeMovementAbility(false)
-        }
-      }, 1000)
-
-      const bumpSoundEl = this.bumpSoundEl.current ;
-      if ( bumpSoundEl ) {
-
-        if (!bumpSoundEl.paused) {
-          (bumpSoundEl.pause() as unknown as Promise<any>).then(() => {
-            bumpSoundEl.play()
-          })
-        } else {
-          bumpSoundEl.play()
-        }
-  
-      }
-      
-      this.setState({dontCallBumpAgain: true}, () => {
-        if (!this.props.gameOver) {
-          this.runningAnimation()
-          if ( this.props.patience > 0 ) {
-            this.props.recordStreak(this.props.movement)
-          }
-          this.props.resetPlayer()
-        }
-      })
+      this.props.toggleBumpingShake();
+      window.setTimeout(this.takeAPictureOfCollision, 10);
+      window.setTimeout(this.afterBumpEffects, 1000);
+      this.bumpSoundEffects();
+      this.setState({dontCallBumpAgain: true}, this.playerRecoveryEffects);
     }
   }
 
   private checkIfTouristStillInView = (): void => {
     if (this.state.positionY) {
-      const sizeOfSide = howBigShouldIBe(this.state.positionY)
-      const lowerTourist = this.state.positionY + sizeOfSide
-      const endOfVisiblePath = canvasHeight - heightOfMap
+      const sizeOfSide = howBigShouldIBe(this.state.positionY);
+      const lowerTourist = this.state.positionY + sizeOfSide;
+      const endOfVisiblePath = canvasHeight - heightOfMap;
       if ( lowerTourist > endOfVisiblePath ) {
         this.setState({ awaitingGarbage: true }, this.props.addTouristGoneCounter);
       }
@@ -242,10 +235,10 @@ class Tourist extends React.PureComponent<TouristProps, TouristState> {
   private makeTouristWalk = (): void => {
     this.walkingTouristInterval = window.setInterval(() => {
       if ( this.state.positionOnArray ){
-        const currentRow = this.state.positionOnArray.row
-        const currentCol = this.state.positionOnArray.col
+        const currentRow = this.state.positionOnArray.row;
+        const currentCol = this.state.positionOnArray.col;
 
-        const potentialCol = currentCol + Math.round((Math.random()*2)-1)
+        const potentialCol = currentCol + Math.round((Math.random()*2)-1);
         this.setState({
           positionOnArray: {
             col: potentialCol >= 0 && potentialCol < 10 ? potentialCol : currentCol,

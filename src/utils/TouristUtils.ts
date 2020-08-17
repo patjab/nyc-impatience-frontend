@@ -3,6 +3,10 @@ import {Position} from '../utils/BrickUtils'
 import {initialPlayerSize, movementPerBrick, yNearnessSpook} from '../setupData';
 
 export class TouristUtils {
+    public static brickTransitionHelper(movement: number, mountedOnMovement: number) {
+        return (Math.trunc(movementPerBrick * (movement) * 0.5) * 2) - (Math.trunc(movementPerBrick * mountedOnMovement * 0.5) * 2);
+    }
+
     public static hasCollided(positionX: number, positionY: number, playerX: number, playerY: number): boolean {
         const sizeOfSide: number = howBigShouldIBe(positionY);
         return this.bumpOnTheSide(positionX, positionY, playerX, playerY, sizeOfSide) && this.withinYRange(positionY, playerY, sizeOfSide);
@@ -23,7 +27,7 @@ export class TouristUtils {
     private static withinYRange = (positionY: number, playerY: number, sizeOfSide: number): boolean => {    
         const lowerPlayer: number = playerY + initialPlayerSize;
         const lowerTourist: number = positionY + sizeOfSide;
-        
+
         const pixelsPerBrickAtLowerPlayer: number = 20;
         const upperTourist: number = lowerTourist - (pixelsPerBrickAtLowerPlayer * movementPerBrick * yNearnessSpook);
     
