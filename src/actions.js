@@ -77,24 +77,6 @@ export const recordStreak = (streak) => {
   }
 }
 
-export const forcePathPlayerMapUpdate = () => {
-  return {
-    type: "FORCE_PATH_PLAYER_MAP_UPDATE"
-  }
-}
-
-export const forcePathUpdate = () => {
-  return {
-    type: "FORCE_PATH_UPDATE"
-  }
-}
-
-export const forcePauseUpdate = () => {
-  return {
-    type: "FORCE_PAUSE_UPDATE"
-  }
-}
-
 export const changeMovementAbility = (isDisabled) => {
   return {
     type: "CHANGE_MOVEMENT_ABILITY",

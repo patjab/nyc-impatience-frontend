@@ -1,8 +1,13 @@
 import {howBigShouldIBe} from '../AuxiliaryMath'
 import {Position} from '../utils/BrickUtils'
 import {initialPlayerSize, movementPerBrick, yNearnessSpook} from '../setupData';
+import {tourist1, tourist2, tourist3} from '../images';
 
 export class TouristUtils {
+
+    public static getTouristImages(index: number): string {
+        return [tourist1, tourist2, tourist3][index];
+    }
     public static brickTransitionHelper(movement: number, mountedOnMovement: number) {
         return (Math.trunc(movementPerBrick * (movement) * 0.5) * 2) - (Math.trunc(movementPerBrick * mountedOnMovement * 0.5) * 2);
     }

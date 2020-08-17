@@ -218,7 +218,6 @@ const mapStateToProps = (state) => {
     player: state.player,
     speed: state.speed,
     bumpingShake: state.bumpingShake,
-    playerUpdater: state.playerUpdater,
     gameOver: state.gameOver,
     movement: state.movement,
     gameStarted: state.gameStarted,

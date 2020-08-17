@@ -28,9 +28,8 @@ class Pause extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    canvas: state.canvas,
-    pauseUpdater: state.pauseUpdater
-  }
+    canvas: state.canvas
+  };
 }
 
 export default connect(mapStateToProps)(Pause)

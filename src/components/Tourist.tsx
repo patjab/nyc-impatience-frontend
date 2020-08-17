@@ -2,11 +2,9 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 
 import { canvasHeight, rendingTouristRowsPercentage,
-  touristRunningMilliseconds, collidedImpatience, heightOfMap, startTouristMovementAtDistance, movementPerBrick} from '../setupData'
-import { tourist1, tourist2, tourist3 } from '../images'
+  touristRunningMilliseconds, collidedImpatience, heightOfMap, startTouristMovementAtDistance} from '../setupData'
 import { addTouristToRoaster, removeTouristFromRoaster,
-  resetPlayer, recordStreak, forcePathPlayerMapUpdate,
-  changeMovementAbility, toggleBumpingShake, addToBumpedImages, modifyPatience, forcePathUpdate, forcePauseUpdate, addTouristGoneCounter} from '../actions'
+  resetPlayer, recordStreak, changeMovementAbility, toggleBumpingShake, addToBumpedImages, modifyPatience, addTouristGoneCounter } from '../actions'
 import { howBigShouldIBe } from '../AuxiliaryMath'
 import { Dispatch } from 'redux'
 import { Row } from '../utils/BrickUtils'
@@ -37,12 +35,8 @@ interface TouristProps {
 interface TouristState {
   positionX: null | number;
   positionY: null | number;
-  initialRow: null | number;
   positionOnArray: {row: number, col: number} | null;
-  image: number;
-  images: string[];
   dontCallBumpAgain: boolean;
-  mountedOnMovement: number | null;
   derivedStateOverride: boolean;
   awaitingGarbage: boolean;
 }
@@ -50,39 +44,41 @@ interface TouristState {
 class Tourist extends React.PureComponent<TouristProps, TouristState> {
   private readonly bumpSoundEl: React.RefObject<HTMLAudioElement>;
   private readonly touristImg: React.RefObject<HTMLImageElement>;
+  private readonly mountedOnMovement: number | null;
+  private readonly initialRow: null | number;
+  private readonly touristImgSrc: string;
 
   private animationInterval: number | undefined;
   private walkingTouristInterval: number | undefined;
 
   public constructor(props: TouristProps) {
     super(props);
-    this.bumpSoundEl = React.createRef();
-    this.touristImg = React.createRef();
 
     const chosenRow: number = Math.trunc(Math.trunc(Math.random()*(props.brickPositions.length-1)) * rendingTouristRowsPercentage);
     const chosenCol: number = Math.trunc(Math.random()*(props.brickPositions[0].length-1));
 
+    this.bumpSoundEl = React.createRef();
+    this.touristImg = React.createRef();
+    this.mountedOnMovement = props.movement;
+    this.initialRow = chosenRow;
+    this.touristImgSrc = TouristUtils.getTouristImages(Math.trunc(Math.random() * 3));
+
     this.state = {
       positionX: chosenRow < 0 ? 0 : props.brickPositions[chosenRow][chosenCol].x,
       positionY: chosenRow < 0 ? 0 : props.brickPositions[chosenRow][chosenCol].y,
-      initialRow: chosenRow,
       positionOnArray: {col: chosenCol, row: chosenRow},
-      image: Math.trunc(Math.random() * 3),
-      images: [tourist1, tourist2, tourist3],
       dontCallBumpAgain: false,
-      mountedOnMovement: props.movement,
       derivedStateOverride: false,
       awaitingGarbage: false
     };
   }
 
-  public static getDerivedStateFromProps(props: TouristProps, state: TouristState) {
-    const brickTransitionHelper = TouristUtils.brickTransitionHelper(props.movement, Number(state.mountedOnMovement));
-    const chosenRow = state.positionOnArray && state.derivedStateOverride ? state.positionOnArray.row : (Number(state.initialRow)+ brickTransitionHelper ) % props.brickPositions.length
+  public converter(props: TouristProps, state: TouristState) {
+    const brickTransitionHelper = TouristUtils.brickTransitionHelper(props.movement, Number(this.mountedOnMovement));
+    const chosenRow = state.positionOnArray && state.derivedStateOverride ? state.positionOnArray.row : (Number(this.initialRow)+ brickTransitionHelper ) % props.brickPositions.length
     const chosenCol = state.positionOnArray ? state.positionOnArray.col : 0;
 
     return {
-      ...state,
       positionX: chosenRow < 0 ? 0 : props.brickPositions[chosenRow][chosenCol].x,
       positionY: chosenRow < 0 ? 0 : props.brickPositions[chosenRow][chosenCol].y,
       positionOnArray: {col: chosenCol, row: chosenRow}
@@ -98,7 +94,7 @@ class Tourist extends React.PureComponent<TouristProps, TouristState> {
           if (!this.props.isPaused && this.state.positionX && this.state.positionY) {
             this.props.canvas.getContext("2d")?.drawImage(touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide);
           }
-          this.props.addTouristToRoaster(this)
+          this.props.addTouristToRoaster(this);
           if ( this.props.movement > startTouristMovementAtDistance ) {
             this.makeTouristWalk();
           }
@@ -111,12 +107,13 @@ class Tourist extends React.PureComponent<TouristProps, TouristState> {
 
 
   public componentDidUpdate(): void {
+    const {positionY, positionX} = this.converter(this.props, this.state);
     const touristImg = this.touristImg.current;
     if (touristImg && this.state.awaitingGarbage === false) {
-      if (!this.props.isPaused && this.state.positionX && this.state.positionY) {
-        const sizeOfSide = howBigShouldIBe(this.state.positionY);
-        this.props.canvas.getContext("2d")?.drawImage(touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide);
-        this.checkForCollision(this.state.positionX, this.state.positionY, this.props.playerX, this.props.playerY);
+      if (!this.props.isPaused && positionX && positionY) {
+        const sizeOfSide = howBigShouldIBe(positionY);
+        this.props.canvas.getContext("2d")?.drawImage(touristImg, positionX, positionY, sizeOfSide, sizeOfSide);
+        this.checkForCollision(positionX, positionY, this.props.playerX, this.props.playerY);
         this.checkIfTouristStillInView();
       }
     }
@@ -124,15 +121,23 @@ class Tourist extends React.PureComponent<TouristProps, TouristState> {
 
   public componentWillUnmount(): void {
     this.props.removeTouristFromRoaster(this.props.id);
-    clearInterval(this.animationInterval);
-    clearInterval(this.walkingTouristInterval);
+    window.clearInterval(this.animationInterval);
+    window.clearInterval(this.walkingTouristInterval);
   }
 
   public render(): React.ReactElement {
     return (
       <>
-        <audio src='../bump.wav' ref={this.bumpSoundEl}/>
-        <img src={`${this.state.images[this.state.image]}`} ref={this.touristImg} className='hidden' alt='tourist'/>
+        <audio 
+          src={'../bump.wav'}
+          ref={this.bumpSoundEl}
+        />
+        <img 
+          src={this.touristImgSrc} 
+          ref={this.touristImg} 
+          className={'hidden'}
+          alt={'tourist'}
+        />
       </>
     )
   }
@@ -145,17 +150,17 @@ class Tourist extends React.PureComponent<TouristProps, TouristState> {
   }
   
   private runningAnimation = (): void => {
-    if ( this.state.positionOnArray ) {
-      let currentRow = this.state.positionOnArray.row;
-      let currentCol = this.state.positionOnArray.col;
+    const {positionOnArray} = this.converter(this.props, this.state);
+    if ( positionOnArray ) {
+      let currentRow = positionOnArray.row;
+      let currentCol = positionOnArray.col;
 
       this.animationInterval = window.setInterval(() => {
-        if ( this.state.positionOnArray ) {
-          if ( this.state.positionOnArray.row <= 0 ) {
+        if ( positionOnArray ) {
+          if ( positionOnArray.row <= 0 ) {
             clearInterval(this.animationInterval)
             this.setState({ awaitingGarbage: true }, this.props.addTouristGoneCounter);
-    
-          } else if ( this.state.positionOnArray.row > 0 && !this.props.isPaused ) {
+          } else if ( positionOnArray.row > 0 && !this.props.isPaused ) {
             this.setState({
               positionOnArray: {
                 col: currentCol,
@@ -217,14 +222,15 @@ class Tourist extends React.PureComponent<TouristProps, TouristState> {
       window.setTimeout(this.takeAPictureOfCollision, 10);
       window.setTimeout(this.afterBumpEffects, 1000);
       this.bumpSoundEffects();
-      this.setState({dontCallBumpAgain: true}, this.playerRecoveryEffects);
+      this.setState({ dontCallBumpAgain: true }, this.playerRecoveryEffects);
     }
   }
 
   private checkIfTouristStillInView = (): void => {
-    if (this.state.positionY) {
-      const sizeOfSide = howBigShouldIBe(this.state.positionY);
-      const lowerTourist = this.state.positionY + sizeOfSide;
+    const {positionY} = this.converter(this.props, this.state);
+    if (positionY) {
+      const sizeOfSide = howBigShouldIBe(positionY);
+      const lowerTourist = positionY + sizeOfSide;
       const endOfVisiblePath = canvasHeight - heightOfMap;
       if ( lowerTourist > endOfVisiblePath ) {
         this.setState({ awaitingGarbage: true }, this.props.addTouristGoneCounter);
@@ -234,9 +240,10 @@ class Tourist extends React.PureComponent<TouristProps, TouristState> {
 
   private makeTouristWalk = (): void => {
     this.walkingTouristInterval = window.setInterval(() => {
-      if ( this.state.positionOnArray ){
-        const currentRow = this.state.positionOnArray.row;
-        const currentCol = this.state.positionOnArray.col;
+      const {positionOnArray} = this.converter(this.props, this.state);
+      if ( positionOnArray ){
+        const currentRow = positionOnArray.row;
+        const currentCol = positionOnArray.col;
 
         const potentialCol = currentCol + Math.round((Math.random()*2)-1);
         this.setState({
@@ -272,14 +279,11 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     addTouristGoneCounter: () => dispatch(addTouristGoneCounter()),
     resetPlayer: () => dispatch(resetPlayer()),
     recordStreak: (streak: number) => dispatch(recordStreak(streak)),
-    forcePathPlayerMapUpdate: () => dispatch(forcePathPlayerMapUpdate()),
     changeMovementAbility: (isDisabled: boolean) => dispatch(changeMovementAbility(isDisabled)),
     toggleBumpingShake: () => dispatch(toggleBumpingShake()),
     addToBumpedImages: (image: string) => dispatch(addToBumpedImages(image)),
     modifyPatience: (modifier: number) => dispatch(modifyPatience(modifier)),
-    forcePathUpdate: () => dispatch(forcePathUpdate()),
-    forcePauseUpdate: () => dispatch(forcePauseUpdate())
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Tourist)
+export default connect(mapStateToProps, mapDispatchToProps)(Tourist);

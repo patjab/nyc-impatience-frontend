@@ -12,9 +12,6 @@ const initialState = {
   touristRoaster: [],
   streak: [],
   stage: 0,
-  playerUpdater: 0,
-  mapUpdater: 0,
-  pauseUpdater: 0,
   disabled: false,
   bumpingShake: false,
   gameOver: false,
@@ -115,17 +112,6 @@ const gameController = (state = initialState, action) => {
       return {
         ...state,
         streak: [...state.streak, action.payload]
-      }
-    case "FORCE_PATH_PLAYER_MAP_UPDATE":
-      return {
-        ...state,
-        playerUpdater: state.playerUpdater + 1,
-        mapUpdater: state.mapUpdater + 1
-      }
-    case "FORCE_PAUSE_UPDATE":
-      return {
-        ...state,
-        pauseUpdater: state.pauseUpdater + 1
       }
     case "CHANGE_MOVEMENT_ABILITY":
       return {
