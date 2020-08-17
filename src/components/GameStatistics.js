@@ -1,11 +1,11 @@
-import React, { Component, Fragment } from 'react'
-import { connect } from 'react-redux'
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import {Actions} from '../store/Actions';
-import { canvasWidth, canvasHeight, marginAroundStats, paddingAroundStats } from '../setupData'
-import { tracks } from '../mediaHelper/microphoneHelper'
-import { angryGoomba } from '../images'
-import { recordHighScore } from '../adapter/adapter'
-import NameInput from './NameInput'
+import {canvasWidth, canvasHeight, marginAroundStats, paddingAroundStats} from '../setupData';
+import {tracks} from '../mediaHelper/microphoneHelper';
+import {angryGoomba} from '../images';
+import NameInput from './NameInput';
+import {Adapter} from '../adapter/Adapter';
 
 class GameStatistics extends Component {
   state = {
@@ -217,7 +217,7 @@ class GameStatistics extends Component {
         direction_changes_per_second: unformatted["Dir Changes per Sec"]
       }
     }
-    return recordHighScore(formatted)
+    return Adapter.recordHighScore(formatted);
   }
 
   componentDidUpdate() {
@@ -244,12 +244,12 @@ class GameStatistics extends Component {
 
   render() {
     return (
-      <Fragment>
-        <audio src='../losingScream.wav' ref='losingScream'/ >
-        <audio src='../gameOver.mp3' loop={true} ref='gameOverMusic'/ >
+      <>
+        <audio src='../losingScream.wav' ref='losingScream'/>
+        <audio src='../gameOver.mp3' loop={true} ref='gameOverMusic'/>
         <img src={this.props.gameOverImage} alt='frozenGameOverScreen' ref='frozenGameOverScreen' className='hidden'/>
         { this.state.nameInputReady ? <NameInput/> : null }
-      </Fragment>
+      </>
     )
   }
 

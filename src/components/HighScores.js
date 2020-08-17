@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { getHighScores } from '../adapter/adapter'
-import { canvasHeight, canvasWidth, numberOfHighScoresToDisplay } from '../setupData'
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {canvasHeight, canvasWidth, numberOfHighScoresToDisplay} from '../setupData';
 import {Actions} from '../store/Actions';
+import {Adapter} from '../adapter/Adapter';
 
 class HighScores extends Component {
   state = {
@@ -36,10 +36,10 @@ class HighScores extends Component {
 
     window.addEventListener('keydown', this.switchToMainScreen)
 
-    getHighScores()
-    .then(allScores => allScores.sort((score1, score2) => score2.distance - score1.distance))
-    .then(sortedScores => sortedScores.slice(0, numberOfHighScoresToDisplay))
-    .then(topScores => this.setState({topScores}))
+    Adapter.getHighScores()
+      .then(allScores => allScores.sort((score1, score2) => score2.distance - score1.distance))
+      .then(sortedScores => sortedScores.slice(0, numberOfHighScoresToDisplay))
+      .then(topScores => this.setState({topScores}))
   }
 
   componentDidUpdate() {
