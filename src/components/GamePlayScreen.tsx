@@ -1,13 +1,13 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { changePauseStatus, changeCurrentScreen, resetAllState } from '../actions'
-
+import {Actions} from '../store/Actions';
 import Timer from './Timer'
 import GameBackground from './GameBackground'
 import Player from './Player'
 import Pause from './Pause'
 import { Dispatch } from 'redux'
 import { CanvasScreen } from '../utils/CanvasScreens'
+import { AppState } from '../store/initialState'
 
 interface GamePlayScreenProps {
   backgroundMusic: any;
@@ -71,7 +71,7 @@ class GamePlayScreen extends React.PureComponent<GamePlayScreenProps> {
 
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: AppState) => {
   return {
     canvas: state.canvas,
     stage: state.stage,
@@ -83,9 +83,9 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    changePauseStatus: () => dispatch(changePauseStatus()),
-    changeCurrentScreen: (screen: CanvasScreen) => dispatch(changeCurrentScreen(screen)),
-    resetAllState: () => dispatch(resetAllState())
+    changePauseStatus: () => dispatch(Actions.changePauseStatus()),
+    changeCurrentScreen: (screen: CanvasScreen) => dispatch(Actions.changeCurrentScreen(screen)),
+    resetAllState: () => dispatch(Actions.resetAllState())
   }
 }
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { canvasHeight, canvasWidth } from '../setupData'
-import { changeCurrentScreen, resetAllState } from '../actions'
+import {Actions} from '../store/Actions';
 
 class Instructions extends Component {
   state = {
@@ -152,8 +152,8 @@ class Instructions extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    changeCurrentScreen: (screen) => dispatch(changeCurrentScreen(screen)),
-    resetAllState: () => dispatch(resetAllState())
+    changeCurrentScreen: (screen) => dispatch(Actions.changeCurrentScreen(screen)),
+    resetAllState: () => dispatch(Actions.resetAllState())
   }
 }
 

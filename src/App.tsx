@@ -6,6 +6,7 @@ import HighScores from './components/HighScores';
 import Instructions from './components/Instructions';
 import {CanvasScreen} from './utils/CanvasScreens';
 import './App.css';
+import { AppState } from './store/initialState';
 
 interface AppProps {
   currentScreen: CanvasScreen;
@@ -27,7 +28,7 @@ class App extends React.PureComponent<AppProps> {
   }
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: AppState) => {
   return {
     currentScreen: state.currentScreen
   };

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { getHighScores } from '../adapter/adapter'
 import { canvasHeight, canvasWidth, numberOfHighScoresToDisplay } from '../setupData'
-import { changeCurrentScreen, resetAllState } from '../actions'
+import {Actions} from '../store/Actions';
 
 class HighScores extends Component {
   state = {
@@ -114,8 +114,8 @@ class HighScores extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    changeCurrentScreen: (screen) => dispatch(changeCurrentScreen(screen)),
-    resetAllState: () => dispatch(resetAllState())
+    changeCurrentScreen: (screen) => dispatch(Actions.changeCurrentScreen(screen)),
+    resetAllState: () => dispatch(Actions.resetAllState())
   }
 }
 

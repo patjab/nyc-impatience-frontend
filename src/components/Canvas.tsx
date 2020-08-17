@@ -1,9 +1,10 @@
-import * as React from 'react'
-import {connect} from 'react-redux'
-import {setThisCanvas} from '../actions'
-import {canvasWidth, canvasHeight} from '../setupData'
-import GamePlayContainer from './GamePlayContainer'
-import {Dispatch} from 'redux'
+import * as React from 'react';
+import {connect} from 'react-redux';
+import {canvasWidth, canvasHeight} from '../setupData';
+import GamePlayContainer from './GamePlayContainer';
+import {Dispatch} from 'redux';
+import {AppState} from '../store/initialState';
+import {Actions} from '../store/Actions';
 
 interface CanvasProps {
   bumpingShake: boolean;
@@ -39,7 +40,7 @@ class Canvas extends React.PureComponent<CanvasProps> {
   }
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: AppState) => {
   return {
     bumpingShake: state.bumpingShake
   }
@@ -47,7 +48,7 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    setCanvas: (canvasRef: HTMLCanvasElement | null) => dispatch(setThisCanvas(canvasRef))
+    setCanvas: (canvasRef: HTMLCanvasElement | null) => dispatch(Actions.setThisCanvas(canvasRef))
   }
 }
 

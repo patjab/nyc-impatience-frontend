@@ -1,5 +1,5 @@
-import { canvasHeight, sideAreaColor } from "../setupData";
-import { Weather } from "../components/GameBackground";
+import {canvasHeight, sideAreaColor} from '../setupData';
+import {Weather} from './Weather';
 
 export interface Position {
     x: number;

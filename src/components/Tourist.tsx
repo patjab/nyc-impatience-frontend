@@ -3,25 +3,26 @@ import { connect } from 'react-redux'
 
 import { canvasHeight, rendingTouristRowsPercentage,
   touristRunningMilliseconds, collidedImpatience, heightOfMap, startTouristMovementAtDistance} from '../setupData'
-import { addTouristToRoaster, removeTouristFromRoaster,
-  resetPlayer, recordStreak, changeMovementAbility, toggleBumpingShake, addToBumpedImages, modifyPatience, addTouristGoneCounter } from '../actions'
+import {Actions} from '../store/Actions';
+
 import { howBigShouldIBe } from '../AuxiliaryMath'
 import { Dispatch } from 'redux'
 import { Row } from '../utils/BrickUtils'
 import { TouristUtils } from '../utils/TouristUtils'
+import { AppState } from '../store/initialState'
 
 interface TouristProps {
   brickPositions: Row[];
   movement: number;
   isPaused: boolean;
-  canvas: HTMLCanvasElement;
+  canvas: HTMLCanvasElement | null;
   id: number;
   playerX: number;
   playerY: number;
   gameOver: boolean;
   patience: number;
 
-  addTouristToRoaster: (arg: React.ReactNode) => void;
+  addTouristToRoaster: (arg: React.Component<any>) => void;
   removeTouristFromRoaster: (id: number) => void;
   addTouristGoneCounter: () => void;
   addToBumpedImages: (snapshot: string) => void;
@@ -92,7 +93,7 @@ class Tourist extends React.PureComponent<TouristProps, TouristState> {
         const sizeOfSide = howBigShouldIBe(this.state.positionY);
         try {
           if (!this.props.isPaused && this.state.positionX && this.state.positionY) {
-            this.props.canvas.getContext("2d")?.drawImage(touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide);
+            this.props.canvas?.getContext("2d")?.drawImage(touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide);
           }
           this.props.addTouristToRoaster(this);
           if ( this.props.movement > startTouristMovementAtDistance ) {
@@ -112,7 +113,7 @@ class Tourist extends React.PureComponent<TouristProps, TouristState> {
     if (touristImg && this.state.awaitingGarbage === false) {
       if (!this.props.isPaused && positionX && positionY) {
         const sizeOfSide = howBigShouldIBe(positionY);
-        this.props.canvas.getContext("2d")?.drawImage(touristImg, positionX, positionY, sizeOfSide, sizeOfSide);
+        this.props.canvas?.getContext("2d")?.drawImage(touristImg, positionX, positionY, sizeOfSide, sizeOfSide);
         this.checkForCollision(positionX, positionY, this.props.playerX, this.props.playerY);
         this.checkIfTouristStillInView();
       }
@@ -179,8 +180,10 @@ class Tourist extends React.PureComponent<TouristProps, TouristState> {
 
   private takeAPictureOfCollision = (): void => {
     const quality = 1;
-    const snapshot = this.props.canvas.toDataURL("image/jpeg", quality);
-    this.props.addToBumpedImages(snapshot);
+    const snapshot = this.props.canvas?.toDataURL("image/jpeg", quality);
+    if (snapshot) {
+      this.props.addToBumpedImages(snapshot);
+    }
   }
 
   private afterBumpEffects = (): void =>{
@@ -258,14 +261,12 @@ class Tourist extends React.PureComponent<TouristProps, TouristState> {
 
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: AppState) => {
   return {
     canvas: state.canvas,
     movement: state.movement,
     playerX: state.player.xPosition,
     playerY: state.player.yPosition,
-    
-    touristRoaster: state.touristRoaster,
     gameOver: state.gameOver,
     patience: state.patience,
     isPaused: state.isPaused
@@ -274,15 +275,15 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    addTouristToRoaster: (tourist: React.ReactNode) => dispatch(addTouristToRoaster(tourist)),
-    removeTouristFromRoaster: (id: number) => dispatch(removeTouristFromRoaster(id)),
-    addTouristGoneCounter: () => dispatch(addTouristGoneCounter()),
-    resetPlayer: () => dispatch(resetPlayer()),
-    recordStreak: (streak: number) => dispatch(recordStreak(streak)),
-    changeMovementAbility: (isDisabled: boolean) => dispatch(changeMovementAbility(isDisabled)),
-    toggleBumpingShake: () => dispatch(toggleBumpingShake()),
-    addToBumpedImages: (image: string) => dispatch(addToBumpedImages(image)),
-    modifyPatience: (modifier: number) => dispatch(modifyPatience(modifier)),
+    addTouristToRoaster: (tourist: React.Component<any>) => dispatch(Actions.addTouristToRoaster(tourist)),
+    removeTouristFromRoaster: (id: number) => dispatch(Actions.removeTouristFromRoaster(id)),
+    addTouristGoneCounter: () => dispatch(Actions.addTouristGoneCounter()),
+    resetPlayer: () => dispatch(Actions.resetPlayer()),
+    recordStreak: (streak: number) => dispatch(Actions.recordStreak(streak)),
+    changeMovementAbility: (isDisabled: boolean) => dispatch(Actions.changeMovementAbility(isDisabled)),
+    toggleBumpingShake: () => dispatch(Actions.toggleBumpingShake()),
+    addToBumpedImages: (image: string) => dispatch(Actions.addToBumpedImages(image)),
+    modifyPatience: (modifier: number) => dispatch(Actions.modifyPatience(modifier)),
   }
 }
 

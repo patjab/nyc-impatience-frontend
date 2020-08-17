@@ -3,12 +3,13 @@ import {connect} from 'react-redux';
 import {horizonLine, canvasWidth, canvasHeight, brickColor, brickBorderColor, numOfBricksInARow, 
     depthMultiplier, movementPerBrick, brickSpacingBetweenRows, touristDensity, heightOfMap} from '../setupData';
 import {BrickUtils, Row} from '../utils/BrickUtils';
-import {Weather} from './GameBackground';
 import Tourist from './Tourist';
 import {Position} from '../utils/BrickUtils';
+import {AppState} from '../store/initialState';
+import {Weather} from '../utils/Weather';
 
 interface GamePathProps {
-    canvas: HTMLCanvasElement;
+    canvas: HTMLCanvasElement | null;
     weather: Weather;
     movement: number;
     stage: number;
@@ -143,7 +144,7 @@ class GamePath extends React.Component<GamePathProps> {
     }
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: AppState) => {
     return {
         canvas: state.canvas,
         weather: state.weather,

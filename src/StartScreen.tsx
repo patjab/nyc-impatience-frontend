@@ -1,10 +1,10 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
-import { changeCurrentScreen } from './actions'
-import { canvasWidth, canvasHeight } from './setupData'
-import { modularWithNegative } from './AuxiliaryMath'
-import { CanvasScreen } from './utils/CanvasScreens'
-import { Dispatch } from 'redux'
+import {connect} from 'react-redux'
+import {canvasWidth, canvasHeight} from './setupData'
+import {modularWithNegative} from './AuxiliaryMath'
+import {CanvasScreen} from './utils/CanvasScreens'
+import {Dispatch} from 'redux'
+import {Actions} from './store/Actions';
 
 interface StartScreenProps {
   changeCurrentScreen: (screen: CanvasScreen) => void;
@@ -113,7 +113,7 @@ class StartScreen extends React.PureComponent<StartScreenProps, StartScreenState
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    changeCurrentScreen: (screen: CanvasScreen) => dispatch(changeCurrentScreen(screen))
+    changeCurrentScreen: (screen: CanvasScreen) => dispatch(Actions.changeCurrentScreen(screen))
   };
 }
 

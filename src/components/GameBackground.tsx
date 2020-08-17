@@ -1,19 +1,16 @@
 import * as React from 'react'
 import {connect} from 'react-redux'
-
 import {nySkyline} from '../images'
 import {horizonLine, statusBarHeight, canvasWidth, canvasHeight, skyColor} from '../setupData'
 import GamePath from './GamePath'
 import Map from './Map';
+import {AppState} from '../store/initialState'
+import {Weather} from '../utils/Weather'
 
-export enum Weather {
-  SUNNY = 'SUNNY',
-  SNOWING = 'SNOWING'
-}
 
 interface PathProps {
-  canvas: any;
-  gameStarted: any;
+  canvas: HTMLCanvasElement | null;
+  gameStarted: boolean;
   weather: Weather
 }
 
@@ -36,24 +33,27 @@ class GameBackground extends React.Component<PathProps> {
   }
 
   public componentDidMount(): void {
-    if (this.nySkyline.current) {
-      this.nySkyline.current.onload = () => {
-        const ctx = this.props.canvas.getContext("2d")
-        ctx.drawImage(this.nySkyline.current, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
-        this.drawStartInstructions(ctx)
+    const nySkyline = this.nySkyline.current;
+    if ( nySkyline ) {
+      nySkyline.onload = () => {
+        const ctx = this.props.canvas?.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight);
+          this.drawStartInstructions(ctx);
+        }
       }
     }
   }
 
   public componentDidUpdate(prevProps: PathProps): void {
     const nySkyline = this.nySkyline.current;
-    const ctx = this.props.canvas.getContext('2d');
-    if (nySkyline && nySkyline.complete) {
+    const ctx = this.props.canvas?.getContext('2d');
+    if (ctx && nySkyline && nySkyline.complete) {
       ctx.drawImage(nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
       this.drawStartInstructions(ctx)
     }
 
-    if (this.props.canvas && nySkyline) {
+    if (ctx && this.props.canvas && nySkyline) {
       ctx.drawImage(nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
     }
 
@@ -106,7 +106,7 @@ class GameBackground extends React.Component<PathProps> {
 
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: AppState) => {
   return {
     canvas: state.canvas,
     gameStarted: state.gameStarted,

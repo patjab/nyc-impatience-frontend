@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { canvasWidth } from '../setupData'
-import { setName } from '../actions'
+import {Actions} from '../store/Actions';
 
 class NameInput extends Component {
   state = {
@@ -155,7 +155,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setName: (name) => dispatch(setName(name))
+    setName: (name) => dispatch(Actions.setName(name))
   }
 }
 

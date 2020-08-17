@@ -1,8 +1,6 @@
-/*eslint no-loop-func: 'ignore'*/
-
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { recordGameStatistics, changeCurrentScreen, signalDoneRecording } from '../actions'
+import {Actions} from '../store/Actions';
 import { canvasWidth, canvasHeight, marginAroundStats, paddingAroundStats } from '../setupData'
 import { tracks } from '../mediaHelper/microphoneHelper'
 import { angryGoomba } from '../images'
@@ -123,6 +121,7 @@ class GameStatistics extends Component {
     for (let img64 of this.props.bumpedImages) {
       const image = new Image()
       image.src = img64
+      // eslint-disable-next-line
       image.onload = () => {
         ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight, imageCursorX, imageCursorY, imageWidth, imageHeight)
         imageCursorX += imageWidth + marginAroundPictures
@@ -271,9 +270,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    recordGameStatistics: (recordData) => dispatch(recordGameStatistics(recordData)),
-    changeCurrentScreen: (screen) => dispatch(changeCurrentScreen(screen)),
-    signalDoneRecording: () => dispatch(signalDoneRecording())
+    recordGameStatistics: (recordData) => dispatch(Actions.recordGameStatistics(recordData)),
+    changeCurrentScreen: (screen) => dispatch(Actions.changeCurrentScreen(screen)),
+    signalDoneRecording: () => dispatch(Actions.signalDoneRecording())
   }
 }
 

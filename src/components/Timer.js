@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { canvasWidth, statusBarHeight } from '../setupData'
-import { setGameOver, setGameOverImage, recordTimeFinished, modifyPatience, recordStreak, incrementTime } from '../actions'
+import {Actions} from '../store/Actions';
 
 import Patience from './Patience'
 import Ability from './Ability'
@@ -97,7 +97,6 @@ const mapStateToProps = (state) => {
     movement: state.movement,
     streak: state.streak,
     patience: state.patience,
-    playerYelled: state.playerYelled,
     time: state.time,
     totalPausedTime: state.totalPausedTime,
     isPaused: state.isPaused
@@ -106,12 +105,12 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setGameOver: () => dispatch(setGameOver()),
-    setGameOverImage: (image) => dispatch(setGameOverImage(image)),
-    recordTimeFinished: (time) => dispatch(recordTimeFinished(time)),
-    modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
-    recordStreak: (streak) => dispatch(recordStreak(streak)),
-    incrementTime: (time) => dispatch(incrementTime(time))
+    setGameOver: () => dispatch(Actions.setGameOver()),
+    setGameOverImage: (image) => dispatch(Actions.setGameOverImage(image)),
+    recordTimeFinished: (time) => dispatch(Actions.recordTimeFinished(time)),
+    modifyPatience: (modifier) => dispatch(Actions.modifyPatience(modifier)),
+    recordStreak: (streak) => dispatch(Actions.recordStreak(streak)),
+    incrementTime: (time) => dispatch(Actions.incrementTime(time))
   }
 }
 

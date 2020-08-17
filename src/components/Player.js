@@ -1,8 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
-import { movePlayer, changeSpeed, addToChangeInDirection, modifyPatience,
-  signalStartGame, recordForBonus, recordTimeOfRun, setRunningMusicRef } from '../actions'
+import {Actions} from '../store/Actions';
 import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth,
   releaseCriteriaImpatience, waitingImpatience, movingQuicklyPatience,
   movingQuicklySecondsRequirement, walking, maximumSecondsOfRunning,
@@ -231,19 +230,19 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    moveUp: () => dispatch(movePlayer(0, 1)),
-    moveDown: () => dispatch(movePlayer(0, -1)),
-    moveLeft: () => dispatch(movePlayer(-shiftingSpeed, 0)),
-    moveRight: () => dispatch(movePlayer(shiftingSpeed, 0)),
-    moveUpLeft: () => dispatch(movePlayer(-shiftingSpeed, 1)),
-    moveUpRight: () => dispatch(movePlayer(shiftingSpeed, 1)),
-    changeSpeed: (speed) => dispatch(changeSpeed(speed)),
-    modifyPatience: (modifier) => dispatch(modifyPatience(modifier)),
-    signalStartGame: () => dispatch(signalStartGame()),
-    recordForBonus: (record) => dispatch(recordForBonus(record)),
-    addToChangeInDirection: () => dispatch(addToChangeInDirection()),
-    recordTimeOfRun: (time) => dispatch(recordTimeOfRun(time)),
-    setRunningMusicRef: (musicRef) => dispatch(setRunningMusicRef(musicRef))
+    moveUp: () => dispatch(Actions.movePlayer(0, 1)),
+    moveDown: () => dispatch(Actions.movePlayer(0, -1)),
+    moveLeft: () => dispatch(Actions.movePlayer(-shiftingSpeed, 0)),
+    moveRight: () => dispatch(Actions.movePlayer(shiftingSpeed, 0)),
+    moveUpLeft: () => dispatch(Actions.movePlayer(-shiftingSpeed, 1)),
+    moveUpRight: () => dispatch(Actions.movePlayer(shiftingSpeed, 1)),
+    changeSpeed: (speed) => dispatch(Actions.changeSpeed(speed)),
+    modifyPatience: (modifier) => dispatch(Actions.modifyPatience(modifier)),
+    signalStartGame: () => dispatch(Actions.signalStartGame()),
+    recordForBonus: (record) => dispatch(Actions.recordForBonus(record)),
+    addToChangeInDirection: () => dispatch(Actions.addToChangeInDirection()),
+    recordTimeOfRun: (time) => dispatch(Actions.recordTimeOfRun(time)),
+    setRunningMusicRef: (musicRef) => dispatch(Actions.setRunningMusicRef(musicRef))
   }
 }
 
