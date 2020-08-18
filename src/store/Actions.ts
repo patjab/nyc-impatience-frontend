@@ -3,10 +3,6 @@ import {Statistics} from './initialState';
 import {CanvasScreen} from '../utils/CanvasScreens';
 import {Weather} from '../utils/Weather';
 
-const createAction = (type: ActionKeys, payload?: any) => {
-  return payload ? { type, payload } : { type };
-}
-
 export const Actions = {
   setThisCanvas: (canvas: HTMLCanvasElement | null) => createAction(ActionKeys.SET_CANVAS, canvas),
   movePlayer: (x: number, y: number) => createAction(ActionKeys.MOVE_PLAYER, {x, y}),
@@ -15,7 +11,6 @@ export const Actions = {
   addTouristToRoaster: (tourist: React.Component<any>) => createAction(ActionKeys.ADD_TOURIST_TO_ROASTER, tourist),
   removeTouristFromRoaster: (id: number) => createAction(ActionKeys.REMOVE_TOURIST_FROM_ROASTER, id),
   emptyTouristRoaster: () => createAction(ActionKeys.EMPTY_TOURIST_ROASTER),
-  playerBroughtBack: () => createAction(ActionKeys.PLAYER_BROUGHT_BACK),
   resetPlayer: () => createAction(ActionKeys.RESET_PLAYER),
   recordStreak: (streak: number) => createAction(ActionKeys.RECORD_STREAK, streak),
   changeMovementAbility: (isDisabled: boolean) => createAction(ActionKeys.CHANGE_MOVEMENT_ABILITY, isDisabled),
@@ -33,14 +28,32 @@ export const Actions = {
   signalDoneRecording: () => createAction(ActionKeys.SIGNAL_DONE_RECORDING),
   signalStartGame: () => createAction(ActionKeys.SIGNAL_START_GAME),
   incrementTime: (time: number) => createAction(ActionKeys.INCREMENT_TIME, time),
-  recordForBonus: (record: number) => createAction(ActionKeys.RECORD_FOR_BONUS, record),
+  recordForBonus: (record: {movement: number, time: number}) => createAction(ActionKeys.RECORD_FOR_BONUS, record),
   setBackgroundMusicRef: (musicRef: HTMLAudioElement) => createAction(ActionKeys.SET_BACKGROUND_MUSIC_REF, musicRef),
   setRunningMusicRef: (musicRef: HTMLAudioElement) => createAction(ActionKeys.SET_RUNNING_MUSIC_REF, musicRef),
   setSnowMusicRef: (musicRef: HTMLAudioElement) => createAction(ActionKeys.SET_SNOW_MUSIC_REF, musicRef),
-  addToSnowAbilityList: (record: number) => createAction(ActionKeys.ADD_TO_SNOW_ABILITY_LIST, record),
+  addToSnowAbilityList: (record: {movement: number, used: boolean}) => createAction(ActionKeys.ADD_TO_SNOW_ABILITY_LIST, record),
   useSnowAbility: () => createAction(ActionKeys.USE_SNOW_ABILITY),
   changeWeather: (weather: Weather) => createAction(ActionKeys.CHANGE_WEATHER, weather),
   recordTimeOfYell: (time: number) => createAction(ActionKeys.RECORD_TIME_OF_YELL, time),
   recordTimeOfRun: (time: number) => createAction(ActionKeys.RECORD_TIME_OF_RUN, time),
   changePauseStatus: () => createAction(ActionKeys.CHANGE_PAUSE_STATUS)
 };
+
+export type Actions = ActionsUnion<typeof Actions>;
+type ActionsUnion<A extends ActionCreatorsMapObject> = ReturnType<A[keyof A]>;
+type ActionCreatorsMapObject = {[actionCreator: string]: (...args: any[]) => any};
+
+interface AppAction<T = any> {
+  type: T;
+}
+
+interface ActionWithPayload<T extends string, P> extends AppAction<T> {
+  payload: P;
+}
+
+export function createAction<T extends string>(type: T): AppAction<T>;
+export function createAction<T extends string, P>(type: T, payload: P): ActionWithPayload<T, P>;
+export function createAction<T extends string, P>(type: T, payload?: P) {
+  return payload ? { type, payload } : { type };
+}

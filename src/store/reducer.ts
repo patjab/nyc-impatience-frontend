@@ -1,8 +1,9 @@
 import {movementsPerStage, initialPatience} from '../setupData';
 import {initialState, AppState} from './initialState';
 import {ActionKeys} from './ActionKeys';
+import {Actions} from './Actions';
 
-function appReducer(state = initialState, action: any): AppState {
+function appReducer(state = initialState, action: Actions): AppState {
   switch(action.type) {
     case ActionKeys.ADD_TOURIST_GONE_COUNTER:
       return {

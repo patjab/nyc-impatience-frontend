@@ -42,7 +42,7 @@ export interface AppState {
     backgroundMusic: HTMLAudioElement | null;
     runningMusic: HTMLAudioElement | null; 
     snowMusic: HTMLAudioElement | null;
-    snowAbilityList: {movement: 0, used: boolean}[];
+    snowAbilityList: {movement: number, used: boolean}[];
     timeOfYell: number;
     timeOfRun: number;
     isPaused: boolean;

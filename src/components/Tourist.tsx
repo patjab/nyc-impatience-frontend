@@ -7,40 +7,7 @@ import {Dispatch} from 'redux';
 import {Row} from '../utils/BrickUtils';
 import {TouristUtils, PositionOnArray} from '../utils/TouristUtils';
 import {AppState} from '../store/initialState';
-
-enum TouristStage {
-  NORMAL = 'NORMAL',
-  COLLIDED = 'COLLIDED',
-  RUNNING = 'RUNNING',
-  GONE = 'GONE'
-}
-
-class TouristStageImpl {
-  private static order: TouristStage[] = [
-    TouristStage.NORMAL,
-    TouristStage.COLLIDED,
-    TouristStage.RUNNING,
-    TouristStage.GONE
-  ];
-
-  private touristStages: TouristStage[];
-
-  public constructor(startAt: TouristStage = TouristStage.NORMAL) {
-    this.touristStages = TouristStageImpl.order.slice(TouristStageImpl.order.indexOf(startAt));
-  }
-
-  public getCurrent = (): TouristStage | void => {
-    return this.touristStages[0];
-  }
-
-  public next = (): TouristStageImpl => {
-    return new TouristStageImpl(this.touristStages[1]);
-  }
-
-  public onDisappear = (): TouristStageImpl => {
-    return new TouristStageImpl(TouristStage.GONE);
-  }
-}
+import {TouristStageImpl, TouristStage} from '../utils/TouristStageUtils';
 
 interface TouristProps {
   brickPositions: Row[];
@@ -65,18 +32,20 @@ interface TouristProps {
 }
 
 interface TouristState {
-  positionX: null | number;
-  positionY: null | number;
+  positionX: number;
+  positionY: number;
   positionOnArray: PositionOnArray;
   allowTouristToRun: boolean;
   stage: TouristStageImpl;
 }
 
+type TouristLifecycleFunction = (positionX: number, positionY: number, positionOnArray: PositionOnArray) => void;
 
 class Tourist extends React.Component<TouristProps, TouristState> {
   private readonly bumpSoundEl: React.RefObject<HTMLAudioElement>;
   private readonly touristImg: React.RefObject<HTMLImageElement>;
   private readonly movementPositionOnMounted: number;
+  private readonly touristLifecycleMap: Map<TouristStage, TouristLifecycleFunction>;
   private readonly initialRow: number;
   private readonly touristImgSrc: string;
 
@@ -94,6 +63,35 @@ class Tourist extends React.Component<TouristProps, TouristState> {
     this.initialRow = chosenRow;
     this.touristImgSrc = TouristUtils.getTouristImages(Math.trunc(Math.random() * 3));
 
+    this.touristLifecycleMap = new Map<TouristStage, TouristLifecycleFunction>([
+      [
+        TouristStage.NORMAL, 
+        (positionX: number, positionY: number, positionOnArray: PositionOnArray) => {
+          this.onCollisionAction(positionX, positionY, positionOnArray);
+          this.checkDisappearance(positionX, positionY, positionOnArray);
+        }
+      ],
+      [
+        TouristStage.COLLIDED, 
+        (positionX: number, positionY: number, positionOnArray: PositionOnArray) => {
+          this.postCollisionAction(positionX, positionY, positionOnArray);
+          this.checkDisappearance(positionX, positionY, positionOnArray);
+        }
+      ],
+      [
+        TouristStage.RUNNING, 
+        (positionX: number, positionY: number, positionOnArray: PositionOnArray) => {
+          this.checkDisappearance(positionX, positionY, positionOnArray);
+        }
+      ],
+      [
+        TouristStage.GONE, 
+        (positionX: number, positionY: number, positionOnArray: PositionOnArray) => {
+          return this.goneAction(positionX, positionY, positionOnArray);
+        }
+      ]
+    ]);
+
     this.state = {
       positionX: chosenRow < 0 ? 0 : props.brickPositions[chosenRow][chosenCol].x,
       positionY: chosenRow < 0 ? 0 : props.brickPositions[chosenRow][chosenCol].y,
@@ -103,65 +101,37 @@ class Tourist extends React.Component<TouristProps, TouristState> {
     };
   }
 
-  // public componentDidMount(): void {
-  //   const touristImg = this.touristImg.current;
-  //   if (touristImg) {
-  //     touristImg.onload = () => {
-  //       const sizeOfSide = howBigShouldIBe(this.state.positionY);
-  //       try {
-  //         if (!this.props.isPaused && this.state.positionX && this.state.positionY) {
-  //           this.props.canvas?.getContext("2d")?.drawImage(touristImg, this.state.positionX, this.state.positionY, sizeOfSide, sizeOfSide);
-  //         }
-  //         this.props.addTouristToRoaster(this);
-  //         if ( this.props.movement > startTouristMovementAtDistance ) {
-  //           this.makeTouristWalk();
-  //         }
-  //      } catch (err) {
-  //         console.log("CANVAS ERROR BYPASSED");
-  //      }
-  //    }
-  //   }
-  // }
+  goneAction = (positionX: number, positionY: number, positionOnArray: PositionOnArray) => {
+    return this.props.addTouristGoneCounter();
+  }
+
+  onCollisionAction = (positionX: number, positionY: number, positionOnArray: PositionOnArray) => {
+    if ( TouristUtils.hasCollided(positionX, positionY, this.props.playerX, this.props.playerY) ) {
+      return this.setState({ stage: this.state.stage.next() });
+    }     
+  }
+
+  postCollisionAction = (positionX: number, positionY: number, positionOnArray: PositionOnArray) => {
+    this.playerCollision(positionOnArray);
+    return this.setState({ stage: this.state.stage.next() });
+  }
+
+  checkDisappearance = (positionX: number, positionY: number, positionOnArray: PositionOnArray) => {
+    if ( !TouristUtils.isTouristInView(positionY) ) {
+      window.clearInterval(this.animationInterval);
+      return this.setState({ stage: this.state.stage.onDisappear() });
+    }
+  }
 
   public componentDidUpdate() {
-
-    const {positionY, positionX} = TouristUtils.convertRowColToXY(this.props.brickPositions, this.props.movement, this.movementPositionOnMounted, this.state.positionOnArray, this.initialRow, this.state.allowTouristToRun);
+    const {positionY, positionX, positionOnArray} = TouristUtils.convertRowColToXY(this.props.brickPositions, this.props.movement, this.movementPositionOnMounted, this.state.positionOnArray, this.initialRow, this.state.allowTouristToRun);
     const touristImg = this.touristImg.current;
     const sizeOfSide = howBigShouldIBe(positionY);
 
     if (touristImg && !this.props.gameOver && !this.props.isPaused) {
       this.props.canvas?.getContext("2d")?.drawImage(touristImg, positionX, positionY, sizeOfSide, sizeOfSide);
-
-      if ( this.state.stage.getCurrent() !== TouristStage.GONE  ) {
-
-        if ( this.state.stage.getCurrent() !== TouristStage.RUNNING  ) {
-
-          if ( this.state.stage.getCurrent() !== TouristStage.COLLIDED ) {
-
-            // Collision Check (animation, logic)
-            if ( TouristUtils.hasCollided(positionX, positionY, this.props.playerX, this.props.playerY) ) {
-              return this.setState({ stage: this.state.stage.next() });
-            } 
-
-          } else {
-            this.collideFrontAndBack();
-            return this.setState({ stage: this.state.stage.next() });
-          }
-
-        } else {
-
-        }
-  
-        // Disappearance Check (animation, logic)
-        if ( !TouristUtils.isTouristInView(positionY) ) {
-          window.clearInterval(this.animationInterval);
-          this.setState({ stage: this.state.stage.onDisappear() });
-        }
-
-      } else {
-        return this.props.addTouristGoneCounter();
-      }
-
+      const lifecycleFunction: TouristLifecycleFunction = this.touristLifecycleMap.get(this.state.stage.getCurrent() as TouristStage) as TouristLifecycleFunction;
+      lifecycleFunction(positionX, positionY, positionOnArray);
     }
   }
   
@@ -188,28 +158,21 @@ class Tourist extends React.Component<TouristProps, TouristState> {
     )
   }
 
-  private collideFrontAndBack = (): void => {
+  private playerCollision = (positionOnArray: PositionOnArray): void => {
     this.props.modifyPatience(collidedImpatience);
     this.props.toggleBumpingShake();
+    this.bumpSoundEffects();
     window.setTimeout(this.takeAPictureOfCollision, 10);
     window.setTimeout(this.afterBumpEffects, 1000);
-    this.bumpSoundEffects();
-    this.playerRecoveryEffects();
-  }
 
-  private playerRecoveryEffects = (): void => {
-    if (!this.props.gameOver) {
-      this.runningAnimation();
-      if ( this.props.patience > 0 ) {
-        this.props.recordStreak(this.props.movement);
-      }
-      this.props.resetPlayer();
+    this.runningAnimation(positionOnArray);
+    if ( this.props.patience > 0 ) {
+      this.props.recordStreak(this.props.movement);
     }
+    this.props.resetPlayer();
   }
   
-  private runningAnimation = (): void => {
-    const {positionOnArray} = TouristUtils.convertRowColToXY(this.props.brickPositions, this.props.movement, this.movementPositionOnMounted, this.state.positionOnArray, this.initialRow, this.state.allowTouristToRun);
-
+  private runningAnimation = (positionOnArray: PositionOnArray): void => {
     this.animationInterval = window.setInterval(() => {
       if ( positionOnArray.row > 0 && !this.props.isPaused ) {
         this.setState({
@@ -221,25 +184,22 @@ class Tourist extends React.Component<TouristProps, TouristState> {
         });
       }
     }, touristRunningMilliseconds);
- }
-
+  }
 
   private takeAPictureOfCollision = (): void => {
     const quality = 1;
     const snapshot = this.props.canvas?.toDataURL("image/jpeg", quality);
     if (snapshot) {
       this.props.addToBumpedImages(snapshot);
-   }
- }
+    }
+  }
 
   private afterBumpEffects = (): void =>{
     if (!this.props.gameOver) {
-      this.props.toggleBumpingShake();
       this.props.changeMovementAbility(false);
-   }
- }
-
-
+      this.props.toggleBumpingShake();
+    }
+  }
 
   private bumpSoundEffects = () => {
     const bumpSoundEl: HTMLAudioElement | null = this.bumpSoundEl.current;
@@ -252,27 +212,8 @@ class Tourist extends React.Component<TouristProps, TouristState> {
       } else {
         bumpSoundEl.play();
       }
-
     }
   }
-
-//   private makeTouristWalk = (): void => {
-//     this.walkingTouristInterval = window.setInterval(() => {
-//       const {positionOnArray} = TouristUtils.convertRowColToXY(this.props.brickPositions, this.props.movement, this.movementPositionOnMounted, this.state.positionOnArray, this.initialRow, this.state.allowTouristToRun);
-//       if ( positionOnArray ){
-//         const currentRow = positionOnArray.row;
-//         const currentCol = positionOnArray.col;
-
-//         const potentialCol = currentCol + Math.round((Math.random()*2)-1);
-//         this.setState({
-//           positionOnArray: {
-//             col: potentialCol >= 0 && potentialCol < 10 ? potentialCol : currentCol,
-//             row: currentRow
-//          }
-//        });
-//      }
-//    }, 1000)
-//  }
 
 }
 
