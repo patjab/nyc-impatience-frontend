@@ -2,7 +2,7 @@ import {movementsPerStage, initialPatience} from '../setupData';
 import {initialState, AppState} from './initialState';
 import {ActionKeys} from './ActionKeys';
 
-function gameController(state = initialState, action: any): AppState {
+function appReducer(state = initialState, action: any): AppState {
   switch(action.type) {
     case ActionKeys.ADD_TOURIST_GONE_COUNTER:
       return {
@@ -198,4 +198,4 @@ function gameController(state = initialState, action: any): AppState {
   }
 }
 
-export default gameController
+export default appReducer

@@ -23,6 +23,7 @@ class App extends React.PureComponent<AppProps> {
     super(props);
   }
 
+
   public render(): React.ReactElement {
     return App.CANVAS_ROUTING.get(this.props.currentScreen) || <Canvas/>;
   }

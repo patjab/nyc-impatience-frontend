@@ -48,7 +48,13 @@ class StartScreen extends React.PureComponent<StartScreenProps, StartScreenState
 
   public render(): React.ReactElement {
     return (
-      <canvas width={canvasWidth} height={canvasHeight} id='startScreen' ref={this.startScreen}></canvas>
+      <canvas 
+        width={canvasWidth} 
+        height={canvasHeight} 
+        id='startScreen' 
+        ref={this.startScreen}
+        role={'img'}
+      />
     );
   }
 
