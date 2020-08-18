@@ -1,11 +1,21 @@
 import {howBigShouldIBe} from '../AuxiliaryMath'
 import {Position, Row} from '../utils/BrickUtils'
-import {initialPlayerSize, movementPerBrick, yNearnessSpook, rendingTouristRowsPercentage} from '../setupData';
+import {initialPlayerSize, movementPerBrick, yNearnessSpook, rendingTouristRowsPercentage, canvasHeight, heightOfMap} from '../setupData';
 import {tourist1, tourist2, tourist3} from '../images';
 
 export type PositionOnArray = {row: number, col: number};
 
 export class TouristUtils {
+    public static isTouristInView(positionY: number): boolean {
+        const sizeOfSide = howBigShouldIBe(positionY);
+        const lowerTourist = positionY + sizeOfSide;
+        const endOfVisiblePath = canvasHeight - heightOfMap;
+        return lowerTourist <= endOfVisiblePath;
+    }
+
+
+
+
 
     public static chooseRandomPosition(brickMatrix: Row[]) {
         return {
