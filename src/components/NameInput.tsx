@@ -1,19 +1,41 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { canvasWidth } from '../setupData'
+import * as React from 'react';
+import {connect} from 'react-redux';
+import {canvasWidth} from '../setupData';
 import {Actions} from '../store/Actions';
+import {ScreenProps} from '../App';
+import {Dispatch} from 'redux';
+import {AppState} from '../store/initialState';
 
-class NameInput extends Component {
-  state = {
-    nameInput: "",
-    flashingBlankInterval: null
+interface NameInputProps extends ScreenProps {
+  doneRecording: boolean;
+  setName: (name: string) => void;
+}
+
+interface NameInputState {
+  nameInput: string;
+  flashingBlankInterval: null;
+}
+
+class NameInput extends React.PureComponent<NameInputProps, NameInputState> {
+  private readonly saveSound: React.RefObject<HTMLAudioElement>;
+  private checkIfRecorded: number | undefined;
+
+  public constructor(props: NameInputProps) {
+    super(props);
+    this.saveSound = React.createRef<HTMLAudioElement>();
+    this.state = {
+      nameInput: '',
+      flashingBlankInterval: null
+    };
   }
 
-  componentDidMount() {
-    window.addEventListener('keydown', this.handleNameInput)
+  public componentDidMount(): void {
+    window.addEventListener('keydown', this.handleNameInput);
   }
 
-  handleNameInput = (e) => {
+  private handleNameInput = (e: KeyboardEvent): void => {
+    const ctx = this.props.canvasContext;
+
     if ( e.keyCode >= 65 && e.keyCode <= 90 && this.state.nameInput.length < 14 ) {
       this.setState({nameInput: this.state.nameInput + e.key}, this.showNameOnScreen)
     }
@@ -22,7 +44,6 @@ class NameInput extends Component {
     }
 
     if ( e.keyCode === 13 && this.state.nameInput.length === 0 ) {
-      const ctx = this.props.canvas.getContext("2d")
 
       ctx.textAlign = 'center'
       ctx.fillStyle = 'red'
@@ -32,9 +53,8 @@ class NameInput extends Component {
 
     if ( e.keyCode === 13 && this.state.nameInput.length > 0 ) {
       window.removeEventListener('keydown', this.handleNameInput)
-      const ctx = this.props.canvas.getContext("2d")
 
-      this.props.setName(this.state.nameInput)
+      this.props.setName(this.state.nameInput);
 
       this.clearInputArea(ctx)
 
@@ -46,11 +66,11 @@ class NameInput extends Component {
       ctx.font = '25px Geneva'
       ctx.fillText("Please wait", canvasWidth/2, 1045+50)
 
-      this.checkIfRecorded = setInterval(() => {
-        if (this.props.doneRecording) {
+      this.checkIfRecorded = window.setInterval(() => {
+        if (this.saveSound.current && this.props.doneRecording) {
           clearInterval(this.checkIfRecorded)
 
-          this.refs.saveSound.play()
+          this.saveSound.current.play();
           this.clearInputArea(ctx)
 
           ctx.fillStyle = '#00ff00'
@@ -98,34 +118,22 @@ class NameInput extends Component {
     }
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleNameInput)
-    clearInterval(this.checkIfRecorded)
+  public componentWillUnmount(): void {
+    window.removeEventListener('keydown', this.handleNameInput);
+    clearInterval(this.checkIfRecorded);
   }
 
-  clearInputArea = (ctx) => {
-    ctx.beginPath()
-    ctx.rect(100, 990, canvasWidth - (100*2), 130)
-    ctx.fillStyle = "#000000"
-    ctx.fill()
-    ctx.closePath()
+  public render(): React.ReactElement {
+    return (
+      <audio 
+        src={'../save.wav'} 
+        ref={this.saveSound}
+      />
+    );
   }
 
-  displayCursor = (ctx) => {
-    if ( this.state.nameInput.length === 0 ) {
-      setInterval(() => {
-        ctx.textAlign = 'center'
-        ctx.fillStyle = 'red'
-        ctx.font = '40px Geneva'
-        ctx.fillText("|", canvasWidth/2, 990)
-
-        setTimeout(this.clearInputArea, 1000)
-      }, 1500)
-    }
-  }
-
-  showNameOnScreen = () => {
-    const ctx = this.props.canvas.getContext("2d")
+  private showNameOnScreen = (): void => {
+    const ctx = this.props.canvasContext;
 
     ctx.beginPath()
     ctx.rect(100, 990, canvasWidth - (100*2), 70)
@@ -141,21 +149,37 @@ class NameInput extends Component {
     }
   }
 
-  render() {
-    return <audio src='../save.wav' ref='saveSound'/ >
+  private displayCursor = (ctx: CanvasRenderingContext2D) => {
+    if ( this.state.nameInput.length === 0 ) {
+      setInterval(() => {
+        ctx.textAlign = 'center'
+        ctx.fillStyle = 'red'
+        ctx.font = '40px Geneva'
+        ctx.fillText("|", canvasWidth/2, 990)
+
+        setTimeout(this.clearInputArea, 1000)
+      }, 1500)
+    }
+  }
+
+  private clearInputArea = (ctx: CanvasRenderingContext2D) => {
+    ctx.beginPath()
+    ctx.rect(100, 990, canvasWidth - (100*2), 130)
+    ctx.fillStyle = "#000000"
+    ctx.fill()
+    ctx.closePath()
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: AppState) => {
   return {
-    canvas: state.canvas,
     doneRecording: state.doneRecording
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    setName: (name) => dispatch(Actions.setName(name))
+    setName: (name: string) => dispatch(Actions.setName(name))
   }
 }
 

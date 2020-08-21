@@ -65,7 +65,7 @@ class GameStatistics extends React.PureComponent<GameStatisticsProps, GameStatis
           ref={this.frozenGameOverScreen}
           className={'hidden'}
         />
-        { this.state.nameInputReady ? <NameInput/> : null }
+        { this.state.nameInputReady ? <NameInput canvasContext={this.props.canvasContext} canvas={this.props.canvas}/> : null }
       </>
     )
   }
