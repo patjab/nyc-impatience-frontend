@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import * as React from 'react';
 import { connect } from 'react-redux'
 
 import {Actions} from '../store/Actions';
@@ -8,52 +8,159 @@ import { shiftingSpeed, initialPlayerSize, playerStartY, canvasWidth,
   maximumSecondsOfRecharge } from '../setupData'
 import { playerStepBigRight, playerStepBigLeft } from '../images'
 import { pixelLengthOfBrickPath } from '../AuxiliaryMath'
+import { Dispatch } from 'redux';
+import { RecordForBonus, AppState, PlayerPosition } from '../store/initialState';
+import { ScreenProps } from '../App';
 
-class Player extends Component {
-  diagonalMapSimultaneous = []
-  stillHoldingUp = false
-  goodForMultipleUps = false
+interface PlayerProps extends ScreenProps{
+  player: PlayerPosition;
+  speed: number;
+  bumpingShake: boolean;
+  gameOver: boolean;
+  movement: number;
+  gameStarted: boolean;
+  bonusRecord: RecordForBonus[];
+  backgroundMusic: HTMLAudioElement | null;
+  timeOfRun: number;
+  isPaused: boolean;
+  time: number;
+  moveUp: () => void;
+  moveDown: () => void;
+  moveLeft: () => void;
+  moveRight: () => void;
+  moveUpLeft: () => void;
+  moveUpRight: () => void;
+  changeSpeed: (speed: number) => void;
+  modifyPatience: (modifier: number) => void;
+  signalStartGame: () => void;
+  recordForBonus: (record: RecordForBonus) => void;
+  addToChangeInDirection: () => void;
+  recordTimeOfRun: (time: number) => void;
+  setRunningMusicRef: (musicRef: HTMLAudioElement) => void;
+}
 
-  state = {
-    walkingCycle: 0,
-    walkingCollection: [playerStepBigRight, playerStepBigRight, playerStepBigLeft, playerStepBigLeft],
-    changeInDirectionCounter: 0
+interface PlayerState {
+  walkingCycle: number;
+  walkingCollection: string[];
+  changeInDirectionCounter: number;
+}
+
+class Player extends React.PureComponent<PlayerProps, PlayerState> {
+  private diagonalMapSimultaneous: any[];
+  private stillHoldingUp = false
+  private goodForMultipleUps = false
+
+  private syntheticInterval: number | undefined;
+  private highestImpatientInterval: number | undefined;
+  private readonly runSoundEffectMusic: React.RefObject<HTMLAudioElement>;
+  private readonly playerImg: React.RefObject<HTMLImageElement>;
+
+  public constructor(props: PlayerProps) {
+    super(props);
+    this.diagonalMapSimultaneous = [];
+    this.stillHoldingUp = false;
+    this.goodForMultipleUps = false;
+    this.runSoundEffectMusic = React.createRef<HTMLAudioElement>();
+    this.playerImg = React.createRef<HTMLImageElement>();
+    this.state = {
+      walkingCycle: 0,
+      walkingCollection: [playerStepBigRight, playerStepBigRight, playerStepBigLeft, playerStepBigLeft],
+      changeInDirectionCounter: 0
+    };
   }
 
-  setBackToWalking = () => {
-    if (this.refs.runSoundEffectMusic) {
+  public componentDidMount(): void {
+    window.addEventListener('keydown', this.handleWalking)
+    this.syntheticListenerForRelease()
+    window.addEventListener('keyup', this.releaseCriteria)
+
+    if (this.runSoundEffectMusic.current) {
+      this.props.setRunningMusicRef(this.runSoundEffectMusic.current)
+    }
+
+    if (this.playerImg.current) {
+      this.playerImg.current.onload = () => {
+        const ctx = this.props.canvasContext;
+
+        if (this.playerImg.current) {
+          ctx.drawImage(this.playerImg.current, this.props.player.xPosition, this.props.player.yPosition, initialPlayerSize, initialPlayerSize)
+        }
+      }
+    }
+  }
+
+  public componentDidUpdate(): void {
+    const ctx = this.props.canvasContext;
+    if (this.playerImg.current) {
+      this.playerImg.current.src = this.state.walkingCollection[this.state.walkingCycle]
+      ctx.drawImage(this.playerImg.current, this.props.player.xPosition, this.props.player.yPosition, initialPlayerSize, initialPlayerSize)
+    }
+
+    const bonusRecord = this.props.bonusRecord
+    const lastRecord = bonusRecord[bonusRecord.length - 1]
+
+    if ( this.props.movement > lastRecord.movement + 1000 ) {
+      if ( (this.props.time/1000) - (lastRecord.time) < movingQuicklySecondsRequirement ) {
+        this.props.modifyPatience(movingQuicklyPatience)
+      }
+      this.props.recordForBonus({movement: lastRecord.movement + 1000, time: this.props.time/1000})
+    }
+  }
+
+  public componentWillUnmount(): void {
+    window.removeEventListener('keydown', this.handleWalking)
+    window.removeEventListener('keyup', this.releaseCriteria)
+    window.removeEventListener('keyup', this.runningRelease)
+    clearInterval(this.syntheticInterval)
+    for (let i = 0; i <= Number(this.highestImpatientInterval); i++) {
+      clearInterval(i)
+    }
+  }
+
+  public render(): React.ReactElement{
+    const currentImageSrc = this.state.walkingCollection[this.state.walkingCycle];
+    return (
+      <>
+        <audio src='../runSoundEffect.mp3' ref={this.runSoundEffectMusic} />
+        <img src={currentImageSrc} ref={this.playerImg} className='hidden' alt='player'/>
+      </>
+    )
+  }
+
+  private setBackToWalking = (): void => {
+    if (this.runSoundEffectMusic.current && this.refs.runSoundEffectMusic) {
       this.props.changeSpeed(walking)
-      this.refs.runSoundEffectMusic.pause()
+      this.runSoundEffectMusic.current.pause();
       if ( !this.props.isPaused && this.props.backgroundMusic ) {
-        this.props.backgroundMusic.play()
+        this.props.backgroundMusic.play();
       }
     }
   }
 
 
-  handleRunning = (e) => {
+  private handleRunning = (e: KeyboardEvent): void => {
     const timePassedSinceRun = (this.props.time/1000) - this.props.timeOfRun
-    if ( timePassedSinceRun > maximumSecondsOfRecharge  ) {
+    if ( this.runSoundEffectMusic.current && timePassedSinceRun > maximumSecondsOfRecharge  ) {
       this.props.recordTimeOfRun(this.props.time/1000)
       this.props.changeSpeed(2 * walking)
       if (this.props.backgroundMusic) {
         this.props.backgroundMusic.pause()
       }
-      this.refs.runSoundEffectMusic.currentTime = 0
-      this.refs.runSoundEffectMusic.play()
+      this.runSoundEffectMusic.current.currentTime = 0
+      this.runSoundEffectMusic.current.play()
       setTimeout(this.setBackToWalking, maximumSecondsOfRunning * 1000)
     }
     window.addEventListener('keyup', this.runningRelease)
   }
 
-  runningRelease = (e) => {
+  private runningRelease = (e: KeyboardEvent): void => {
     if (e.key === 's') {
       this.setBackToWalking()
       window.removeEventListener('keyup', this.runningRelease)
     }
   }
 
-  handleWalking = (e) => {
+  private handleWalking = (e: KeyboardEvent): void => {
     if ( this.props.isPaused ) {
       for ( let i = 37; i < 40; i++ ) {
         this.diagonalMapSimultaneous[i] = false
@@ -83,15 +190,15 @@ class Player extends Component {
     }
   }
 
-  syntheticListenerForRelease = () => {
+  private syntheticListenerForRelease = (): void => {
     if (!this.props.gameOver && !this.props.isPaused) {
       const eventsPerSecond = 27
       const syntheticConstant = 1000/eventsPerSecond
-      this.syntheticInterval = setInterval(this.applyMovement, syntheticConstant)
+      this.syntheticInterval = window.setInterval(this.applyMovement, syntheticConstant)
     }
   }
 
-  applyMovement = () => {
+  private applyMovement = (): void => {
     if ( !this.props.isPaused ) {
       const leftPressed = this.diagonalMapSimultaneous[37]
       const rightPressed = this.diagonalMapSimultaneous[39]
@@ -121,7 +228,7 @@ class Player extends Component {
     }
   }
 
-  releaseCriteria = (e) => {
+  private releaseCriteria = (e: KeyboardEvent): void => {
     if ( e.keyCode >= 37 && e.keyCode <= 40 && !this.props.isPaused) {
 
       if ( this.props.gameStarted ) {
@@ -130,7 +237,7 @@ class Player extends Component {
       }
 
       const previousMovement = this.props.movement
-      const impatientWait = setInterval(() => {
+      const impatientWait = window.setInterval(() => {
         setTimeout(() => {
           if ( this.props.gameStarted && this.props.movement === previousMovement ) {
             this.props.modifyPatience(waitingImpatience)
@@ -157,61 +264,9 @@ class Player extends Component {
 
     }
   }
-
-  componentDidMount() {
-    window.addEventListener('keydown', this.handleWalking)
-    this.syntheticListenerForRelease()
-    window.addEventListener('keyup', this.releaseCriteria)
-
-    this.props.setRunningMusicRef(this.refs.runSoundEffectMusic)
-
-    this.refs.playerImg.onload = () => {
-      const ctx = this.props.canvasContext;
-
-      if (this.refs.playerImg) {
-        ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPlayerSize, initialPlayerSize)
-      }
-    }
-  }
-
-  componentDidUpdate() {
-    const ctx = this.props.canvasContext;
-    this.refs.playerImg.src = this.state.walkingCollection[this.state.walkingCycle]
-    ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPlayerSize, initialPlayerSize)
-
-    const bonusRecord = this.props.bonusRecord
-    const lastRecord = bonusRecord[bonusRecord.length - 1]
-
-    if ( this.props.movement > lastRecord.movement + 1000 ) {
-      if ( (this.props.time/1000) - (lastRecord.time) < movingQuicklySecondsRequirement ) {
-        this.props.modifyPatience(movingQuicklyPatience)
-      }
-      this.props.recordForBonus({movement: lastRecord.movement + 1000, time: this.props.time/1000})
-    }
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleWalking)
-    window.removeEventListener('keyup', this.releaseCriteria)
-    window.removeEventListener('keyup', this.runningRelease)
-    clearInterval(this.syntheticInterval)
-    for (let i = 0; i <= this.highestImpatientInterval; i++) {
-      clearInterval(i)
-    }
-  }
-
-  render() {
-    const currentImageSrc = this.state.walkingCollection[this.state.walkingCycle]
-    return (
-      <>
-        <audio src='../runSoundEffect.mp3' ref='runSoundEffectMusic' />
-        <img src={currentImageSrc} ref='playerImg' className='hidden' alt='player'/>
-      </>
-    )
-  }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: AppState) => {
   return {
     player: state.player,
     speed: state.speed,
@@ -224,10 +279,10 @@ const mapStateToProps = (state) => {
     timeOfRun: state.timeOfRun,
     isPaused: state.isPaused,
     time: state.time // FIX - find a more efficient way of rendering independent of state.time since time is only used for recording, but not rendering (maybe shouldComponentUpdate)
-  }
+  };
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     moveUp: () => dispatch(Actions.movePlayer(0, 1)),
     moveDown: () => dispatch(Actions.movePlayer(0, -1)),
@@ -235,14 +290,14 @@ const mapDispatchToProps = (dispatch) => {
     moveRight: () => dispatch(Actions.movePlayer(shiftingSpeed, 0)),
     moveUpLeft: () => dispatch(Actions.movePlayer(-shiftingSpeed, 1)),
     moveUpRight: () => dispatch(Actions.movePlayer(shiftingSpeed, 1)),
-    changeSpeed: (speed) => dispatch(Actions.changeSpeed(speed)),
-    modifyPatience: (modifier) => dispatch(Actions.modifyPatience(modifier)),
+    changeSpeed: (speed: number) => dispatch(Actions.changeSpeed(speed)),
+    modifyPatience: (modifier: number) => dispatch(Actions.modifyPatience(modifier)),
     signalStartGame: () => dispatch(Actions.signalStartGame()),
-    recordForBonus: (record) => dispatch(Actions.recordForBonus(record)),
+    recordForBonus: (record: RecordForBonus) => dispatch(Actions.recordForBonus(record)),
     addToChangeInDirection: () => dispatch(Actions.addToChangeInDirection()),
-    recordTimeOfRun: (time) => dispatch(Actions.recordTimeOfRun(time)),
-    setRunningMusicRef: (musicRef) => dispatch(Actions.setRunningMusicRef(musicRef))
-  }
+    recordTimeOfRun: (time: number) => dispatch(Actions.recordTimeOfRun(time)),
+    setRunningMusicRef: (musicRef: HTMLAudioElement) => dispatch(Actions.setRunningMusicRef(musicRef))
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Player)
