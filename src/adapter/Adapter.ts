@@ -1,6 +1,6 @@
 const baseURL = `https://impatience-api.herokuapp.com/api/v1/high_scores/`;
 
-interface ScoreResponse {
+export interface ScoreResponse {
   average_speed: number;
   created_at: string;
   direction_changes: number;

@@ -1,11 +1,42 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { canvasWidth, canvasHeight, heightOfMap, movementPerMap, percentageDivisionOnMap, movingQuicklySecondsRequirement } from '../setupData'
+import * as React from 'react';
+import {connect} from 'react-redux';
+import {canvasWidth, canvasHeight, heightOfMap, movementPerMap, percentageDivisionOnMap, movingQuicklySecondsRequirement} from '../setupData';
+import {AppState, RecordForBonus, PlayerPosition} from '../store/initialState';
+import {ScreenProps} from '../App';
 
-class Map extends Component {
-  previousFirstMarker = 0
+interface MapProps extends ScreenProps {
+  movement: number;
+  player: PlayerPosition;
+  recordForBonus: RecordForBonus[];
+  time: number;
+}
 
-  drawMap = (ctx) => {
+class Map extends React.PureComponent<MapProps> {
+  private readonly bonusAwardedMusic: React.RefObject<HTMLAudioElement>;
+
+  public constructor(props: MapProps) {
+    super(props);
+    this.bonusAwardedMusic = React.createRef<HTMLAudioElement>();
+  }
+
+  public componentDidMount(): void {
+    this.drawMap(this.props.canvasContext);
+  }
+
+  public componentDidUpdate(): void {
+    this.drawMap(this.props.canvasContext);
+  }
+
+  public render(): React.ReactElement {
+    return (
+      <audio 
+        src={'../bonusAwarded.mp3'} 
+        ref={this.bonusAwardedMusic} 
+      />
+    );
+  }
+
+  private drawMap = (ctx: CanvasRenderingContext2D) => {
     const mapMargins = 0
     const widthOfMap = canvasWidth - (mapMargins*2)
 
@@ -20,7 +51,7 @@ class Map extends Component {
 
     const currentTimeInSec = Math.trunc(this.props.time/1000)
     const lastRecBonusTime = Math.trunc(this.props.recordForBonus[this.props.recordForBonus.length - 1].time)
-    const penultimateRecBonusTime = this.props.recordForBonus.length >= 2 ? Math.trunc(this.props.recordForBonus[this.props.recordForBonus.length - 2].time) : undefined
+    const penultimateRecBonusTime = this.props.recordForBonus.length >= 2 ? Math.trunc(this.props.recordForBonus[this.props.recordForBonus.length - 2].time) : 0
     const timeLeftForBonus = movingQuicklySecondsRequirement - (currentTimeInSec - lastRecBonusTime)
     const nextBonusMovementCheckpoint = this.props.recordForBonus[this.props.recordForBonus.length - 1].movement + 1000
 
@@ -31,8 +62,8 @@ class Map extends Component {
     ctx.closePath()
 
     if ( timeLeftForBonus > 27 && (lastRecBonusTime - penultimateRecBonusTime < movingQuicklySecondsRequirement ) ) {
-      if ( timeLeftForBonus > 29 ) {
-        this.refs.bonusAwardedMusic.play()
+      if ( this.bonusAwardedMusic.current && timeLeftForBonus > 29 ) {
+        this.bonusAwardedMusic.current.play();
       }
 
       ctx.font = "50px Geneva"
@@ -84,21 +115,9 @@ class Map extends Component {
     }
 
   }
-
-  componentDidMount() {
-    this.drawMap(this.props.canvasContext);
-  }
-
-  componentDidUpdate() {
-    this.drawMap(this.props.canvasContext);
-  }
-
-  render() {
-    return <audio src='../bonusAwarded.mp3' ref='bonusAwardedMusic' />
-  }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: AppState) => {
   return {
     movement: state.movement,
     player: state.player,

@@ -15,12 +15,19 @@ export interface Statistics extends UnnamedStatistics{
   "Name": string | null
 }
 
+export interface PlayerPosition {
+  xPosition: number;
+  yPosition: number;
+}
+
+export interface RecordForBonus {
+  movement: number;
+  time: number;
+}
+
 export interface AppState {
     // canvas: HTMLCanvasElement | null;
-    player: {
-      xPosition: number;
-      yPosition: number;
-    },
+    player: PlayerPosition,
     movement: number;
     speed: number;
     touristRoaster: React.Component<any>[];
@@ -39,7 +46,7 @@ export interface AppState {
     doneRecording: boolean;
     gameStarted: boolean;
     time: number;
-    recordForBonus: {movement: number, time: number}[];
+    recordForBonus: RecordForBonus[];
     weather: Weather;
     backgroundMusic: HTMLAudioElement | null;
     runningMusic: HTMLAudioElement | null; 

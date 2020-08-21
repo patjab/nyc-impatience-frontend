@@ -71,7 +71,7 @@ class GameBackground extends React.Component<PathProps> {
           ref={this.nySkyline}
         />
         <GamePath canvasContext={this.props.canvasContext} canvas={this.props.canvas}/>
-        { this.props.gameStarted  ? <Map canvasContext={this.props.canvasContext} /> : null }
+        { this.props.gameStarted  ? <Map canvasContext={this.props.canvasContext} canvas={this.props.canvas}/> : null }
       </>
     );
   }
