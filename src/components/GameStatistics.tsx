@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import * as React from 'react';
 import {connect} from 'react-redux';
 import {Actions} from '../store/Actions';
 import {canvasWidth, canvasHeight, marginAroundStats, paddingAroundStats} from '../setupData';
@@ -6,36 +6,102 @@ import {tracks} from '../mediaHelper/microphoneHelper';
 import {angryGoomba} from '../images';
 import NameInput from './NameInput';
 import {Adapter} from '../adapter/Adapter';
+import {ScreenProps} from '../App';
+import { AppState, Statistics, UnnamedStatistics } from '../store/initialState';
+import { Dispatch } from 'redux';
+import { CanvasScreen } from '../utils/CanvasScreens';
 
-class GameStatistics extends Component {
-  state = {
-    hasPlayedYell: false,
-    nameInputReady: false,
-    doneGreyscale: false
+interface GameStatisticsProps extends ScreenProps {
+  dataToBeRecorded: Statistics;
+  bumpedImages: string[];
+  streak: number[];
+  timeFinished: number | null;
+  changeInDirectionCounter: number;
+  gameOverImage: string | null;
+  movement: number;
+  recordGameStatistics: (statistics: UnnamedStatistics) => void;
+  changeCurrentScreen: (screen: CanvasScreen) => void;
+  signalDoneRecording: () => void;
+};
+
+interface GameStatisticsState {
+  hasPlayedYell: boolean;
+  nameInputReady: boolean;
+  doneGreyscale: boolean;
+}
+
+class GameStatistics extends React.PureComponent<GameStatisticsProps, GameStatisticsState> {
+  private readonly frozenGameOverScreen: React.RefObject<HTMLImageElement>;
+  private readonly gameOverMusic: React.RefObject<HTMLAudioElement>;
+  private readonly losingScream: React.RefObject<HTMLAudioElement>;
+
+  public constructor(props: GameStatisticsProps) {
+    super(props);
+    this.frozenGameOverScreen = React.createRef<HTMLImageElement>();
+    this.gameOverMusic = React.createRef<HTMLAudioElement>();
+    this.losingScream = React.createRef<HTMLAudioElement>();
+    this.state = {
+      hasPlayedYell: false,
+      nameInputReady: false,
+      doneGreyscale: false
+    };
+  }
+
+  public render(): React.ReactElement {
+    return (
+      <>
+        <audio 
+          src={'../losingScream.wav'} 
+          ref={this.losingScream}
+        />
+        <audio 
+          src={'../gameOver.mp3'} 
+          loop={true} 
+          ref={this.gameOverMusic}
+        />
+        <img 
+          src={String(this.props.gameOverImage)} 
+          alt={'frozenGameOverScreen'}
+          ref={this.frozenGameOverScreen}
+          className={'hidden'}
+        />
+        { this.state.nameInputReady ? <NameInput/> : null }
+      </>
+    )
   }
 
   fadeToGrey = () => {
-    if ( !this.state.hasPlayedYell ) {
-      this.refs.losingScream.play()
+    if ( !this.state.hasPlayedYell && this.losingScream.current ) {
+      this.losingScream.current.play();
       this.setState({hasPlayedYell: true})
     }
-    this.refs.gameOverMusic.play()
-    this.refs.frozenGameOverScreen.onload = () => {
-      this.props.canvas.getContext("2d").drawImage(this.refs.frozenGameOverScreen, 0, 0, canvasWidth, canvasHeight)
-      let context = this.props.canvas.getContext("2d")
-      let canvas = this.props.canvas
-      this.grayScale(context, canvas)
-      this.refs.frozenGameOverScreen.onload = () => {
-          context.drawImage(this.refs.frozenGameOverScreen, 0, 0)
-          this.grayScale(context, canvas)
+    if (this.gameOverMusic.current) {
+      this.gameOverMusic.current.play()
+    }
+
+    if (this.frozenGameOverScreen.current) {
+      this.frozenGameOverScreen.current.onload = () => {
+        if ( this.frozenGameOverScreen.current ) {
+          this.props.canvasContext.drawImage(this.frozenGameOverScreen.current, 0, 0, canvasWidth, canvasHeight)
+          let context = this.props.canvasContext;
+          this.grayScale(context)
+          this.frozenGameOverScreen.current.onload = () => {
+            if ( this.frozenGameOverScreen.current ) {
+              context.drawImage(this.frozenGameOverScreen.current, 0, 0);
+              this.grayScale(context);
+            }
+          }
+        } 
       }
     }
+
+
   }
 
-  grayScale(context, canvas) {
-    const imgData = context.getImageData(0, 0, canvas.width, canvas.height)
-    const pixels = imgData.data
-    let i = 0
+  grayScale(context: CanvasRenderingContext2D) {
+    const imgData = context.getImageData(0, 0, canvasWidth, canvasHeight);
+    const pixels = imgData.data;
+    let i = 0;
     const pixelInterval = setInterval(() => {
       if ( i >= pixels.length ) {
         clearInterval(pixelInterval)
@@ -57,10 +123,10 @@ class GameStatistics extends Component {
   }
 
   cfOnlyOnceTemp = true
-  displayGameStatsSquare = (ctx) => {
+  displayGameStatsSquare = (ctx: CanvasRenderingContext2D) => {
     this.cfOnlyOnceTemp = false
     let i = 0
-    let squareWidth, squareHeight
+    let squareWidth: number, squareHeight: number;
     const maximumWidth = canvasWidth - marginAroundStats
     const maximumHeight = canvasHeight - marginAroundStats
     const startingDimension = 5
@@ -87,7 +153,7 @@ class GameStatistics extends Component {
     }, 1)
   }
 
-  displayStats = (ctx) => {
+  displayStats = (ctx: CanvasRenderingContext2D) => {
     let yCursor = 130
     ctx.textAlign = 'center'
     ctx.font = "50px Geneva"
@@ -107,7 +173,7 @@ class GameStatistics extends Component {
     const proportionalSizeImage = imageWidth/canvasWidth
     const imageHeight = proportionalSizeImage * canvasHeight
 
-    let imageCursorX
+    let imageCursorX: number;
     if ( numberOfBumpedImages <= 1 ) {
       imageCursorX = (canvasWidth/2) - (imageWidth/2)
     } else if ( numberOfBumpedImages === 2 ) {
@@ -160,29 +226,29 @@ class GameStatistics extends Component {
       }
     }
 
-    const recordData = {
+    const recordData: UnnamedStatistics = {
       "Distance": Math.trunc(this.props.movement),
-      "Average Speed": Math.trunc(this.props.movement / (this.props.timeFinished/100)),
+      "Average Speed": Math.trunc(this.props.movement / (Number(this.props.timeFinished)/100)),
       "Time Lasted": this.props.timeFinished,
       "Longest Streak": Math.trunc(Math.max(...indivStreaks)),
       "Shortest Streak": Math.trunc(Math.min(...indivStreaks)),
       "Direction Changes": this.props.changeInDirectionCounter,
-      "Dir Changes per Sec": this.props.changeInDirectionCounter / (this.props.timeFinished/100)
+      "Dir Changes per Sec": this.props.changeInDirectionCounter / (Number(this.props.timeFinished)/100)
     }
 
-    this.props.recordGameStatistics(recordData)
+    this.props.recordGameStatistics(recordData);
 
-    yCursor += sectionPadding
+    yCursor += sectionPadding;
 
-    for ( let attr in recordData ) {
+    Object.entries(recordData).forEach(([attr, numRecord]: [string, number]) => {
       ctx.textAlign = 'right'
       ctx.fillStyle = 'white'
       ctx.fillText(attr, canvasWidth/2 + (10*afterColon), yCursor)
       ctx.textAlign = 'left'
       ctx.fillStyle = colorOfData
-      ctx.fillText(`${Math.round(recordData[attr] * 100) / 100}`, canvasWidth/2 + (12*afterColon), yCursor)
+      ctx.fillText(`${Math.round(numRecord * 100) / 100}`, canvasWidth/2 + (12*afterColon), yCursor)
       yCursor += spacing
-    }
+    });
 
     yCursor += (2*sectionPadding)
     ctx.textAlign = 'center'
@@ -197,9 +263,9 @@ class GameStatistics extends Component {
     window.addEventListener('keydown', this.switchToHighScores)
   }
 
-  switchToHighScores = (e) => {
+  switchToHighScores = (e: KeyboardEvent) => {
     if (e.keyCode === 27) {
-      this.props.changeCurrentScreen("highScores")
+      this.props.changeCurrentScreen(CanvasScreen.HIGH_SCORES);
     }
   }
 
@@ -221,7 +287,7 @@ class GameStatistics extends Component {
   }
 
   componentDidUpdate() {
-    const ctx = this.props.canvas.getContext("2d")
+    const ctx = this.props.canvasContext;
     if ( this.state.doneGreyscale && this.cfOnlyOnceTemp ) {
       this.displayGameStatsSquare(ctx)
     } else if ( this.props.dataToBeRecorded["Name"] ) {
@@ -233,7 +299,7 @@ class GameStatistics extends Component {
 
   componentDidMount() {
     if ( tracks ) {
-      tracks.forEach(track => track.stop())
+      tracks.forEach((track: any) => track.stop())
     }
     this.fadeToGrey()
   }
@@ -242,22 +308,12 @@ class GameStatistics extends Component {
     window.removeEventListener('keydown', this.switchToHighScores)
   }
 
-  render() {
-    return (
-      <>
-        <audio src='../losingScream.wav' ref='losingScream'/>
-        <audio src='../gameOver.mp3' loop={true} ref='gameOverMusic'/>
-        <img src={this.props.gameOverImage} alt='frozenGameOverScreen' ref='frozenGameOverScreen' className='hidden'/>
-        { this.state.nameInputReady ? <NameInput/> : null }
-      </>
-    )
-  }
+
 
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: AppState) => {
   return {
-    canvas: state.canvas,
     dataToBeRecorded: state.dataToBeRecorded,
     bumpedImages: state.bumpedImages,
     streak: state.streak,
@@ -268,12 +324,12 @@ const mapStateToProps = (state) => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    recordGameStatistics: (recordData) => dispatch(Actions.recordGameStatistics(recordData)),
-    changeCurrentScreen: (screen) => dispatch(Actions.changeCurrentScreen(screen)),
+    recordGameStatistics: (statistics: UnnamedStatistics) => dispatch(Actions.recordGameStatistics(statistics)),
+    changeCurrentScreen: (screen: CanvasScreen) => dispatch(Actions.changeCurrentScreen(screen)),
     signalDoneRecording: () => dispatch(Actions.signalDoneRecording())
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GameStatistics)
+export default connect(mapStateToProps, mapDispatchToProps)(GameStatistics);

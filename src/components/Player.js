@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import {Actions} from '../store/Actions';
@@ -166,16 +166,16 @@ class Player extends Component {
     this.props.setRunningMusicRef(this.refs.runSoundEffectMusic)
 
     this.refs.playerImg.onload = () => {
-      const ctx = this.props.canvas.getContext("2d")
+      const ctx = this.props.canvasContext;
 
-      if (this.refs.playerImg && ctx) {
+      if (this.refs.playerImg) {
         ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPlayerSize, initialPlayerSize)
       }
     }
   }
 
   componentDidUpdate() {
-    const ctx = this.props.canvas.getContext("2d")
+    const ctx = this.props.canvasContext;
     this.refs.playerImg.src = this.state.walkingCollection[this.state.walkingCycle]
     ctx.drawImage(this.refs.playerImg, this.props.player.xPosition, this.props.player.yPosition, initialPlayerSize, initialPlayerSize)
 
@@ -203,17 +203,16 @@ class Player extends Component {
   render() {
     const currentImageSrc = this.state.walkingCollection[this.state.walkingCycle]
     return (
-      <Fragment>
+      <>
         <audio src='../runSoundEffect.mp3' ref='runSoundEffectMusic' />
         <img src={currentImageSrc} ref='playerImg' className='hidden' alt='player'/>
-      </Fragment>
+      </>
     )
   }
 }
 
 const mapStateToProps = (state) => {
   return {
-    canvas: state.canvas,
     player: state.player,
     speed: state.speed,
     bumpingShake: state.bumpingShake,

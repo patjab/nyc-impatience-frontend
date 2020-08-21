@@ -86,18 +86,11 @@ class Map extends Component {
   }
 
   componentDidMount() {
-    const canvas = this.props.canvas
-    if (canvas) {
-      const ctx = canvas.getContext("2d")
-      this.drawMap(ctx)
-    }
+    this.drawMap(this.props.canvasContext);
   }
 
   componentDidUpdate() {
-    const canvas = this.props.canvas
-    const ctx = canvas.getContext("2d")
-
-    this.drawMap(ctx)
+    this.drawMap(this.props.canvasContext);
   }
 
   render() {
@@ -107,7 +100,6 @@ class Map extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    canvas: state.canvas,
     movement: state.movement,
     player: state.player,
     recordForBonus: state.recordForBonus,

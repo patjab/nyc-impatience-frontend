@@ -8,12 +8,12 @@ import {Row} from '../utils/BrickUtils';
 import {TouristUtils, PositionOnArray} from '../utils/TouristUtils';
 import {AppState} from '../store/initialState';
 import {TouristStageImpl, TouristStage} from '../utils/TouristStageUtils';
+import { ScreenProps } from '../App';
 
-interface TouristProps {
+interface TouristProps extends ScreenProps {
   brickPositions: Row[];
   movement: number;
   isPaused: boolean;
-  canvas: HTMLCanvasElement | null;
   id: number;
   playerX: number;
   playerY: number;
@@ -129,7 +129,7 @@ class Tourist extends React.Component<TouristProps, TouristState> {
     const sizeOfSide = howBigShouldIBe(positionY);
 
     if (touristImg && !this.props.gameOver && !this.props.isPaused) {
-      this.props.canvas?.getContext("2d")?.drawImage(touristImg, positionX, positionY, sizeOfSide, sizeOfSide);
+      this.props.canvasContext.drawImage(touristImg, positionX, positionY, sizeOfSide, sizeOfSide);
       const lifecycleFunction: TouristLifecycleFunction = this.touristLifecycleMap.get(this.state.stage.getCurrent() as TouristStage) as TouristLifecycleFunction;
       lifecycleFunction(positionX, positionY, positionOnArray);
     }
@@ -188,7 +188,8 @@ class Tourist extends React.Component<TouristProps, TouristState> {
 
   private takeAPictureOfCollision = (): void => {
     const quality = 1;
-    const snapshot = this.props.canvas?.toDataURL("image/jpeg", quality);
+    // TODO: Reenable
+    const snapshot = this.props.canvas.toDataURL("image/jpeg", quality);
     if (snapshot) {
       this.props.addToBumpedImages(snapshot);
     }
@@ -219,7 +220,6 @@ class Tourist extends React.Component<TouristProps, TouristState> {
 
 const mapStateToProps = (state: AppState) => {
   return {
-    canvas: state.canvas,
     movement: state.movement,
     playerX: state.player.xPosition,
     playerY: state.player.yPosition,

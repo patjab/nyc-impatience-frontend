@@ -3,9 +3,9 @@ import {connect} from 'react-redux';
 import {canvasWidth, statusBarHeight, loudnessRechargeInSeconds, maximumSecondsOfRecharge, walking} from '../setupData';
 import {activeMegaphone, inactiveMegaphone, activeRunning, inactiveRunning, redRunning} from '../images';
 import {AppState} from '../store/initialState';
+import { ScreenProps } from '../App';
 
-interface AbilityProps {
-  canvas: HTMLCanvasElement | null;
+interface AbilityProps extends ScreenProps {
   time: number;
   timeOfYell: number;
   timeOfRun: number;
@@ -18,35 +18,26 @@ class Ability extends React.PureComponent<AbilityProps> {
   }
 
   public componentDidMount(): void {
-    const ctx = this.props.canvas?.getContext('2d');
-    if (ctx) {
-      this.clearAbilityBackground(ctx);
-    }
-  }
+    const ctx = this.props.canvasContext;
+    const timePassedYell = Math.round((this.props.time/1000) - this.props.timeOfYell);
+    const timePassedRun = Math.round((this.props.time/1000) - this.props.timeOfRun);
 
-  public componentDidUpdate(): void {
-    const ctx = this.props.canvas?.getContext('2d');
+    const readyForYelling = timePassedYell > loudnessRechargeInSeconds;
+    const readyForRunning = timePassedRun >= maximumSecondsOfRecharge;
 
-    if (ctx) {
-      const timePassedYell = Math.round((this.props.time/1000) - this.props.timeOfYell);
-      const timePassedRun = Math.round((this.props.time/1000) - this.props.timeOfRun);
-  
-      const readyForYelling = timePassedYell > loudnessRechargeInSeconds;
-      const readyForRunning = timePassedRun >= maximumSecondsOfRecharge;
-  
-      const shoutIcon = new Image();
-      shoutIcon.src = readyForYelling ? activeMegaphone : inactiveMegaphone;
-  
-      const runningIcon = new Image();
-      runningIcon.src = readyForRunning ? activeRunning : ( this.props.speed === 2 * walking ? redRunning : inactiveRunning );
-  
-      shoutIcon.onload = () => {
-        runningIcon.onload = () => {
-          this.clearAbilityBackground(ctx);
-          this.drawUpdatedImagesAndTimers(ctx, shoutIcon, timePassedYell, readyForYelling, runningIcon, timePassedRun, readyForRunning);
-        }
+    const shoutIcon = new Image();
+    shoutIcon.src = readyForYelling ? activeMegaphone : inactiveMegaphone;
+
+    const runningIcon = new Image();
+    runningIcon.src = readyForRunning ? activeRunning : ( this.props.speed === 2 * walking ? redRunning : inactiveRunning );
+
+    shoutIcon.onload = () => {
+      runningIcon.onload = () => {
+        this.clearAbilityBackground(ctx);
+        this.drawUpdatedImagesAndTimers(ctx, shoutIcon, timePassedYell, readyForYelling, runningIcon, timePassedRun, readyForRunning);
       }
     }
+    
   }
 
   public render(): React.ReactElement {
@@ -103,7 +94,6 @@ class Ability extends React.PureComponent<AbilityProps> {
 }
 
 const mapStateToProps = (state: AppState) => ({
-  canvas: state.canvas,
   time: state.time,
   timeOfYell: state.timeOfYell,
   timeOfRun: state.timeOfRun,

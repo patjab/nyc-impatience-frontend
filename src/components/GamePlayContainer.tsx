@@ -7,8 +7,9 @@ import GamePlayScreen from './GamePlayScreen';
 import GameStatistics from './GameStatistics';
 import {AppState} from '../store/initialState';
 import {Dispatch} from 'redux';
+import {ScreenProps} from '../App';
 
-interface GamePlayContainerProps {
+interface GamePlayContainerProps extends ScreenProps {
   timeFinished: number | null;
   touristRoaster: React.Component[];
   time: number;
@@ -53,6 +54,7 @@ class GamePlayContainer extends React.PureComponent<GamePlayContainerProps, Game
   }
 
   public render(): React.ReactElement {
+    console.log(this.props)
     return (
       <>
         <audio 
@@ -65,7 +67,7 @@ class GamePlayContainer extends React.PureComponent<GamePlayContainerProps, Game
           loop={true} 
           ref={this.snowMusic}
         />
-        {this.props.timeFinished === null ? <GamePlayScreen /> : <GameStatistics /> }
+        {this.props.timeFinished === null ? <GamePlayScreen canvasContext={this.props.canvasContext} canvas={this.props.canvas}/> : <GameStatistics canvasContext={this.props.canvasContext} canvas={this.props.canvas}/> }
       </>
     )
   }

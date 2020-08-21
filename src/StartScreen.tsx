@@ -5,8 +5,9 @@ import {modularWithNegative} from './AuxiliaryMath'
 import {CanvasScreen} from './utils/CanvasScreens'
 import {Dispatch} from 'redux'
 import {Actions} from './store/Actions';
+import { ScreenProps } from './App'
 
-interface StartScreenProps {
+interface StartScreenProps extends ScreenProps {
   changeCurrentScreen: (screen: CanvasScreen) => void;
 }
 
@@ -15,11 +16,11 @@ interface StartScreenState {
 }
 
 class StartScreen extends React.PureComponent<StartScreenProps, StartScreenState> {
-  private readonly startScreen: React.RefObject<HTMLCanvasElement>;
+  // private readonly startScreen: React.RefObject<HTMLCanvasElement>;
 
   public constructor(props: StartScreenProps) {
     super(props);
-    this.startScreen = React.createRef();
+    // this.startScreen = React.createRef();
     this.state = {
       choice: 0
     };  
@@ -27,19 +28,11 @@ class StartScreen extends React.PureComponent<StartScreenProps, StartScreenState
 
   public componentDidMount(): void {
     window.addEventListener('keydown', this.userInputStartScreen);
-    const canvas = this.startScreen.current;
-    const ctx = canvas?.getContext("2d");
-    if (ctx) {
-      this.userMenu(ctx);
-    }
+    this.userMenu(this.props.canvasContext);
   }
 
   public componentDidUpdate(): void {
-    const canvas = this.startScreen.current;
-    const ctx = canvas?.getContext("2d");
-    if (ctx) {
-      this.userMenu(ctx);
-    }
+    this.userMenu(this.props.canvasContext);
   }
 
   public componentWillUnmount(): void {
@@ -47,15 +40,7 @@ class StartScreen extends React.PureComponent<StartScreenProps, StartScreenState
   }
 
   public render(): React.ReactElement {
-    return (
-      <canvas 
-        width={canvasWidth} 
-        height={canvasHeight} 
-        id='startScreen' 
-        ref={this.startScreen}
-        role={'img'}
-      />
-    );
+    return (<></>);
   }
 
   private playAudio = (src: string) => {
@@ -95,6 +80,12 @@ class StartScreen extends React.PureComponent<StartScreenProps, StartScreenState
   }
 
   private userMenu = (ctx: CanvasRenderingContext2D) => {
+    ctx.beginPath();
+    ctx.rect(0, 0, canvasWidth, canvasHeight);
+    ctx.fillStyle = '#000000';
+    ctx.fill();
+    ctx.closePath();
+
     ctx.textAlign = 'center';
     ctx.font = "100px Impact";
     ctx.fillStyle = "white";
@@ -116,6 +107,7 @@ class StartScreen extends React.PureComponent<StartScreenProps, StartScreenState
     ctx.fillText("Information", canvasWidth/2, canvasHeight/2 + 100);
   }
 }
+
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {

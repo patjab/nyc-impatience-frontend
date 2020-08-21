@@ -6,10 +6,10 @@ import GamePath from './GamePath'
 import Map from './Map';
 import {AppState} from '../store/initialState'
 import {Weather} from '../utils/Weather'
+import { ScreenProps } from '../App'
 
 
-interface PathProps {
-  canvas: HTMLCanvasElement | null;
+interface PathProps extends ScreenProps {
   gameStarted: boolean;
   weather: Weather
 }
@@ -36,24 +36,22 @@ class GameBackground extends React.Component<PathProps> {
     const nySkyline = this.nySkyline.current;
     if ( nySkyline ) {
       nySkyline.onload = () => {
-        const ctx = this.props.canvas?.getContext("2d");
-        if (ctx) {
-          ctx.drawImage(nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight);
-          this.drawStartInstructions(ctx);
-        }
+        const ctx = this.props.canvasContext;
+        ctx.drawImage(nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight);
+        this.drawStartInstructions(ctx);
       }
     }
   }
 
   public componentDidUpdate(prevProps: PathProps): void {
     const nySkyline = this.nySkyline.current;
-    const ctx = this.props.canvas?.getContext('2d');
+    const ctx = this.props.canvasContext;
     if (ctx && nySkyline && nySkyline.complete) {
       ctx.drawImage(nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
       this.drawStartInstructions(ctx)
     }
 
-    if (ctx && this.props.canvas && nySkyline) {
+    if (ctx && this.props.canvasContext && nySkyline) {
       ctx.drawImage(nySkyline, this.skylineStartX, this.skylineStartY, this.skylineWidth, this.skylineHeight)
     }
 
@@ -63,10 +61,7 @@ class GameBackground extends React.Component<PathProps> {
   }
 
   public render(): React.ReactElement {
-    const ctx = this.props.canvas && this.props.canvas.getContext("2d");
-    if (ctx) {
-      this.drawSky(ctx)
-    }
+    this.drawSky(this.props.canvasContext)
     return (
       <>
         <img 
@@ -75,9 +70,8 @@ class GameBackground extends React.Component<PathProps> {
           alt={'nySkyline'}
           ref={this.nySkyline}
         />
-        <GamePath/>
-        { this.props.gameStarted  ? <Map /> : null }
-
+        <GamePath canvasContext={this.props.canvasContext} canvas={this.props.canvas}/>
+        { this.props.gameStarted  ? <Map canvasContext={this.props.canvasContext} /> : null }
       </>
     );
   }
@@ -108,7 +102,6 @@ class GameBackground extends React.Component<PathProps> {
 
 const mapStateToProps = (state: AppState) => {
   return {
-    canvas: state.canvas,
     gameStarted: state.gameStarted,
     weather: state.weather
   }

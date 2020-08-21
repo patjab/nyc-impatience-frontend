@@ -10,11 +10,6 @@ function appReducer(state = initialState, action: Actions): AppState {
         ...state,
         touristGoneCounter: state.touristGoneCounter + 1
       }
-    case ActionKeys.SET_CANVAS:
-      return {
-        ...state,
-        canvas: action.payload
-      }
     case ActionKeys.MOVE_PLAYER:
       const allowedMovement = state.movement !== 0 && state.movement + (action.payload.y * state.speed) < 0 ? 0 : state.movement + (action.payload.y * state.speed)
       return {

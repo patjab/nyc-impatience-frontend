@@ -4,12 +4,12 @@ import { canvasWidth, statusBarHeight, initialPatience } from '../setupData'
 
 class Patience extends Component {
 
+  componentDidMount() {
+    this.drawLivesMeter(this.props.canvasContext)
+  }
+
   componentDidUpdate() {
-    const canvas = this.props.canvas
-    const ctx = canvas.getContext("2d")
-    if (canvas) {
-      this.drawLivesMeter(ctx)
-    }
+    this.drawLivesMeter(this.props.canvasContext)
   }
 
   formatPercentage = () => {
@@ -66,7 +66,6 @@ class Patience extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    canvas: state.canvas,
     patience: state.patience,
     isPaused: state.isPaused
   }

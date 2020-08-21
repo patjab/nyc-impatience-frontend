@@ -1,5 +1,3 @@
-import {Statistics} from '../store/initialState';
-
 const baseURL = `https://impatience-api.herokuapp.com/api/v1/high_scores/`;
 
 interface ScoreResponse {
@@ -33,7 +31,7 @@ export class Adapter {
     .then((resp: Response) => resp.json());
   }
 
-  public static recordHighScore(gameStatistics: Statistics): Promise<ScoreResponse> {
+  public static recordHighScore(gameStatistics: {}): Promise<ScoreResponse> {
     return fetch(baseURL, {
       headers: {
         'Content-Type': 'application/json',

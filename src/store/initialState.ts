@@ -2,8 +2,7 @@ import {playerStartX, playerStartY, walking, initialPatience, loudnessRechargeIn
 import {CanvasScreen} from '../utils/CanvasScreens';
 import {Weather} from '../utils/Weather';
 
-export interface Statistics {
-  "Name": string | null,
+export interface UnnamedStatistics {
   "Distance": number | null,
   "Average Speed": number | null,
   "Time Lasted": number | null,
@@ -12,9 +11,12 @@ export interface Statistics {
   "Direction Changes": number | null,
   "Dir Changes per Sec": number | null
 }
+export interface Statistics extends UnnamedStatistics{
+  "Name": string | null
+}
 
 export interface AppState {
-    canvas: HTMLCanvasElement | null;
+    // canvas: HTMLCanvasElement | null;
     player: {
       xPosition: number;
       yPosition: number;
@@ -52,7 +54,7 @@ export interface AppState {
 };
 
 export const initialState: AppState = {
-    canvas: null,
+    // canvas: null,
     player: {
       xPosition: playerStartX,
       yPosition: playerStartY

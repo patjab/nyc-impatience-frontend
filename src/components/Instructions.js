@@ -9,7 +9,7 @@ class Instructions extends Component {
   }
 
   componentDidMount() {
-    const canvas = this.refs.instructions
+    const canvas = this.props.canvas
     const ctx = canvas.getContext("2d")
     ctx.beginPath()
     ctx.rect(0, 0, canvasWidth, canvasHeight)
@@ -146,7 +146,8 @@ class Instructions extends Component {
   }
 
   render() {
-    return <canvas width={canvasWidth} height={canvasHeight} ref='instructions'></canvas>
+    return <></>;
+    // return <canvas width={canvasWidth} height={canvasHeight} ref='instructions'></canvas>
   }
 }
 

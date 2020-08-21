@@ -1,10 +1,9 @@
 import {ActionKeys} from './ActionKeys';
-import {Statistics} from './initialState';
+import {UnnamedStatistics} from './initialState';
 import {CanvasScreen} from '../utils/CanvasScreens';
 import {Weather} from '../utils/Weather';
 
 export const Actions = {
-  setThisCanvas: (canvas: HTMLCanvasElement | null) => createAction(ActionKeys.SET_CANVAS, canvas),
   movePlayer: (x: number, y: number) => createAction(ActionKeys.MOVE_PLAYER, {x, y}),
   changeSpeed: (speed: number) => createAction(ActionKeys.CHANGE_SPEED, speed),
   addTouristGoneCounter: () => createAction(ActionKeys.ADD_TOURIST_GONE_COUNTER),
@@ -21,7 +20,7 @@ export const Actions = {
   recordTimeFinished: (time: number) => createAction(ActionKeys.RECORD_TIME_FINISHED, time),
   addToChangeInDirection: () => createAction(ActionKeys.ADD_TO_CHANGE_IN_DIRECTION),
   setName: (name: string) => createAction(ActionKeys.SET_NAME, name),
-  recordGameStatistics: (statistics: Statistics) => createAction(ActionKeys.RECORD_GAME_STATISTICS, statistics),
+  recordGameStatistics: (statistics: UnnamedStatistics) => createAction(ActionKeys.RECORD_GAME_STATISTICS, statistics),
   changeCurrentScreen: (screen: CanvasScreen) => createAction(ActionKeys.CHANGE_CURRENT_SCREEN, screen),
   resetAllState: () => createAction(ActionKeys.RESET_ALL_STATE),
   modifyPatience: (modifier: number) => createAction(ActionKeys.MODIFY_PATIENCE, modifier),

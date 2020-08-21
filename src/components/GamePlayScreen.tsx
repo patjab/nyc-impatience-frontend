@@ -8,8 +8,9 @@ import Pause from './Pause'
 import { Dispatch } from 'redux'
 import { CanvasScreen } from '../utils/CanvasScreens'
 import { AppState } from '../store/initialState'
+import { ScreenProps } from '../App';
 
-interface GamePlayScreenProps {
+interface GamePlayScreenProps extends ScreenProps {
   backgroundMusic: any;
   runningMusic: any;
   isPaused: boolean;
@@ -36,10 +37,10 @@ class GamePlayScreen extends React.PureComponent<GamePlayScreenProps> {
   public render(): React.ReactElement {
     return (
       <>
-        <Timer />
-        <GameBackground />
-        {this.props.isPaused ? <Pause /> : null}
-        <Player />
+        <Timer canvasContext={this.props.canvasContext} canvas={this.props.canvas}/>
+        <GameBackground canvasContext={this.props.canvasContext} canvas={this.props.canvas} />
+        {this.props.isPaused ? <Pause canvasContext={this.props.canvasContext} canvas={this.props.canvas}/> : null}
+        <Player canvasContext={this.props.canvasContext} canvas={this.props.canvas} />
       </>
     )
   }
@@ -73,7 +74,6 @@ class GamePlayScreen extends React.PureComponent<GamePlayScreenProps> {
 
 const mapStateToProps = (state: AppState) => {
   return {
-    canvas: state.canvas,
     stage: state.stage,
     backgroundMusic: state.backgroundMusic,
     isPaused: state.isPaused,

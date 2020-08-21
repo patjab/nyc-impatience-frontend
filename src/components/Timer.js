@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { canvasWidth, statusBarHeight } from '../setupData'
 import {Actions} from '../store/Actions';
@@ -21,13 +21,10 @@ class Timer extends Component {
   }
 
   drawStatusBar = () => {
-    const ctx = this.props.canvas ? this.props.canvas.getContext("2d") : null
-    if (ctx) {
-      ctx.clearRect(canvasWidth*0.70, 0, canvasWidth*0.30, statusBarHeight)
-      ctx.fillStyle = 'black'
-      ctx.fillRect(canvasWidth*0.70, 0, canvasWidth*0.30, statusBarHeight)
-      this.drawTime(ctx)
-    }
+    this.props.canvasContext.clearRect(canvasWidth*0.70, 0, canvasWidth*0.30, statusBarHeight)
+    this.props.canvasContext.fillStyle = 'black'
+    this.props.canvasContext.fillRect(canvasWidth*0.70, 0, canvasWidth*0.30, statusBarHeight)
+    this.drawTime(this.props.canvasContext)
   }
 
   drawTime = (ctx) => {
@@ -59,7 +56,9 @@ class Timer extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('keydown', this.incrementTime)
+    window.addEventListener('keydown', this.incrementTime);
+    this.drawStatusBar();
+    this.drawTime(this.props.canvasContext);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -68,32 +67,33 @@ class Timer extends Component {
   }
 
   showGameOverScreen = () => {
+    // TODO: Renable this as a more specific context was passed thorugh here
     const gameOverImg = this.props.canvas.toDataURL("image/png")
     this.props.setGameOverImage(gameOverImg)
   }
 
   componentDidUpdate() {
+    console.log('CALLING')
     if (this.props.patience <= 0) {
-      this.props.recordStreak(this.props.movement)
-      this.props.recordTimeFinished(this.props.time/1000)
-      this.showGameOverScreen()
+      this.props.recordStreak(this.props.movement);
+      this.props.recordTimeFinished(this.props.time/1000);
+      this.showGameOverScreen();
     }
   }
 
   render() {
     this.drawStatusBar()
     return (
-      <Fragment>
-        <Patience/>
-        <Ability/>
-      </Fragment>
+      <>
+        <Patience canvasContext={this.props.canvasContext}/>
+        <Ability canvasContext={this.props.canvasContext}/>
+      </>
     )
   }
 }
 
 const mapStateToProps = (state) => {
   return {
-    canvas: state.canvas,
     movement: state.movement,
     streak: state.streak,
     patience: state.patience,

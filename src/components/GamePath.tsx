@@ -7,9 +7,9 @@ import Tourist from './Tourist';
 import {Position} from '../utils/BrickUtils';
 import {AppState} from '../store/initialState';
 import {Weather} from '../utils/Weather';
+import {ScreenProps} from '../App';
 
-interface GamePathProps {
-    canvas: HTMLCanvasElement | null;
+interface GamePathProps extends ScreenProps {
     weather: Weather;
     movement: number;
     stage: number;
@@ -26,36 +26,28 @@ class GamePath extends React.Component<GamePathProps> {
     }
 
     public render(): JSX.Element | JSX.Element[] {
-
-        const ctx = this.props.canvas && this.props.canvas.getContext("2d");
-        if (ctx) {
-
-            const brickMatrix: Row[] = BrickUtils.getBrickMatrix(
-                horizonLine,
-                canvasWidth,
-                numOfBricksInARow,
-                brickSpacingBetweenRows,
-                this.props.movement,
-                movementPerBrick,
-                depthMultiplier
-            );
-
-            this.drawPathBackground(ctx);
-            this.drawBrickMatrix(ctx, brickMatrix);
-            this.drawSideStructures(ctx, this.props.weather);
-            this.drawLeftPathBorder(ctx);
-            this.drawBicycleLane(ctx, this.props.weather);
-            return this.renderTourists(touristDensity, brickMatrix);
-
-        } else {
-            return (<></>);
-        }
+        const ctx = this.props.canvasContext;
+        const brickMatrix: Row[] = BrickUtils.getBrickMatrix(
+            horizonLine,
+            canvasWidth,
+            numOfBricksInARow,
+            brickSpacingBetweenRows,
+            this.props.movement,
+            movementPerBrick,
+            depthMultiplier
+        );
+        this.drawPathBackground(ctx);
+        this.drawBrickMatrix(ctx, brickMatrix);
+        this.drawSideStructures(ctx, this.props.weather);
+        this.drawLeftPathBorder(ctx);
+        this.drawBicycleLane(ctx, this.props.weather);
+        return this.renderTourists(touristDensity, brickMatrix);
     }
 
     private renderTourists = (numberOfTourists: number, bricksList: Row[]): JSX.Element[] => {        
         let tourists = [];
         for ( let i = this.props.touristGoneCounter; i < (numberOfTourists + this.props.stage + this.props.touristGoneCounter); i++ ) {
-            tourists.push(<Tourist key={i} id={i} brickPositions={bricksList} />);
+            tourists.push(<Tourist key={i} id={i} brickPositions={bricksList} canvasContext={this.props.canvasContext} canvas={this.props.canvas}/>);
         }
         return tourists;
     }
@@ -146,7 +138,6 @@ class GamePath extends React.Component<GamePathProps> {
 
 const mapStateToProps = (state: AppState) => {
     return {
-        canvas: state.canvas,
         weather: state.weather,
         movement: state.movement,
         stage: state.stage,
