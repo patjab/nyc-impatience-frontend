@@ -5,11 +5,6 @@ import {Actions} from './Actions';
 
 function appReducer(state = initialState, action: Actions): AppState {
   switch(action.type) {
-    case ActionKeys.ADD_TOURIST_GONE_COUNTER:
-      return {
-        ...state,
-        touristGoneCounter: state.touristGoneCounter + 1
-      }
     case ActionKeys.MOVE_PLAYER:
       const allowedMovement = state.movement !== 0 && state.movement + (action.payload.y * state.speed) < 0 ? 0 : state.movement + (action.payload.y * state.speed)
       return {
@@ -25,21 +20,6 @@ function appReducer(state = initialState, action: Actions): AppState {
       return {
         ...state,
         speed: action.payload
-      }
-    case ActionKeys.ADD_TOURIST_TO_ROASTER:
-      return {
-        ...state,
-        touristRoaster: [...state.touristRoaster, action.payload]
-      }
-    case ActionKeys.EMPTY_TOURIST_ROASTER:
-      return {
-        ...state,
-        touristRoaster: []
-      }
-    case ActionKeys.REMOVE_TOURIST_FROM_ROASTER:
-      return {
-        ...state,
-        touristRoaster: state.touristRoaster.filter(tourist => action.payload !== tourist.props.id)
       }
     case ActionKeys.RESET_PLAYER:
       return {
@@ -194,4 +174,4 @@ function appReducer(state = initialState, action: Actions): AppState {
   }
 }
 
-export default appReducer
+export default appReducer;

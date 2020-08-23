@@ -249,9 +249,7 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    addTouristToRoaster: (tourist: TouristComponent) => dispatch(Actions.addTouristToRoaster(tourist)),
     removeTouristFromRoaster: (id: number) => dispatch(Actions.removeTouristFromRoaster(id)),
-    addTouristGoneCounter: () => dispatch(Actions.addTouristGoneCounter()),
     resetPlayer: () => dispatch(Actions.resetPlayer()),
     recordStreak: (streak: number) => dispatch(Actions.recordStreak(streak)),
     changeMovementAbility: (isDisabled: boolean) => dispatch(Actions.changeMovementAbility(isDisabled)),

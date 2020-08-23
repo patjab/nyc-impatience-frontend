@@ -1,7 +1,6 @@
 import {playerStartX, playerStartY, walking, initialPatience, loudnessRechargeInSeconds, maximumSecondsOfRecharge} from '../setupData';
 import {CanvasScreen} from '../utils/CanvasScreens';
 import {Weather} from '../utils/Weather';
-import {TouristComponent} from '../components/Tourist';
 
 export interface UnnamedStatistics {
   "Distance": number | null,
@@ -30,7 +29,6 @@ export interface AppState {
     player: PlayerPosition,
     movement: number;
     speed: number;
-    touristRoaster: TouristComponent[];
     streak: number[];
     stage: number;
     disabled: boolean;
@@ -57,7 +55,6 @@ export interface AppState {
     isPaused: boolean;
     timePaused: Date | null;
     totalPausedTime: number | null;
-    touristGoneCounter: number;
 };
 
 export const initialState: AppState = {
@@ -67,7 +64,6 @@ export const initialState: AppState = {
     },
     movement: 0,
     speed: walking,
-    touristRoaster: [],
     streak: [],
     stage: 0,
     disabled: false,
@@ -102,6 +98,5 @@ export const initialState: AppState = {
     timeOfRun: -2*maximumSecondsOfRecharge,
     isPaused: false,
     timePaused: null,
-    totalPausedTime: null,
-    touristGoneCounter: 0
+    totalPausedTime: null
 };

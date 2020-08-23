@@ -10,17 +10,11 @@ import {ScreenProps} from '../App';
 interface GamePathProps extends ScreenProps {
     brickMatrix: Row[];
     weather: Weather;
-    touristGoneCounter: number;
 }
 
-class GamePath extends React.Component<GamePathProps> {
+class GamePath extends React.PureComponent<GamePathProps> {
     public constructor(props: GamePathProps) {
         super(props);
-    }
-
-    // TODO: Remove in future release - currently helps to prevent map from regenerating
-    public shouldComponentUpdate(prevProps: GamePathProps): boolean {
-      return prevProps.touristGoneCounter === this.props.touristGoneCounter;
     }
 
     public render(): JSX.Element | JSX.Element[] {
@@ -119,8 +113,7 @@ class GamePath extends React.Component<GamePathProps> {
 
 const mapStateToProps = (state: AppState) => {
     return {
-        weather: state.weather,
-        touristGoneCounter: state.touristGoneCounter
+        weather: state.weather
     }
 }
 
