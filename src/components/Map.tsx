@@ -61,7 +61,7 @@ class Map extends React.PureComponent<MapProps> {
     ctx.fill()
     ctx.closePath()
 
-    if ( timeLeftForBonus > 27 && (lastRecBonusTime - penultimateRecBonusTime < movingQuicklySecondsRequirement ) ) {
+    if ( lastRecBonusTime !== 0 && timeLeftForBonus > 27 && (lastRecBonusTime - penultimateRecBonusTime < movingQuicklySecondsRequirement ) ) {
       if ( this.bonusAwardedMusic.current && timeLeftForBonus > 29 ) {
         this.bonusAwardedMusic.current.play();
       }
@@ -126,4 +126,4 @@ const mapStateToProps = (state: AppState) => {
   }
 }
 
-export default connect(mapStateToProps)(Map)
+export default connect(mapStateToProps)(Map);

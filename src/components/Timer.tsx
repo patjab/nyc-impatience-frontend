@@ -35,7 +35,7 @@ interface FormattedGameTime {
   milliseconds: number;
 }
 
-class Timer extends React.PureComponent<TimerProps, TimerState> {
+class Timer extends React.Component<TimerProps, TimerState> {
   public constructor(props: TimerProps) {
     super(props);
     this.state = {

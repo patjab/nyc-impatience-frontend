@@ -128,7 +128,7 @@ class Player extends React.PureComponent<PlayerProps, PlayerState> {
   }
 
   private setBackToWalking = (): void => {
-    if (this.runSoundEffectMusic.current && this.refs.runSoundEffectMusic) {
+    if (this.runSoundEffectMusic.current) {
       this.props.changeSpeed(walking)
       this.runSoundEffectMusic.current.pause();
       if ( !this.props.isPaused && this.props.backgroundMusic ) {

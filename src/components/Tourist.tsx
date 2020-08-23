@@ -123,6 +123,18 @@ class Tourist extends React.Component<TouristProps, TouristState> {
     }
   }
 
+  /*
+   * Used externally as a ref in the TouristContainer
+   */
+  public spookedRunAway(): void {
+    const {positionOnArray} = TouristUtils.convertRowColToXY(this.props.brickPositions, this.props.movement, this.movementPositionOnMounted, this.state.positionOnArray, this.initialRow, this.state.allowTouristToRun);
+    this.runningAnimation(positionOnArray);
+  }
+
+  public componentDidMount(): void {
+    this.props.addTouristToRoaster(this);
+  }
+
   public componentDidUpdate() {
     const {positionY, positionX, positionOnArray} = TouristUtils.convertRowColToXY(this.props.brickPositions, this.props.movement, this.movementPositionOnMounted, this.state.positionOnArray, this.initialRow, this.state.allowTouristToRun);
     const touristImg = this.touristImg.current;

@@ -54,7 +54,6 @@ class GamePlayContainer extends React.PureComponent<GamePlayContainerProps, Game
   }
 
   public render(): React.ReactElement {
-    console.log(this.props)
     return (
       <>
         <audio 
@@ -91,7 +90,7 @@ class GamePlayContainer extends React.PureComponent<GamePlayContainerProps, Game
         this.props.recordTimeOfYell(this.props.time/1000)
         for ( let tourist of this.props.touristRoaster ) {
           // @ts-ignore - fix imperative access
-          tourist.runningAnimation();
+          tourist.spookedRunAway();
         }
       }
     }, 100)

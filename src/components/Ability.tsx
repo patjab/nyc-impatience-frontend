@@ -17,8 +17,7 @@ class Ability extends React.PureComponent<AbilityProps> {
     super(props);
   }
 
-  public componentDidMount(): void {
-    const ctx = this.props.canvasContext;
+  public renderAbilitiesToolbar(ctx: CanvasRenderingContext2D): void {
     const timePassedYell = Math.round((this.props.time/1000) - this.props.timeOfYell);
     const timePassedRun = Math.round((this.props.time/1000) - this.props.timeOfRun);
 
@@ -41,6 +40,8 @@ class Ability extends React.PureComponent<AbilityProps> {
   }
 
   public render(): React.ReactElement {
+    const ctx = this.props.canvasContext;
+    this.renderAbilitiesToolbar(ctx);
     return (<></>);
   }
 
