@@ -1,6 +1,7 @@
 import {playerStartX, playerStartY, walking, initialPatience, loudnessRechargeInSeconds, maximumSecondsOfRecharge} from '../setupData';
 import {CanvasScreen} from '../utils/CanvasScreens';
 import {Weather} from '../utils/Weather';
+import {TouristComponent} from '../components/Tourist';
 
 export interface UnnamedStatistics {
   "Distance": number | null,
@@ -26,11 +27,10 @@ export interface RecordForBonus {
 }
 
 export interface AppState {
-    // canvas: HTMLCanvasElement | null;
     player: PlayerPosition,
     movement: number;
     speed: number;
-    touristRoaster: React.Component<any>[];
+    touristRoaster: TouristComponent[];
     streak: number[];
     stage: number;
     disabled: boolean;
@@ -61,7 +61,6 @@ export interface AppState {
 };
 
 export const initialState: AppState = {
-    // canvas: null,
     player: {
       xPosition: playerStartX,
       yPosition: playerStartY

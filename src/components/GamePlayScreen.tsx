@@ -9,8 +9,12 @@ import { Dispatch } from 'redux'
 import { CanvasScreen } from '../utils/CanvasScreens'
 import { AppState } from '../store/initialState'
 import { ScreenProps } from '../App';
+import TouristContainer from './TouristContainer';
+import { Row, BrickUtils } from '../utils/BrickUtils';
+import { horizonLine, canvasWidth, numOfBricksInARow, brickSpacingBetweenRows, movementPerBrick, depthMultiplier } from '../setupData';
 
 interface GamePlayScreenProps extends ScreenProps {
+  movement: number;
   backgroundMusic: any;
   runningMusic: any;
   isPaused: boolean;
@@ -35,10 +39,20 @@ class GamePlayScreen extends React.PureComponent<GamePlayScreenProps> {
   }
 
   public render(): React.ReactElement {
+    const brickMatrix: Row[] = BrickUtils.getBrickMatrix(
+      horizonLine,
+      canvasWidth,
+      numOfBricksInARow,
+      brickSpacingBetweenRows,
+      this.props.movement,
+      movementPerBrick,
+      depthMultiplier
+  );
     return (
       <>
         <Timer canvasContext={this.props.canvasContext} canvas={this.props.canvas}/>
-        <GameBackground canvasContext={this.props.canvasContext} canvas={this.props.canvas} />
+        <GameBackground brickMatrix={brickMatrix} canvasContext={this.props.canvasContext} canvas={this.props.canvas} />
+        <TouristContainer brickMatrix={brickMatrix} canvasContext={this.props.canvasContext} canvas={this.props.canvas}/>
         {this.props.isPaused ? <Pause canvasContext={this.props.canvasContext} canvas={this.props.canvas}/> : null}
         <Player canvasContext={this.props.canvasContext} canvas={this.props.canvas} />
       </>
@@ -74,6 +88,7 @@ class GamePlayScreen extends React.PureComponent<GamePlayScreenProps> {
 
 const mapStateToProps = (state: AppState) => {
   return {
+    movement: state.movement,
     stage: state.stage,
     backgroundMusic: state.backgroundMusic,
     isPaused: state.isPaused,

@@ -52,7 +52,7 @@ class App extends React.PureComponent<AppProps, InnerAppState> {
           className={this.props.bumpingShake ? 'bumpingShake' : ''}
           role={'img'}
         />
-        {this.state.canvasContext && this.state.canvas && <Screen canvasContext={this.state.canvasContext} canvas={this.state.canvas}/> }
+        {this.state.canvasContext && this.state.canvas && <Screen canvasContext={this.state.canvasContext} canvas={this.state.canvas}/>}
       </>
     );
   }

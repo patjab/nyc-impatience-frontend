@@ -8,7 +8,7 @@ import {Row} from '../utils/BrickUtils';
 import {TouristUtils, PositionOnArray} from '../utils/TouristUtils';
 import {AppState} from '../store/initialState';
 import {TouristStageImpl, TouristStage} from '../utils/TouristStageUtils';
-import { ScreenProps } from '../App';
+import {ScreenProps} from '../App';
 
 interface TouristProps extends ScreenProps {
   brickPositions: Row[];
@@ -20,7 +20,7 @@ interface TouristProps extends ScreenProps {
   gameOver: boolean;
   patience: number;
 
-  addTouristToRoaster: (arg: React.Component<any>) => void;
+  addTouristToRoaster: (arg: TouristComponent) => void;
   removeTouristFromRoaster: (id: number) => void;
   addTouristGoneCounter: () => void;
   addToBumpedImages: (snapshot: string) => void;
@@ -41,7 +41,13 @@ interface TouristState {
 
 type TouristLifecycleFunction = (positionX: number, positionY: number, positionOnArray: PositionOnArray) => void;
 
-class Tourist extends React.Component<TouristProps, TouristState> {
+interface PublicTouristProps {
+  spookedRunAway(): void;
+}
+
+export type TouristComponent = React.Component<TouristProps, TouristState> & PublicTouristProps;
+
+class Tourist extends React.Component<TouristProps, TouristState> implements TouristComponent {
   private readonly bumpSoundEl: React.RefObject<HTMLAudioElement>;
   private readonly touristImg: React.RefObject<HTMLImageElement>;
   private readonly movementPositionOnMounted: number;
@@ -243,7 +249,7 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    addTouristToRoaster: (tourist: React.Component<any>) => dispatch(Actions.addTouristToRoaster(tourist)),
+    addTouristToRoaster: (tourist: TouristComponent) => dispatch(Actions.addTouristToRoaster(tourist)),
     removeTouristFromRoaster: (id: number) => dispatch(Actions.removeTouristFromRoaster(id)),
     addTouristGoneCounter: () => dispatch(Actions.addTouristGoneCounter()),
     resetPlayer: () => dispatch(Actions.resetPlayer()),

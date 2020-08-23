@@ -7,9 +7,10 @@ import Map from './Map';
 import {AppState} from '../store/initialState'
 import {Weather} from '../utils/Weather'
 import { ScreenProps } from '../App'
-
+import { Row } from '../utils/BrickUtils'
 
 interface PathProps extends ScreenProps {
+  brickMatrix: Row[];
   gameStarted: boolean;
   weather: Weather
 }
@@ -70,7 +71,7 @@ class GameBackground extends React.Component<PathProps> {
           alt={'nySkyline'}
           ref={this.nySkyline}
         />
-        <GamePath canvasContext={this.props.canvasContext} canvas={this.props.canvas}/>
+        <GamePath brickMatrix={this.props.brickMatrix} canvasContext={this.props.canvasContext} canvas={this.props.canvas}/>
         { this.props.gameStarted  ? <Map canvasContext={this.props.canvasContext} canvas={this.props.canvas}/> : null }
       </>
     );

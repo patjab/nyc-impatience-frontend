@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {backgroundMusicOn, loudnessSpookLevel, loudnessRechargeInSeconds} from '../setupData';
-import {microphoneRunner, loudEnough} from '../mediaHelper/microphoneHelper';
+import {backgroundMusicOn} from '../setupData';
 import {Actions} from '../store/Actions';
 import GamePlayScreen from './GamePlayScreen';
 import GameStatistics from './GameStatistics';
@@ -11,19 +10,11 @@ import {ScreenProps} from '../App';
 
 interface GamePlayContainerProps extends ScreenProps {
   timeFinished: number | null;
-  touristRoaster: React.Component[];
-  time: number;
-  timeOfYell: number;
   setBackgroundMusicRef: (musicRef: HTMLAudioElement) => void;
   setSnowMusicRef: (musicRef: HTMLAudioElement) => void;
-  recordTimeOfYell: (time: number) => void;
 }
 
-interface GamePlayContainerState {
-  scaredTouristListener: number | null;
-}
-
-class GamePlayContainer extends React.PureComponent<GamePlayContainerProps, GamePlayContainerState> {
+class GamePlayContainer extends React.PureComponent<GamePlayContainerProps> {
   private readonly backgroundMusic: React.RefObject<HTMLAudioElement>;
   private readonly snowMusic: React.RefObject<HTMLAudioElement>;
 
@@ -31,15 +22,10 @@ class GamePlayContainer extends React.PureComponent<GamePlayContainerProps, Game
     super(props);
     this.backgroundMusic = React.createRef();
     this.snowMusic = React.createRef();
-    this.state = {
-      scaredTouristListener: null
-    };
   }
 
   public componentDidMount(): void {
     window.addEventListener('keydown', this.backgroundMusicStart);
-    const scaredTouristListener = this.scaredTouristListener();
-    this.setState({ scaredTouristListener: scaredTouristListener });
   }
 
   public componentDidUpdate(): void {
@@ -49,11 +35,8 @@ class GamePlayContainer extends React.PureComponent<GamePlayContainerProps, Game
     }
   }
 
-  public componentWillUnmount(): void {
-    this.state.scaredTouristListener && window.clearInterval(this.state.scaredTouristListener);
-  }
-
   public render(): React.ReactElement {
+    const Screen = this.props.timeFinished === null ? GamePlayScreen : GameStatistics;
     return (
       <>
         <audio 
@@ -66,7 +49,7 @@ class GamePlayContainer extends React.PureComponent<GamePlayContainerProps, Game
           loop={true} 
           ref={this.snowMusic}
         />
-        {this.props.timeFinished === null ? <GamePlayScreen canvasContext={this.props.canvasContext} canvas={this.props.canvas}/> : <GameStatistics canvasContext={this.props.canvasContext} canvas={this.props.canvas}/> }
+        <Screen canvasContext={this.props.canvasContext} canvas={this.props.canvas}/>
       </>
     )
   }
@@ -82,36 +65,19 @@ class GamePlayContainer extends React.PureComponent<GamePlayContainerProps, Game
     }
   }
 
-  private scaredTouristListener = () => {
-    microphoneRunner(loudnessSpookLevel);
-    return window.setInterval(() => {
-      const readyForYelling = (this.props.time/1000) - this.props.timeOfYell > loudnessRechargeInSeconds
-      if (loudEnough && readyForYelling ) {
-        this.props.recordTimeOfYell(this.props.time/1000)
-        for ( let tourist of this.props.touristRoaster ) {
-          // @ts-ignore - fix imperative access
-          tourist.spookedRunAway();
-        }
-      }
-    }, 100)
-  }
 }
 
 const mapStateToProps = (state: AppState) => {
   return {
-    timeFinished: state.timeFinished,
-    touristRoaster: state.touristRoaster,
-    time: state.time,
-    timeOfYell: state.timeOfYell
+    timeFinished: state.timeFinished
   };
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     setBackgroundMusicRef: (musicRef: HTMLAudioElement) => dispatch(Actions.setBackgroundMusicRef(musicRef)),
-    setSnowMusicRef: (musicRef: HTMLAudioElement) => dispatch(Actions.setSnowMusicRef(musicRef)),
-    recordTimeOfYell: (time: number) => dispatch(Actions.recordTimeOfYell(time))
+    setSnowMusicRef: (musicRef: HTMLAudioElement) => dispatch(Actions.setSnowMusicRef(musicRef))
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GamePlayContainer)
+export default connect(mapStateToProps, mapDispatchToProps)(GamePlayContainer);

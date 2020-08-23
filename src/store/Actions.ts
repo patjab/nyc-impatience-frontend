@@ -3,12 +3,13 @@ import {UnnamedStatistics} from './initialState';
 import {CanvasScreen} from '../utils/CanvasScreens';
 import {Weather} from '../utils/Weather';
 import {ActionsUnion, createAction} from '../domain/ActionHelpers';
+import { TouristComponent } from '../components/Tourist';
 
 export const Actions = {
   movePlayer: (x: number, y: number) => createAction(ActionKeys.MOVE_PLAYER, {x, y}),
   changeSpeed: (speed: number) => createAction(ActionKeys.CHANGE_SPEED, speed),
   addTouristGoneCounter: () => createAction(ActionKeys.ADD_TOURIST_GONE_COUNTER),
-  addTouristToRoaster: (tourist: React.Component<any>) => createAction(ActionKeys.ADD_TOURIST_TO_ROASTER, tourist),
+  addTouristToRoaster: (tourist: TouristComponent) => createAction(ActionKeys.ADD_TOURIST_TO_ROASTER, tourist),
   removeTouristFromRoaster: (id: number) => createAction(ActionKeys.REMOVE_TOURIST_FROM_ROASTER, id),
   emptyTouristRoaster: () => createAction(ActionKeys.EMPTY_TOURIST_ROASTER),
   resetPlayer: () => createAction(ActionKeys.RESET_PLAYER),

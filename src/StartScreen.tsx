@@ -5,7 +5,7 @@ import {modularWithNegative} from './AuxiliaryMath'
 import {CanvasScreen} from './utils/CanvasScreens'
 import {Dispatch} from 'redux'
 import {Actions} from './store/Actions';
-import { ScreenProps } from './App'
+import {ScreenProps} from './App'
 
 interface StartScreenProps extends ScreenProps {
   changeCurrentScreen: (screen: CanvasScreen) => void;
@@ -16,11 +16,9 @@ interface StartScreenState {
 }
 
 class StartScreen extends React.PureComponent<StartScreenProps, StartScreenState> {
-  // private readonly startScreen: React.RefObject<HTMLCanvasElement>;
 
   public constructor(props: StartScreenProps) {
     super(props);
-    // this.startScreen = React.createRef();
     this.state = {
       choice: 0
     };  

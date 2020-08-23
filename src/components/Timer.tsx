@@ -87,10 +87,6 @@ class Timer extends React.Component<TimerProps, TimerState> {
     };
   }
 
-  private formatMovement(): string {
-    return this.state.willBeDone ? `${("000000" + Math.max.apply(null, this.props.streak)).slice(-7)}` : `${("000000" + this.props.movement).slice(-7)}`;
-  }
-
   private drawStatusBar = (): void => {
     this.props.canvasContext.clearRect(canvasWidth*0.70, 0, canvasWidth*0.30, statusBarHeight);
     this.props.canvasContext.fillStyle = 'black';
