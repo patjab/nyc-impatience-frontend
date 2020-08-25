@@ -28,7 +28,7 @@ export const movementsPerStage = 1000
 export const loudnessSpookLevel = 0.4
 export const loudnessRechargeInSeconds = 30
 
-export const rendingTouristRowsPercentage = 0.50
+export const rendingTouristRowsPercentage = 0.50;
 
 export const touristRunningMilliseconds = 30
 

@@ -1,6 +1,6 @@
 import {howBigShouldIBe} from '../AuxiliaryMath'
 import {Position, Row} from '../utils/BrickUtils'
-import {initialPlayerSize, movementPerBrick, yNearnessSpook, rendingTouristRowsPercentage, canvasHeight, heightOfMap} from '../setupData';
+import {initialPlayerSize, movementPerBrick, yNearnessSpook, canvasHeight, heightOfMap} from '../setupData';
 import {tourist1, tourist2, tourist3} from '../images';
 
 export type PositionOnArray = {row: number, col: number};
@@ -17,9 +17,9 @@ export class TouristUtils {
 
 
 
-    public static chooseRandomPosition(brickMatrix: Row[]) {
+    public static chooseRandomPosition(brickMatrix: Row[], backPercentageOfGridRenderTouristFrom: number) {
         return {
-            chosenRow: Math.trunc(Math.trunc(Math.random()*(brickMatrix.length-1)) * rendingTouristRowsPercentage),
+            chosenRow: Math.trunc(Math.trunc(Math.random()*(brickMatrix.length-1)) * backPercentageOfGridRenderTouristFrom),
             chosenCol: Math.trunc(Math.random()*(brickMatrix[0].length-1))
         };
     }

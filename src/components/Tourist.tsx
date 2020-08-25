@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {touristRunningMilliseconds, collidedImpatience} from '../setupData';
+import {touristRunningMilliseconds, collidedImpatience, rendingTouristRowsPercentage} from '../setupData';
 import {Actions} from '../store/Actions';
 import {howBigShouldIBe} from '../AuxiliaryMath';
 import {Dispatch} from 'redux';
@@ -19,10 +19,10 @@ interface TouristProps extends ScreenProps {
   playerY: number;
   gameOver: boolean;
   patience: number;
+  time: number;
+  timeOfYell: number;
 
-  addTouristToRoaster: (arg: TouristComponent) => void;
   removeTouristFromRoaster: (id: number) => void;
-  addTouristGoneCounter: () => void;
   addToBumpedImages: (snapshot: string) => void;
   modifyPatience: (patience: number) => void;
   toggleBumpingShake: () => void;
@@ -41,13 +41,7 @@ interface TouristState {
 
 type TouristLifecycleFunction = (positionX: number, positionY: number, positionOnArray: PositionOnArray) => void;
 
-interface PublicTouristProps {
-  spookedRunAway(): void;
-}
-
-export type TouristComponent = React.Component<TouristProps, TouristState> & PublicTouristProps;
-
-class Tourist extends React.Component<TouristProps, TouristState> implements TouristComponent {
+class Tourist extends React.Component<TouristProps, TouristState> {
   private readonly bumpSoundEl: React.RefObject<HTMLAudioElement>;
   private readonly touristImg: React.RefObject<HTMLImageElement>;
   private readonly movementPositionOnMounted: number;
@@ -61,7 +55,7 @@ class Tourist extends React.Component<TouristProps, TouristState> implements Tou
   public constructor(props: TouristProps) {
     super(props);
 
-    const {chosenRow, chosenCol} = TouristUtils.chooseRandomPosition(props.brickPositions);
+    const {chosenRow, chosenCol} = TouristUtils.chooseRandomPosition(props.brickPositions, rendingTouristRowsPercentage);
 
     this.bumpSoundEl = React.createRef();
     this.touristImg = React.createRef();
@@ -108,7 +102,7 @@ class Tourist extends React.Component<TouristProps, TouristState> implements Tou
   }
 
   goneAction = (positionX: number, positionY: number, positionOnArray: PositionOnArray) => {
-    return this.props.addTouristGoneCounter();
+    return this.props.removeTouristFromRoaster(this.props.id);
   }
 
   onCollisionAction = (positionX: number, positionY: number, positionOnArray: PositionOnArray) => {
@@ -132,14 +126,10 @@ class Tourist extends React.Component<TouristProps, TouristState> implements Tou
   /*
    * Used externally as a ref in the TouristContainer
    */
-  public spookedRunAway(): void {
-    const {positionOnArray} = TouristUtils.convertRowColToXY(this.props.brickPositions, this.props.movement, this.movementPositionOnMounted, this.state.positionOnArray, this.initialRow, this.state.allowTouristToRun);
-    this.runningAnimation(positionOnArray);
-  }
-
-  public componentDidMount(): void {
-    this.props.addTouristToRoaster(this);
-  }
+  // public spookedRunAway(): void {
+  //   const {positionOnArray} = TouristUtils.convertRowColToXY(this.props.brickPositions, this.props.movement, this.movementPositionOnMounted, this.state.positionOnArray, this.initialRow, this.state.allowTouristToRun);
+  //   this.runningAnimation(positionOnArray);
+  // }
 
   public componentDidUpdate() {
     const {positionY, positionX, positionOnArray} = TouristUtils.convertRowColToXY(this.props.brickPositions, this.props.movement, this.movementPositionOnMounted, this.state.positionOnArray, this.initialRow, this.state.allowTouristToRun);
@@ -147,6 +137,10 @@ class Tourist extends React.Component<TouristProps, TouristState> implements Tou
     const sizeOfSide = howBigShouldIBe(positionY);
 
     if (touristImg && !this.props.gameOver && !this.props.isPaused) {
+      if ( this.props.time === this.props.timeOfYell ) {
+        return this.runningAnimation(positionOnArray);
+      }
+
       this.props.canvasContext.drawImage(touristImg, positionX, positionY, sizeOfSide, sizeOfSide);
       const lifecycleFunction: TouristLifecycleFunction = this.touristLifecycleMap.get(this.state.stage.getCurrent() as TouristStage) as TouristLifecycleFunction;
       lifecycleFunction(positionX, positionY, positionOnArray);
@@ -154,7 +148,6 @@ class Tourist extends React.Component<TouristProps, TouristState> implements Tou
   }
   
   public componentWillUnmount(): void {
-    this.props.removeTouristFromRoaster(this.props.id);
     window.clearInterval(this.animationInterval);
     window.clearInterval(this.walkingTouristInterval);
   }
@@ -243,13 +236,16 @@ const mapStateToProps = (state: AppState) => {
     playerY: state.player.yPosition,
     gameOver: state.gameOver,
     patience: state.patience,
-    isPaused: state.isPaused
+    isPaused: state.isPaused,
+    // TODO: Debate whether or not these should be connected or passed down
+    timeOfYell: state.timeOfYell,
+    time: state.time
  }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    removeTouristFromRoaster: (id: number) => dispatch(Actions.removeTouristFromRoaster(id)),
+    // removeTouristFromRoaster: (id: number) => dispatch(Actions.removeTouristFromRoaster(id)),
     resetPlayer: () => dispatch(Actions.resetPlayer()),
     recordStreak: (streak: number) => dispatch(Actions.recordStreak(streak)),
     changeMovementAbility: (isDisabled: boolean) => dispatch(Actions.changeMovementAbility(isDisabled)),

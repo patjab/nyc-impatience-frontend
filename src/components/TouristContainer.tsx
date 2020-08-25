@@ -2,12 +2,15 @@ import * as React from 'react';
 import {microphoneRunner, loudEnough} from '../mediaHelper/microphoneHelper';
 import {loudnessSpookLevel, loudnessRechargeInSeconds, touristDensity} from '../setupData';
 import {ScreenProps} from '../App';
-import Tourist, { TouristComponent} from './Tourist';
+import Tourist from './Tourist';
 import {connect} from 'react-redux';
 import {AppState} from '../store/initialState';
 import {Dispatch} from 'redux';
 import {Actions} from '../store/Actions';
 import {Row} from '../utils/BrickUtils';
+
+type TouristGeneratorFn = (brickPositions: Row[]) => JSX.Element;
+type TouristRoasterNext = Map<number, TouristGeneratorFn>;
 
 interface TouristContainerProps extends ScreenProps {
     brickMatrix: Row[];
@@ -18,8 +21,7 @@ interface TouristContainerProps extends ScreenProps {
 }
 
 interface TouristContainerState {
-    touristRoaster: TouristComponent[];
-    touristGoneCounter: number;
+    touristRoasterNext: TouristRoasterNext;
 }
 
 class TouristContainer extends React.PureComponent<TouristContainerProps, TouristContainerState> {
@@ -28,9 +30,16 @@ class TouristContainer extends React.PureComponent<TouristContainerProps, Touris
     public constructor(props: TouristContainerProps) {
         super(props);
         this.scaredTouristListenerInterval = this.scaredTouristListener();
-        this.state = {
-            touristRoaster: [],
-            touristGoneCounter: 0
+        const touristRoasterNext: TouristRoasterNext = Array.from(Array(touristDensity).keys()).reduce(this.addToTouristRoaster, new Map());
+        this.state = { 
+            touristRoasterNext
+        };
+    }
+
+    public componentDidUpdate(): void {
+        const numOfActiveTourists: number = this.state.touristRoasterNext.size;
+        if ( numOfActiveTourists < this.props.stage + touristDensity ) {
+            this.addToTouristRoaster(this.state.touristRoasterNext, Number(new Date()));
         }
     }
 
@@ -39,64 +48,57 @@ class TouristContainer extends React.PureComponent<TouristContainerProps, Touris
     }
 
     public render(): JSX.Element[] {
-        return this.renderTourists(touristDensity, this.props.brickMatrix);
+        return Array.from(this.state.touristRoasterNext.entries())
+            .map(([id, jsxGenerator]: [number, TouristGeneratorFn]) => jsxGenerator(this.props.brickMatrix));
     }
 
+    //  move this out to a centralized place with intervals/listeners
     private scaredTouristListener = (): number => {
         microphoneRunner(loudnessSpookLevel);
         return window.setInterval(() => {
             const hasGameStarted = this.props.time > 0;
-            const readyForYelling = (this.props.time/1000) - this.props.timeOfYell > loudnessRechargeInSeconds
+            const readyForYelling = (this.props.time/1000) - this.props.timeOfYell > loudnessRechargeInSeconds;
             if ( hasGameStarted && loudEnough && readyForYelling ) {
-                this.props.recordTimeOfYell(this.props.time/1000)
-                for ( let tourist of this.state.touristRoaster ) {
-                    tourist.spookedRunAway();
-                }
+                this.props.recordTimeOfYell(this.props.time/1000);
             }
         }, 100);
     }
-    
-    private renderTourists = (numberOfTourists: number, bricksList: Row[]): JSX.Element[] => {        
-        let tourists: JSX.Element[] = [];
-        console.log(this.state.touristGoneCounter, (numberOfTourists + this.props.stage + this.state.touristGoneCounter))
 
-        for ( let i = this.state.touristGoneCounter; i < (numberOfTourists + this.props.stage + this.state.touristGoneCounter); i++ ) {
-            tourists.push(
+    private addToTouristRoaster = (acc: TouristRoasterNext, id: number): TouristRoasterNext => {
+        return acc.set(id, this.generateTourist(id));
+    }
+
+    private removeTouristFromRoaster = (id: number): void => {
+        const touristRoasterNext = new Map(this.state.touristRoasterNext);
+        touristRoasterNext.delete(id);
+        this.setState({ touristRoasterNext });
+    }
+
+    private generateTourist = (id: number) => {
+        return (brickPositions: Row[]): JSX.Element => {
+            return (
                 <Tourist 
-                    key={i} 
-                    id={i} 
-                    brickPositions={bricksList} 
+                    key={id} 
+                    id={id} 
+                    brickPositions={brickPositions} 
                     canvasContext={this.props.canvasContext} 
                     canvas={this.props.canvas}
-                    addTouristToRoaster={this.addTouristToRoaster}
-                    addTouristGoneCounter={this.addTouristGoneCounter}
+                    removeTouristFromRoaster={this.removeTouristFromRoaster}
                 />
             );
-        }
-        return tourists;
+        };
     }
 
-    private addTouristToRoaster = (tourist: TouristComponent) => {
-        this.setState({ touristRoaster: [...this.state.touristRoaster, tourist] });
-    }
-
-    private addTouristGoneCounter = () => {
-        this.setState({ touristGoneCounter: this.state.touristGoneCounter + 1 });
-    }
 }
 
-const mapStateToProps = (state: AppState) => {
-    return {
-        time: state.time,
-        timeOfYell: state.timeOfYell,
-        stage: state.stage
-    };
-}
+const mapStateToProps = (state: AppState) => ({
+    time: state.time,
+    timeOfYell: state.timeOfYell,
+    stage: state.stage
+});
   
-const mapDispatchToProps = (dispatch: Dispatch) => {
-    return {
-        recordTimeOfYell: (time: number) => dispatch(Actions.recordTimeOfYell(time))
-    };
-}
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+    recordTimeOfYell: (time: number) => dispatch(Actions.recordTimeOfYell(time))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(TouristContainer);
