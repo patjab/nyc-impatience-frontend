@@ -33,7 +33,6 @@ export interface AppState {
     stage: number;
     disabled: boolean;
     bumpingShake: boolean;
-    gameOver: boolean;
     gameOverImage: null | string;
     bumpedImages: string[];
     timeFinished: number | null;
@@ -68,7 +67,6 @@ export const initialState: AppState = {
     stage: 0,
     disabled: false,
     bumpingShake: false,
-    gameOver: false,
     gameOverImage: null,
     bumpedImages: [],
     timeFinished: null,

@@ -16,7 +16,6 @@ interface PlayerProps extends ScreenProps{
   player: PlayerPosition;
   speed: number;
   bumpingShake: boolean;
-  gameOver: boolean;
   movement: number;
   gameStarted: boolean;
   bonusRecord: RecordForBonus[];
@@ -171,7 +170,7 @@ class Player extends React.PureComponent<PlayerProps, PlayerState> {
       this.props.signalStartGame()
     }
 
-    if (!this.props.gameOver && !this.props.isPaused) {
+    if (!this.props.isPaused) {
       this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
       this.stillHoldingUp = e.keyCode === 38 ? true : false
 
@@ -191,7 +190,7 @@ class Player extends React.PureComponent<PlayerProps, PlayerState> {
   }
 
   private syntheticListenerForRelease = (): void => {
-    if (!this.props.gameOver && !this.props.isPaused) {
+    if (!this.props.isPaused) {
       const eventsPerSecond = 27
       const syntheticConstant = 1000/eventsPerSecond
       this.syntheticInterval = window.setInterval(this.applyMovement, syntheticConstant)
@@ -248,7 +247,7 @@ class Player extends React.PureComponent<PlayerProps, PlayerState> {
       }, 2000)
       this.highestImpatientInterval = impatientWait
 
-      if (!this.props.gameOver && !this.props.isPaused) {
+      if (!this.props.isPaused) {
         this.diagonalMapSimultaneous[e.keyCode] = e.type === 'keydown'
         this.setState({walkingCycle: (this.state.walkingCycle+1) % this.state.walkingCollection.length})
         this.stillHoldingUp = e.key !== 'ArrowUp'
@@ -271,7 +270,6 @@ const mapStateToProps = (state: AppState) => {
     player: state.player,
     speed: state.speed,
     bumpingShake: state.bumpingShake,
-    gameOver: state.gameOver,
     movement: state.movement,
     gameStarted: state.gameStarted,
     bonusRecord: state.recordForBonus,
@@ -300,4 +298,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Player)
+export default connect(mapStateToProps, mapDispatchToProps)(Player);

@@ -16,7 +16,6 @@ interface TimerProps extends ScreenProps {
   time: number;
   totalPausedTime: number | null;
   isPaused: boolean;
-  setGameOver: () => void;
   setGameOverImage: (image: string) => void;
   recordTimeFinished: (time: number) => void;
   modifyPatience: (modifier: number) => void;
@@ -134,7 +133,6 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    setGameOver: () => dispatch(Actions.setGameOver()),
     setGameOverImage: (image: string) => dispatch(Actions.setGameOverImage(image)),
     recordTimeFinished: (time: number) => dispatch(Actions.recordTimeFinished(time)),
     modifyPatience: (modifier: number) => dispatch(Actions.modifyPatience(modifier)),

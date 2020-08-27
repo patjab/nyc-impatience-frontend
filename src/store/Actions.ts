@@ -11,7 +11,6 @@ export const Actions = {
   resetPlayer: () => createAction(ActionKeys.RESET_PLAYER),
   changeMovementAbility: (isDisabled: boolean) => createAction(ActionKeys.CHANGE_MOVEMENT_ABILITY, isDisabled),
   toggleBumpingShake: () => createAction(ActionKeys.TOGGLE_BUMPING_SHAKE),
-  setGameOver: () => createAction(ActionKeys.SET_GAME_OVER),
   setGameOverImage: (imageData: string) => createAction(ActionKeys.SET_GAME_OVER_IMAGE, imageData),
   changeCurrentScreen: (screen: CanvasScreen) => createAction(ActionKeys.CHANGE_CURRENT_SCREEN, screen),
   resetAllState: () => createAction(ActionKeys.RESET_ALL_STATE),

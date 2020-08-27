@@ -41,11 +41,6 @@ function appReducer(state = initialState, action: Actions): AppState {
         ...state,
         bumpingShake: !state.bumpingShake
       }
-    case ActionKeys.SET_GAME_OVER:
-      return {
-        ...state,
-        gameOver: true
-      }
     case ActionKeys.SET_GAME_OVER_IMAGE:
       return {
         ...state,

@@ -17,7 +17,6 @@ interface TouristProps extends ScreenProps {
   id: number;
   playerX: number;
   playerY: number;
-  gameOver: boolean;
   patience: number;
   time: number;
   timeOfYell: number;
@@ -128,7 +127,7 @@ class Tourist extends React.Component<TouristProps, TouristState> {
     const touristImg = this.touristImg.current;
     const sizeOfSide = howBigShouldIBe(positionY);
 
-    if (touristImg && !this.props.gameOver && !this.props.isPaused) {
+    if (touristImg && !this.props.isPaused) {
 
 
       this.props.canvasContext.drawImage(touristImg, positionX, positionY, sizeOfSide, sizeOfSide);
@@ -204,10 +203,8 @@ class Tourist extends React.Component<TouristProps, TouristState> {
   }
 
   private afterBumpEffects = (): void =>{
-    if (!this.props.gameOver) {
-      this.props.changeMovementAbility(false);
-      this.props.toggleBumpingShake();
-    }
+    this.props.changeMovementAbility(false);
+    this.props.toggleBumpingShake();
   }
 
   private bumpSoundEffects = () => {
@@ -231,7 +228,6 @@ const mapStateToProps = (state: AppState) => {
     movement: state.movement,
     playerX: state.player.xPosition,
     playerY: state.player.yPosition,
-    gameOver: state.gameOver,
     patience: state.patience,
     isPaused: state.isPaused,
     // TODO: Debate whether or not these should be connected or passed down
