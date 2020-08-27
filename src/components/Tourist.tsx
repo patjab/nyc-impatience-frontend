@@ -123,27 +123,24 @@ class Tourist extends React.Component<TouristProps, TouristState> {
     }
   }
 
-  /*
-   * Used externally as a ref in the TouristContainer
-   */
-  // public spookedRunAway(): void {
-  //   const {positionOnArray} = TouristUtils.convertRowColToXY(this.props.brickPositions, this.props.movement, this.movementPositionOnMounted, this.state.positionOnArray, this.initialRow, this.state.allowTouristToRun);
-  //   this.runningAnimation(positionOnArray);
-  // }
-
-  public componentDidUpdate() {
+  public componentDidUpdate(prevProps: TouristProps) {
     const {positionY, positionX, positionOnArray} = TouristUtils.convertRowColToXY(this.props.brickPositions, this.props.movement, this.movementPositionOnMounted, this.state.positionOnArray, this.initialRow, this.state.allowTouristToRun);
     const touristImg = this.touristImg.current;
     const sizeOfSide = howBigShouldIBe(positionY);
 
     if (touristImg && !this.props.gameOver && !this.props.isPaused) {
-      if ( this.props.time === this.props.timeOfYell ) {
-        return this.runningAnimation(positionOnArray);
-      }
+
 
       this.props.canvasContext.drawImage(touristImg, positionX, positionY, sizeOfSide, sizeOfSide);
       const lifecycleFunction: TouristLifecycleFunction = this.touristLifecycleMap.get(this.state.stage.getCurrent() as TouristStage) as TouristLifecycleFunction;
       lifecycleFunction(positionX, positionY, positionOnArray);
+
+      if ( (this.state.stage.getCurrent() !== TouristStage.RUNNING) && (this.state.stage.getCurrent() !== TouristStage.COLLIDED) ) {
+        if ( this.props.timeOfYell !== prevProps.timeOfYell ) {
+          this.runningAnimation(positionOnArray);
+        }
+      }
+      
     }
   }
   
@@ -200,7 +197,7 @@ class Tourist extends React.Component<TouristProps, TouristState> {
   private takeAPictureOfCollision = (): void => {
     const quality = 1;
     // TODO: Reenable
-    const snapshot = this.props.canvas.toDataURL("image/jpeg", quality);
+    const snapshot = this.props.canvas.toDataURL('image/jpeg', quality);
     if (snapshot) {
       this.props.addToBumpedImages(snapshot);
     }
@@ -245,7 +242,6 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    // removeTouristFromRoaster: (id: number) => dispatch(Actions.removeTouristFromRoaster(id)),
     resetPlayer: () => dispatch(Actions.resetPlayer()),
     recordStreak: (streak: number) => dispatch(Actions.recordStreak(streak)),
     changeMovementAbility: (isDisabled: boolean) => dispatch(Actions.changeMovementAbility(isDisabled)),
